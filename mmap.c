@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/cdefs.h>
 #include <sys/mman.h>
 
 uint32_t* code; 
@@ -27,7 +28,7 @@ uint32_t *get_executable_block()
 
 }
 
-void generate_purecap(uint32_t* code) {
+uint32_t* generate_purecap(uint32_t* code) {
 	uint32_t idx = 0;
 	code[idx++] = cincoffsetimm(csp, csp, ((-32) + (2 << 20))); //0xFE01115B; // cincoffset csp, csp, -32
 	code[idx++] = csc_128(csp, cra, 16); //0x00114823; // csc cra, 16(csp)
@@ -45,39 +46,41 @@ void generate_purecap(uint32_t* code) {
 	// When in hybrid mode the capabilities of some registers don't matter and the ddc (default data capability) is being used.
 	// When in capability mode the capability of the coresponding capability register is used, if you try to access a0 that would use the capability inside of ca0
 	//
-	code = cheri_flags_set(code, 0x0001);
+	return cheri_flags_set(code, 0x0001);
 
 }
 
 // The hybrid function works because the DDC can be set to the stack pointer and used as a referance 
 // This because when we are in hybrid mode the DDC's address is what is used, and here we have it set to the stack pointer.
-// This means that when we want to store a value on the stack we can just do `csc cra, 16(cnull)`.
-// The calculateion is dcone like this: `ddc.address + cnull_value + 16`.
+// This means that when we want to store a value on the stack we can just do `csc cra, 16(zero)`.
+// The calculateion is dcone like this: `ddc.address + zero_value + 16`.
 // Therefore cnull can be used in place of the stack pointer in the case of this example.
-void generate_hybrid(uint32_t* code) {
+uint32_t* generate_hybrid(uint32_t* code) {
 	uint32_t idx = 0;
 	code[idx++] = cincoffsetimm(csp, csp, ((-32) + (2 << 20)));
 	code[idx++] = cspecialrw(cnull, csp, 1); // cspecialw csp, ddc
-	code[idx++] = csc_128(cnull, cra, 16);
-	code[idx++] = csc_128(cnull, cs0, 0);
+	code[idx++] = csc_128(zero, cra, 16);
+	code[idx++] = csc_128(zero, cs0, 0);
 	code[idx++] = cincoffset(cs0, csp, 32);
 	code[idx++] = addi(a0, zero, 5);
-	code[idx++] = clc_128(cs0, cnull, 0); 
-	code[idx++] = clc_128(cra, cnull, 16);
+	code[idx++] = clc_128(cs0, zero, 0); 
+	code[idx++] = clc_128(cra, zero, 16);
 	code[idx++] = cincoffsetimm(csp, csp, 32);
 	code[idx++] = cjalr(zero, cra); 
+	return code;
 }
 
-void generate_micro(uint32_t* code) {
+uint32_t* generate_micro(uint32_t* code) {
 	uint32_t idx = 0;
 	code[idx++] = addi(a0, zero, 5);
 	code[idx++] = cjalr(zero, cra); 
+	return code;
 }
 
 int main()
 {
 	code = get_executable_block();
-	generate_hybrid(code);
+	code = generate_purecap(code);
 
 	inspect_pointer(cheri_pcc_get());
 	inspect_pointer(code);
