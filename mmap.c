@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/cdefs.h>
 #include <sys/mman.h>
 
 uint32_t* code; 
@@ -27,7 +28,7 @@ uint32_t *get_executable_block()
 
 }
 
-void generate(uint32_t* code) {
+uint32_t* generate_purecap(uint32_t* code) {
 	uint32_t idx = 0;
 	code[idx++] = cincoffsetimm(csp, csp, ((-32) + (2 << 20))); //0xFE01115B; // cincoffset csp, csp, -32
 	code[idx++] = csc_128(csp, cra, 16); //0x00114823; // csc cra, 16(csp)
@@ -38,14 +39,6 @@ void generate(uint32_t* code) {
 	code[idx++] = clc_128(cra, csp, 16); //0x0101208F; // clc cra, 16(csp)
 	code[idx++] = cincoffsetimm(csp, csp, 32); //0x0201115B; // cincoffset csp, csp, 32
 	code[idx++] = cjalr(zero, cra); //0xFEC0805B; // cret
-}
-
-int main()
-{
-	code = get_executable_block();
-	generate(code);
-
-
 
 	// Very important, the flags of the pointer that is used to call a function are then transfered to the pcc register 
 	// The flags in the pcc reigster matter when executing: https://github.com/CTSRD-CHERI/sail-cheri-riscv/blob/8253bffe30abf2a8ae1c7eba515061b141aff727/src/cheri_addr_checks.sail#L109
@@ -53,10 +46,44 @@ int main()
 	// When in hybrid mode the capabilities of some registers don't matter and the ddc (default data capability) is being used.
 	// When in capability mode the capability of the coresponding capability register is used, if you try to access a0 that would use the capability inside of ca0
 	//
-	code = cheri_flags_set(code, 0x0001);
+	return cheri_flags_set(code, 0x0001);
+
+}
+
+// The hybrid function works because the DDC can be set to the stack pointer and used as a referance 
+// This because when we are in hybrid mode the DDC's address is what is used, and here we have it set to the stack pointer.
+// This means that when we want to store a value on the stack we can just do `csc cra, 16(zero)`.
+// The calculateion is dcone like this: `ddc.address + zero_value + 16`.
+// Therefore cnull can be used in place of the stack pointer in the case of this example.
+uint32_t* generate_hybrid(uint32_t* code) {
+	uint32_t idx = 0;
+	code[idx++] = cincoffsetimm(csp, csp, ((-32) + (2 << 20)));
+	code[idx++] = cspecialrw(cnull, csp, 1); // cspecialw csp, ddc
+	code[idx++] = csc_128(zero, cra, 16);
+	code[idx++] = csc_128(zero, cs0, 0);
+	code[idx++] = cincoffset(cs0, csp, 32);
+	code[idx++] = addi(a0, zero, 5);
+	code[idx++] = clc_128(cs0, zero, 0); 
+	code[idx++] = clc_128(cra, zero, 16);
+	code[idx++] = cincoffsetimm(csp, csp, 32);
+	code[idx++] = cjalr(zero, cra); 
+	return code;
+}
+
+uint32_t* generate_micro(uint32_t* code) {
+	uint32_t idx = 0;
+	code[idx++] = addi(a0, zero, 5);
+	code[idx++] = cjalr(zero, cra); 
+	return code;
+}
+
+int main()
+{
+	code = get_executable_block();
+	code = generate_purecap(code);
+
 	inspect_pointer(cheri_pcc_get());
 	inspect_pointer(code);
-
 
 	//	code[0] = 0x00500513; // addi a0, zero, 5
 	//	code[1] = 0xFEC0805B; // cret
