@@ -1,6 +1,6 @@
-#include "common.h"
-#include "regs.h"
-#include "instructions.h"
+#include "include/common.h"
+#include "include/regs.h"
+#include "include/instructions.h"
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
