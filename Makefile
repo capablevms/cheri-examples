@@ -15,5 +15,12 @@ run-%: bin/%
 	scp -P 10003 bin/$(<F) $(<F).c root@127.0.0.1:/root
 	ssh -p 10003 root@127.0.0.1 -t '/root/$(<F)'
 
+dbg-%: bin/%
+	scp -P 10003 bin/$(<F) $(<F).c root@127.0.0.1:/root
+	ssh -p 10003 root@127.0.0.1 -t 'gdb-run.sh /root/$(<F)'
+
+	
+
+
 clean: 
 	rm -rv bin/*
