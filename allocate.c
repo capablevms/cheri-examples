@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
+int main()
+{
 	size_t size = 31;
 	printf("Size: ");
 	scanf("%lu", &size);
-	void* memory = malloc(size);
+	void *memory = malloc(size);
 	inspect_pointer(memory);
-
 }
