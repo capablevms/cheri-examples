@@ -2,11 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main() {
+int main()
+{
 	size_t size = 31;
-	printf("Size: ");
-	scanf("%lu", &size);
-	void* memory = malloc(size);
-	inspect_pointer(memory);
 
+	printf("Size: ");
+	if (0 == scanf("%lu", &size))
+	{
+		error("Extraneous input");
+		return -1;
+	}
+
+	void *memory = malloc(size);
+	inspect_pointer(memory);
 }
