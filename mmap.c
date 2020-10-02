@@ -9,13 +9,11 @@
 #include <sys/cdefs.h>
 #include <sys/mman.h>
 
-uint32_t* code; 
-
 uint32_t *get_executable_block()
 {
 	uint32_t* result = mmap(
 		NULL,
-		512,
+		4096,
 		PROT_READ | PROT_WRITE | PROT_EXEC,
 		MAP_ANON | MAP_PRIVATE,
 		-1,
@@ -79,17 +77,15 @@ uint32_t* generate_micro(uint32_t* code) {
 
 int main()
 {
+	uint32_t* code; 
 	code = get_executable_block();
 	code = generate_purecap(code);
 
 	inspect_pointer(cheri_pcc_get());
 	inspect_pointer(code);
 
-	//	code[0] = 0x00500513; // addi a0, zero, 5
-	//	code[1] = 0xFEC0805B; // cret
-
 	int (*code_function)() = (int (*)())code;
-	int result = ((int (*)())code)();
+	int result = code_function();
 	printf("Result: %d\n\n", result);
 	return result;
 }
