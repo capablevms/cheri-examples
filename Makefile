@@ -1,5 +1,6 @@
 CC=$(HOME)/cheri/output/sdk/bin/riscv64-unknown-freebsd13-clang
 CFLAGS=-march=rv64imafdcxcheri -mabi=l64pc128d --sysroot=/home/alex4o/cheri/output/rootfs-riscv64-hybrid -mno-relax -g -O0
+export 
 
 cfiles := $(wildcard *.c)
 examples := $(patsubst %.c,bin/%,$(cfiles))
