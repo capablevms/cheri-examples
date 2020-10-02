@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdint.h>
+#include"include/common.h"
 
 int gcd(int a, int b) 
 { 
@@ -26,6 +27,8 @@ int main() {
 	
 	int c_gcd = gcd(a, b);
 	printf("The gcd of these numbers is: %d\n", c_gcd);
+	inspect_pointer(*gcd);
+	
 	return 0;
 
 }
