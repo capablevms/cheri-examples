@@ -9,5 +9,5 @@ BreakBeforeBraces: Allman
 BraceWrapping:
 	AfterControlStatement: Always
 
-ColumnLimit: 0
+ColumnLimit: 120
 
