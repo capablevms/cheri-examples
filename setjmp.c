@@ -10,7 +10,7 @@ int main()
 	int res = setjmp(buffer);
 
 	uint32_t length = cheri_length_get(buffer);
-	
+
 	// buffer[0] == _JB_MAGIC_SETJMP == 0xbe87fd8a2910af01
 	// buffer[1] == $csp
 	// buffer[2] == $cfp
