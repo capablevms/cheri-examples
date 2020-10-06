@@ -23,18 +23,15 @@ void inspect_pointer(void *ptr)
 
 void error(char* string) {
 	fputs(string, stderr);
+	fputc('\n', stderr);
 }
 
-// This should be a macro or inlined
-// In the current case it gives the stack pointer
-// inside of the cheri_csp_get function.
-// This is fine if only the capabilitits are important.
-// In any other case the csp will need to be decremented
-// to get the actual csp of the calling function.
-void* cheri_csp_get()
+
+// This function returns the current stack pointer.
+//
+// We don't want to inline it because __builtin_frame_address will change it's meaning.
+__attribute__((noinline)) void* cheri_csp_get()
 {
-	void *value;
-	asm("csc csp, %0"	: "=rm"(value));
-	return value;
+	return __builtin_frame_address(0);
 }
 
