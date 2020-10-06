@@ -14,7 +14,10 @@ int main()
 
 	uint32_t bounds = 64;
 	puts("bounds(64): ");
-	scanf("%u", &bounds);
+	if (0 == scanf("%u", &bounds))
+	{
+		error("Extraneous input");
+	}
 
 	int32_t *custom_boundes_array = cheri_setbounds(array, bounds);
 

@@ -5,14 +5,22 @@
 
 int gcd(int a, int b)
 {
-	if (a == 0)
+	if (0 == a)
+	{
 		return b;
-	if (b == 0)
+	}
+	else if (0 == b)
+	{
 		return a;
-	if (a == b)
+	}
+	else if (a == b)
+	{
 		return a;
-	if (a > b)
+	}
+	else if (a > b)
+	{
 		return gcd(a - b, b);
+	}
 	return gcd(a, b - a);
 }
 
@@ -20,10 +28,20 @@ int main()
 {
 
 	int a, b = 0;
+
 	printf("Enter first number:");
-	scanf("%d", &a);
+	if (0 == scanf("%d", &a))
+	{
+		error("Extraneous input");
+		return -1;
+	}
+
 	printf("Enter second number:");
-	scanf("%d", &b);
+	if (0 == scanf("%d", &b))
+	{
+		error("Extraneous input");
+		return -1;
+	}
 
 	int c_gcd = gcd(a, b);
 	printf("The gcd of these numbers is: %d\n", c_gcd);

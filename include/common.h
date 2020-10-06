@@ -20,6 +20,11 @@ void inspect_pointer(void *ptr)
 			address, base, base + length, flags, length, offset, perms, type, tag, valid);
 }
 
+
+void error(char* string) {
+	fputs(string, stderr);
+}
+
 // This should be a macro or inlined
 // In the current case it gives the stack pointer
 // inside of the cheri_csp_get function.

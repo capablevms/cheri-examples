@@ -51,9 +51,10 @@ void scan_range(void *start, void *end)
 {
 
 	void **location = (void **)start;
-	//printf("Scanning: ");
-	//inspect_pointer(start);
-	//inspect_pointer(end);
+	puts("Scanning range: ");
+	inspect_pointer(start);
+	inspect_pointer(end);
+	puts("\n");
 
 	while (location > end)
 	{
@@ -87,7 +88,7 @@ void scan_frames()
 		void **next_frame = (void **)previous_frame;
 		if (!is_stack_pointer(*next_frame))
 		{
-			//printf("Couldn't find a stack pointer at: %p, looking down the stack", next_frame);
+			printf("Couldn't find a stack pointer at: %p, looking up the stack", next_frame);
 		}
 		while (!is_stack_pointer(*next_frame))
 		{
