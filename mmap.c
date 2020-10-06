@@ -40,28 +40,28 @@ uint32_t *generate_purecap(uint32_t *code)
 	code[idx++] = cjalr(zero, cra);								//0xFEC0805B; // cret
 
 	/*
-	 * Very importan.
-	 * The flags of the pointer that is used to call a function are then transfered to the pcc register.
-	 * This is important when executing because:
-	 * https://github.com/CTSRD-CHERI/sail-cheri-riscv/blob/8253bffe30abf2a8ae1c7eba515061b141aff727/src/cheri_addr_checks.sail#L109
-	 * The pcc register is used to determine the mode of operation.
-	 * Is it in capability mode or in hybrid mode.
-	 * When in hybrid mode the capabilities of some registers are ignored.
-	 * This means that the ddc (default data capability) is being used.
-	 * When in capability mode the capability of the coresponding capability register is used.
-	 * For example, if you try to access a0 that would use the capability inside of ca0
-	 */
+       * Very important.
+       * The flags of the pointer that is used to call a function are then transferred to the pcc register.
+       * This is important when executing because:
+       * https://github.com/CTSRD-CHERI/sail-cheri-riscv/blob/8253bffe30abf2a8ae1c7eba515061b141aff727/src/cheri_addr_checks.sail#L109
+       * The pcc register is used to determine the mode of operation.
+       * Is it in capability mode or hybrid mode.
+       * When in hybrid mode the capabilities of some registers are ignored.
+       * This means that the ddc (default data capability) is being used.
+       * When in capability mode the capability of the corresponding capability register is used.
+       * For example, if you try to access a0 that would use the capability inside of ca0
+       */
 	return cheri_flags_set(code, 0x0001);
 }
 
-/* 
- * This hybrid function works because the DDC can be set to the stack pointer and used as a referance.
-* This works because when we are in hybrid mode the DDC's address is used as base.
-* We have the ddc set to be the stack pointer. 
-* This allows storing values on the stack though `csc cra, 16(zero)`.
-* The calculateion is done like this: `ddc.address + zero_value + 16`.
-* Therefore cnull can be used in place of the stack pointer in the case of this example.
-*/
+/*
+ * This hybrid function works because the DDC can be set to the stack pointer and used as a reference.
+ * This works because when we are in hybrid mode the DDC's address is used as a base.
+ * We have the DDC set to be the stack pointer.
+ * This allows storing values on the stack though `csc cra, 16(zero)`.
+ * The calculateion is done like this: `ddc.address + zero_value + 16`.
+ * Therefore cnull can be used in place of the stack pointer in the case of this example.
+ */
 uint32_t *generate_hybrid(uint32_t *code)
 {
 	uint32_t idx = 0;
@@ -70,7 +70,7 @@ uint32_t *generate_hybrid(uint32_t *code)
 	code[idx++] = csc_128(zero, cra, 16);
 	code[idx++] = csc_128(zero, cs0, 0);
 	code[idx++] = cincoffset(cs0, csp, 32);
-	code[idx++] = addi(a0, zero, 5
+	code[idx++] = addi(a0, zero, 5);
 	code[idx++] = clc_128(cs0, zero, 0);
 	code[idx++] = clc_128(cra, zero, 16);
 	code[idx++] = cincoffsetimm(csp, csp, 32);
