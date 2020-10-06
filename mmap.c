@@ -29,6 +29,12 @@ uint32_t *get_executable_block()
 uint32_t *generate_purecap(uint32_t *code)
 {
 	uint32_t idx = 0;
+	
+	if(cheri_length_get(code) <= (9 * sizeof(uint32_t))) {
+		error("Insufficient size\n");
+		exit(-1);
+	}
+	
 	code[idx++] = cincoffsetimm(csp, csp, ((-32) + (2 << 20))); //0xFE01115B; // cincoffset csp, csp, -32
 	code[idx++] = csc_128(csp, cra, 16);						//0x00114823; // csc cra, 16(csp)
 	code[idx++] = csc_128(csp, cs0, 0);							//0x00814023; // csc cs0, 0(csp)
@@ -65,6 +71,12 @@ uint32_t *generate_purecap(uint32_t *code)
 uint32_t *generate_hybrid(uint32_t *code)
 {
 	uint32_t idx = 0;
+	
+	if(cheri_length_get(code) <= (10 * sizeof(uint32_t))) {
+		error("Insufficient size");
+		exit(-1);
+	}
+
 	code[idx++] = cincoffsetimm(csp, csp, ((-32) + (2 << 20)));
 	code[idx++] = cspecialrw(cnull, csp, 1); // cspecialw csp, ddc
 	code[idx++] = csc_128(zero, cra, 16);
@@ -81,6 +93,12 @@ uint32_t *generate_hybrid(uint32_t *code)
 uint32_t *generate_micro(uint32_t *code)
 {
 	uint32_t idx = 0;
+	
+	if(cheri_length_get(code) <= (2 * sizeof(uint32_t))) {
+		error("Insufficient size");
+		exit(-1);
+	
+	}
 	code[idx++] = addi(a0, zero, 5);
 	code[idx++] = cjalr(zero, cra);
 	return code;
