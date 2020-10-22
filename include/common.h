@@ -1,7 +1,7 @@
-#include<stdio.h>
-#include<stdint.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <cheriintrin.h>
-#include<stdbool.h>
+#include <stdbool.h>
 
 void inspect_pointer(void *ptr)
 {
@@ -36,4 +36,3 @@ __attribute__((noinline)) void* cheri_csp_get()
 {
 	return __builtin_frame_address(0);
 }
-

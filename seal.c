@@ -37,7 +37,7 @@ int main()
 	inspect_pointer(pcc);
 
 	void *searling_root;
-	if (sysarch(CHERI_GET_SEALCAP, &searling_root) < 0)
+	if (sysarch(CHERI_PERM_SEAL, &searling_root) < 0)
 		searling_root = NULL;
 
 	cheri_pointer data;

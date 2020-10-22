@@ -1,7 +1,6 @@
-#include "lib/timsort_lib.h"
+#include "lib/timsort_lib_purecap.h"
 #include "lib/timsortdata.h"
-#include <cheriintrin.h>
-
+#include <cheri/cheric.h>
 
 /**
  * Allocates a large chunk of memory, copies a large chunk of data to it and then sorts using
@@ -12,9 +11,9 @@
  */
 int main(int argc, char *argv[])
 {
-
+	
 	int* arr = random_chunk();
-
+	inspect_pointer(arr);
 	// place the chunk of data on the heap
 	if (NULL == arr)
 	{
@@ -22,7 +21,7 @@ int main(int argc, char *argv[])
 	}
 
 	// sort the data
-	timSort(arr, cheri_length_get(arr) / sizeof(int));
+	timSort(arr);
 
 	// clean up
 	free(arr);
