@@ -12,6 +12,8 @@
 
 const int RUN_LENGTH = 32;
 
+void inspect_pointer(void *ptr);
+
 /**
  * Checks if an array of integers `arr` is sorted in ascending order. Uses capability instructions
  * to determine the array's length.
@@ -118,15 +120,25 @@ void merge(int* arr)
 {
 
 	// allocations
-	size_t lengthFirstHalf = cheri_getoffset(arr);
-	size_t lengthSecondHalf = cheri_getlen(arr)  - lengthFirstHalf;
+	size_t lengthFirstHalf = cheri_getoffset(arr) / sizeof(int);
+	size_t lengthSecondHalf = (cheri_getlen(arr) / sizeof(int))  - lengthFirstHalf;
 	
 
-	int firstHalf[lengthFirstHalf];
+	int firstHalf[lengthFirstHalf ];
 	int secondHalf[lengthSecondHalf];
 
-	// copy to intermediate storage (gets optimised out)
-	memcpy(firstHalf, arr, lengthFirstHalf * sizeof(int));
+	// printf("... %zu, %zu\n", lengthFirstHalf , lengthSecondHalf);
+	// 	inspect_pointer(arr);
+	
+
+	// reset offset otherwise arr[x] is actually arr[x+offset]
+	arr = cheri_offset_set(arr, 0);
+
+	// inspect_pointer(&arr[0]);
+	// inspect_pointer(&arr[lengthFirstHalf]); printf ("%zu \n", lengthFirstHalf);
+
+	// copy to intermediate storage
+	memcpy(firstHalf, &arr[0], lengthFirstHalf * sizeof(int));
 	memcpy(secondHalf, &arr[lengthFirstHalf], lengthSecondHalf * sizeof(int));
 
 	// merge intermediate back to output
@@ -189,19 +201,17 @@ size_t min(size_t a, size_t b)
  * @param arr Array to sort
  * @param n The legth of `arr`
  */
-
-
 void timSort(int* arr)
 {
 	size_t length = cheri_getlen(arr) / sizeof(int);
-	inspect_pointer(arr);
+	
 	// insertion sort on `RUN_LENGTH` segments
 	for (size_t ix = 0; ix < length; ix += RUN_LENGTH)
 	{
 		size_t min_offset = min((ix + RUN_LENGTH), (length - 1));
 
-		int* arr_base_set = cheri_offset_set(arr, ix);
-		int* arr_base_length_set = cheri_bounds_set(arr_base_set, min_offset);
+		int* arr_base_set = cheri_offset_set(arr, ix * sizeof(int));
+		int* arr_base_length_set = cheri_bounds_set(arr_base_set, (min_offset - ix) * sizeof(int));
 
 		insertionSort(arr_base_length_set);
 	}
@@ -214,10 +224,10 @@ void timSort(int* arr)
 			size_t mid = left + size;
 			size_t right = min((left + 2 * size), (length - 1));
 
-			int* arr_base_length_set = cheri_bounds_set(arr, right );
 
-			arr_base_length_set = cheri_offset_set(arr_base_length_set, mid);
-			printf("%zu, %zu, %zu\n", left, mid, right);
+			int* arr_base_length_set = cheri_bounds_set(&arr[left], (right - left )  * sizeof(int) );
+			arr_base_length_set = cheri_offset_set(arr_base_length_set, (mid - left) * sizeof(int));
+			
 			merge(arr_base_length_set);
 		}
 	}
