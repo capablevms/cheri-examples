@@ -2,7 +2,6 @@
 #include "lib/timsortdata.h"
 #include <cheriintrin.h>
 
-
 /**
  * Allocates a large chunk of memory, copies a large chunk of data to it and then sorts using
  * `timsort`. The example uses two implementations, one that uses explicit parameters to encode run
@@ -13,7 +12,7 @@
 int main(int argc, char *argv[])
 {
 
-	int* arr = random_chunk();
+	int *arr = random_chunk();
 
 	// place the chunk of data on the heap
 	if (NULL == arr)
