@@ -1,7 +1,7 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 bool isSorted(int arr[], size_t length);
 void insertionSort(int arr[], size_t lowerBound, size_t upperBound);

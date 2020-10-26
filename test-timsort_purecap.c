@@ -1,7 +1,7 @@
 #include "lib/timsort_lib_purecap.h"
+#include "lib/timsortdata.h"
 #include <assert.h>
 #include <cheriintrin.h>
-
 
 bool arrEq(int arr_a[], int arr_b[])
 {
@@ -28,17 +28,15 @@ void test_merge()
 	int input_arr_mutate_b_input[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 	int input_arr_mutate_b_expected[] = {5, 4, 3, 2, 1, 10, 9, 8, 7, 6};
 
-	size_t mid_a = 4; 	
-	size_t mid_b = 5; 
+	size_t mid_a = 4;
+	size_t mid_b = 5;
 
-	int* arr_a_base_set = cheri_offset_set(input_arr_mutate_a_input, mid_a);
-	int* arr_a_base_length_set = cheri_bounds_set(arr_a_base_set, cheri_length_get(input_arr_mutate_a_input) - mid_a );
+	int *arr_a_base_set = cheri_offset_set(input_arr_mutate_a_input, mid_a * sizeof(int));
 
-	int* arr_b_base_set = cheri_offset_set(input_arr_mutate_b_input, mid_b);
-	int* arr_b_base_length_set = cheri_bounds_set(arr_b_base_set, cheri_length_get(input_arr_mutate_b_input) - mid_b );
+	int *arr_b_base_set = cheri_offset_set(input_arr_mutate_b_input, mid_b * sizeof(int));
 
-	merge(input_arr_mutate_a_input, arr_a_base_length_set);
-	merge(input_arr_mutate_b_input, arr_b_base_length_set);
+	merge(arr_a_base_set);
+	merge(arr_b_base_set);
 
 	assert(arrEq(input_arr_mutate_a_input, input_arr_mutate_a_expected));
 	assert(arrEq(input_arr_mutate_b_input, input_arr_mutate_b_expected));
@@ -66,18 +64,10 @@ void test_isSorted()
 
 void test_timsort()
 {
-	int data[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-	const size_t arr_length = 20;
 
+	int *arr = random_chunk(8192);
 	// place the chunk of data on the heap
-	int *arr = malloc(arr_length * sizeof(int));
-
 	assert(NULL != arr);
-
-	for (size_t ix = 0; ix < arr_length; ix++)
-	{
-		arr[ix] = data[ix];
-	}
 
 	// ensure we start fair ( the data is not initially sorted )
 	assert(!isSorted(arr));

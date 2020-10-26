@@ -1,7 +1,6 @@
 #include "lib/timsort_lib.h"
 #include <assert.h>
 
-
 bool arrEq(int arr_a[], int arr_b[], size_t lowerBound, size_t upperBound)
 {
 	for (size_t ix = lowerBound; ix <= upperBound; ix++)

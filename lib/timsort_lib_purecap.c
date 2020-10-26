@@ -1,5 +1,4 @@
 #include "timsort_lib_purecap.h"
-
 #include "../include/common.h"
 #include <assert.h>
 #include <cheri/cheric.h>
@@ -9,17 +8,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 const int RUN_LENGTH = 32;
-
-void inspect_pointer(void *ptr);
 
 /**
  * Checks if an array of integers `arr` is sorted in ascending order. Uses capability instructions
  * to determine the array's length.
  * @param arr Array to sort
+ * Capability implicit paramters:
+ * - uses length of memory allocation chunk as upper bound (unit: bytes)
  */
-bool isSorted(int* arr)
+bool isSorted(int *arr)
 {
 	assert(cheri_is_valid(arr));
 	size_t length = cheri_getlen(arr) / sizeof(int);
@@ -44,8 +42,10 @@ bool isSorted(int* arr)
 /**
  * Prints out an integer array. Uses capability instructions to determine the array's length.
  * @param arr array to print
+ * Capability implicit paramters:
+ * - uses length of memory allocation chunk as upper bound
  */
-void printArray(int* arr)
+void printArray(int *arr)
 {
 	assert(cheri_is_valid(arr));
 	size_t length = cheri_getlen(arr) / sizeof(int);
@@ -75,11 +75,14 @@ void printArray(int* arr)
 /**
  * Sorts the input array, in place, using `insertion sort`.
  * @param arr array to sort
+ * Capability implicit paramters:
+ * - uses offset to indicate lower bound (unit: bytes)
+ * - uses length of memory allocation chunk as upper bound (unit: bytes)
  */
-void insertionSort(int* arr)
+void insertionSort(int *arr)
 {
 	assert(cheri_is_valid(arr));
-	size_t lowerBound = cheri_getbase(arr); 
+	size_t lowerBound = cheri_getbase(arr);
 	size_t upperBound = cheri_getlen(arr) / sizeof(int);
 
 	for (size_t ix = lowerBound + 1; ix <= upperBound; ix++)
@@ -112,30 +115,24 @@ void insertionSort(int* arr)
 }
 
 /**
- * Merges two runs of an array. 
+ * Merges two runs of an array.
  * @param arr super-array to merge
- * 
+ * Capability implicit paramters:
+ * - uses offset to indicate the end of the first leg to merge (unit: bytes)
+ * - uses length of memory allocation as end of sencond leg to merge (unit: bytes)
  */
-void merge(int* arr)
+void merge(int *arr)
 {
 
 	// allocations
 	size_t lengthFirstHalf = cheri_getoffset(arr) / sizeof(int);
-	size_t lengthSecondHalf = (cheri_getlen(arr) / sizeof(int))  - lengthFirstHalf;
-	
-
-	int firstHalf[lengthFirstHalf ];
-	int secondHalf[lengthSecondHalf];
-
-	// printf("... %zu, %zu\n", lengthFirstHalf , lengthSecondHalf);
-	// 	inspect_pointer(arr);
-	
+	size_t lengthSecondHalf = (cheri_getlen(arr) / sizeof(int)) - lengthFirstHalf;
 
 	// reset offset otherwise arr[x] is actually arr[x+offset]
 	arr = cheri_offset_set(arr, 0);
 
-	// inspect_pointer(&arr[0]);
-	// inspect_pointer(&arr[lengthFirstHalf]); printf ("%zu \n", lengthFirstHalf);
+	int firstHalf[lengthFirstHalf];
+	int secondHalf[lengthSecondHalf];
 
 	// copy to intermediate storage
 	memcpy(firstHalf, &arr[0], lengthFirstHalf * sizeof(int));
@@ -199,19 +196,20 @@ size_t min(size_t a, size_t b)
 /**
  * Timsort routine for an array of `int`.
  * @param arr Array to sort
- * @param n The legth of `arr`
+ * Capability implicit paramters:
+ * - uses length of memory allocation chunk: n = cheri_getlen(arr) / sizeof(int)
  */
-void timSort(int* arr)
+void timSort(int *arr)
 {
 	size_t length = cheri_getlen(arr) / sizeof(int);
-	
+
 	// insertion sort on `RUN_LENGTH` segments
 	for (size_t ix = 0; ix < length; ix += RUN_LENGTH)
 	{
 		size_t min_offset = min((ix + RUN_LENGTH), (length - 1));
 
-		int* arr_base_set = cheri_offset_set(arr, ix * sizeof(int));
-		int* arr_base_length_set = cheri_bounds_set(arr_base_set, (min_offset - ix) * sizeof(int));
+		int *arr_base_set = cheri_offset_set(arr, ix * sizeof(int));
+		int *arr_base_length_set = cheri_bounds_set(arr_base_set, (min_offset - ix) * sizeof(int));
 
 		insertionSort(arr_base_length_set);
 	}
@@ -224,10 +222,9 @@ void timSort(int* arr)
 			size_t mid = left + size;
 			size_t right = min((left + 2 * size), (length - 1));
 
-
-			int* arr_base_length_set = cheri_bounds_set(&arr[left], (right - left )  * sizeof(int) );
+			int *arr_base_length_set = cheri_bounds_set(&arr[left], (right - left) * sizeof(int));
 			arr_base_length_set = cheri_offset_set(arr_base_length_set, (mid - left) * sizeof(int));
-			
+
 			merge(arr_base_length_set);
 		}
 	}

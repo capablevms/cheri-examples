@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 const int RUN_LENGTH = 32;
 
 /**
@@ -73,7 +72,6 @@ void insertionSort(int arr[], size_t lowerBound, size_t upperBound)
 	}
 }
 
-
 /**
  * Merges two sorted arrays segments into a single run.
  * @param arr array to sort
@@ -133,7 +131,6 @@ void merge(int arr[], size_t lowerBound, size_t midPoint, size_t upperBound)
 
 	return;
 }
-
 
 /**
  * Min of two size_t arguments.
