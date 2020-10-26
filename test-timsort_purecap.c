@@ -81,9 +81,10 @@ void test_timsort()
 	// clean up
 	free(arr);
 }
+
 /**
  * Test harness for `timsort.c`.
- * @return EXIT_SUCCESS when all tests pass. EXIT_FAILURE otherwise
+ * @return EXIT_SUCCESS when all tests pass. Assertion failure otherwise.
  */
 int main(int argc, char *argv[])
 {

@@ -23,6 +23,7 @@ bool isSorted(int *arr)
 	size_t length = cheri_getlen(arr) / sizeof(int);
 
 	// short-circuit: empty and singleton arrays are always sorted.
+	// still makes sense in capability land as lengths <= 1024 are exact
 	if (length <= 1)
 	{
 		return true;
@@ -82,10 +83,13 @@ void printArray(int *arr)
 void insertionSort(int *arr)
 {
 	assert(cheri_is_valid(arr));
-	size_t lowerBound = cheri_getbase(arr);
-	size_t upperBound = cheri_getlen(arr) / sizeof(int);
+	size_t lowerBound = cheri_getoffset(arr) / sizeof(int);
+	size_t upperBound = (cheri_getlen(arr) / sizeof(int)) - lowerBound;
 
-	for (size_t ix = lowerBound + 1; ix <= upperBound; ix++)
+	// reset offset otherwise arr[x] is actually arr[x+offset]
+	arr = cheri_offset_set(arr, 0);
+
+	for (size_t ix = lowerBound + 1; ix < upperBound; ix++)
 	{
 		int ix_value = arr[ix];
 		size_t ixp = ix - 1;
@@ -208,11 +212,12 @@ void timSort(int *arr)
 	{
 		size_t min_offset = min((ix + RUN_LENGTH), (length - 1));
 
-		int *arr_base_set = cheri_offset_set(arr, ix * sizeof(int));
-		int *arr_base_length_set = cheri_bounds_set(arr_base_set, (min_offset - ix) * sizeof(int));
+		int *arr_base_length_set = cheri_bounds_set(&arr[ix], (min_offset - ix) * sizeof(int));
+		arr_base_length_set = cheri_offset_set(arr, ix * sizeof(int));
 
 		insertionSort(arr_base_length_set);
 	}
+
 	// Merge window doubles every iteration
 	for (size_t size = RUN_LENGTH; size < length; size *= 2)
 	{
