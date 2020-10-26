@@ -11,7 +11,7 @@ examples := $(patsubst %.c,bin/%,$(cfiles)) $(patsubst %.cpp,bin/%,$(cfiles))
 .PHONY: all run clean
 
 all: $(examples)
-
+	
 bin/%: %.c
 	$(CC) $(CFLAGS) $< -o $@
 
