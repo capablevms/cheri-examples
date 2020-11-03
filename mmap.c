@@ -8,6 +8,7 @@
 #include <string.h>
 #include <sys/cdefs.h>
 #include <sys/mman.h>
+#include <cheri/cheric.h>
 
 uint32_t *get_executable_block()
 {
@@ -107,7 +108,7 @@ int main()
 	code = get_executable_block();
 	code = generate_purecap(code);
 
-	inspect_pointer(cheri_pcc_get());
+	inspect_pointer(cheri_getpcc());
 	inspect_pointer(code);
 
 	int (*code_function)() = (int (*)())code;

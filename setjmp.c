@@ -3,6 +3,7 @@
 #include <setjmp.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <cheri/cheric.h>
 
 int main()
 {
@@ -18,12 +19,12 @@ int main()
 	// buffer[14..31] = ???
 	for (uint32_t idx; idx < (length / 16); idx++)
 	{
-		if (cheri_is_valid(((void **)buffer)[idx]))
+		if (cheri_gettag(((void **)buffer)[idx]))
 		{
 			void *csp = cheri_csp_get();
 			uint64_t base = cheri_base_get(csp);
 			uint64_t length = cheri_length_get(csp);
-			uint64_t address = cheri_address_get(((void **)buffer)[idx]);
+			uint64_t address = cheri_getaddress(((void **)buffer)[idx]);
 
 			if (address >= base && address <= (base + length))
 			{

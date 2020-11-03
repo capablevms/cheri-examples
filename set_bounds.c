@@ -1,6 +1,5 @@
 #include "include/common.h"
 #include <cheri/cheric.h>
-#include <cheriintrin.h>
 #include <stdint.h>
 #include <stdio.h>
 

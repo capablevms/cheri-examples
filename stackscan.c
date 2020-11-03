@@ -15,11 +15,11 @@ void inspect_stack(void *stack)
 
 bool is_stack_pointer(void *ptr)
 {
-	if (cheri_is_valid(ptr))
+	if (cheri_gettag(ptr))
 	{
 		uint64_t base = cheri_base_get(stack_top);
 		uint64_t length = cheri_length_get(stack_top);
-		uint64_t address = cheri_address_get(ptr);
+		uint64_t address = cheri_getaddress(ptr);
 
 		if (address >= base && address <= (base + length))
 		{
@@ -31,7 +31,7 @@ bool is_stack_pointer(void *ptr)
 
 bool is_pointer(void *ptr)
 {
-	if (cheri_is_valid(ptr))
+	if (cheri_gettag(ptr))
 	{
 		return true;
 	}
