@@ -1,5 +1,6 @@
 #include "include/common.h"
 
+#include <cheri/cheric.h>
 #include <setjmp.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -10,18 +11,16 @@ void *stack_top;
 
 void inspect_stack(void *stack)
 {
-	printf("offset: %lu\n", cheri_length_get(stack) - cheri_offset_get(stack));
+	printf("offset: %lu\n", cheri_getlength(stack) - cheri_getoffset(stack));
 }
 
 bool is_stack_pointer(void *ptr)
 {
 	if (cheri_gettag(ptr))
 	{
-		uint64_t base = cheri_base_get(stack_top);
-		uint64_t length = cheri_length_get(stack_top);
 		uint64_t address = cheri_getaddress(ptr);
 
-		if (address >= base && address <= (base + length))
+		if (cheri_is_address_inbounds(stack_top, address))
 		{
 			return true;
 		}
@@ -40,7 +39,7 @@ bool is_pointer(void *ptr)
 
 bool is_exec(void *ptr)
 {
-	if (((cheri_perms_get(ptr) & 0b10) >> 1) == 1)
+	if (((cheri_getperm(ptr) & 0b10) >> 1) == 1)
 	{
 		return true;
 	}
@@ -133,8 +132,8 @@ int main()
 {
 	stack_top = __builtin_frame_address(0);
 
-	uint64_t base = cheri_base_get(csp);
-	uint64_t length = cheri_length_get(csp);
+	uint64_t base = cheri_getbase(csp);
+	uint64_t length = cheri_getlength(csp);
 
 	uint32_t *values = test();
 

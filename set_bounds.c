@@ -20,7 +20,7 @@ int main()
 
 	int32_t *custom_boundes_array = cheri_setbounds(array, bounds);
 
-	uint64_t length = cheri_length_get(custom_boundes_array);
+	uint64_t length = cheri_getlength(custom_boundes_array);
 	for (uint32_t counter = 0; counter < length / sizeof(int32_t); counter++)
 	{
 		inspect_pointer(custom_boundes_array + counter);

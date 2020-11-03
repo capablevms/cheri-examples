@@ -26,7 +26,7 @@ uint32_t *generate_purecap(uint32_t *code)
 {
 	uint32_t idx = 0;
 
-	if (cheri_length_get(code) <= (9 * sizeof(uint32_t)))
+	if (cheri_getlength(code) <= (9 * sizeof(uint32_t)))
 	{
 		error("Insufficient size");
 		exit(-1);
@@ -55,7 +55,7 @@ uint32_t *generate_purecap(uint32_t *code)
 	 * When in capability mode the capability of the corresponding capability register is used.
 	 * For example, if you try to access a0 that would use the capability inside of ca0
 	 */
-	return cheri_flags_set(code, 0x0001);
+	return cheri_setflags(code, 0x0001);
 }
 
 /*
@@ -69,7 +69,7 @@ uint32_t *generate_hybrid(uint32_t *code)
 {
 	uint32_t idx = 0;
 
-	if (cheri_length_get(code) <= (10 * sizeof(uint32_t)))
+	if (cheri_getlength(code) <= (10 * sizeof(uint32_t)))
 	{
 		error("Insufficient size");
 		exit(-1);
@@ -92,7 +92,7 @@ uint32_t *generate_micro(uint32_t *code)
 {
 	uint32_t idx = 0;
 
-	if (cheri_length_get(code) <= (2 * sizeof(uint32_t)))
+	if (cheri_getlength(code) <= (2 * sizeof(uint32_t)))
 	{
 		error("Insufficient size");
 		exit(-1);

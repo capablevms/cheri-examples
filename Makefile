@@ -14,14 +14,13 @@ all: $(examples)
 
 bin/%: %.c
 	$(CC) $(CFLAGS) $< -o $@
-	scp -P $(SSHPORT) $< root@127.0.0.1:/root
 
 bin/%: %.cpp
 	$(CXX) $(CFLAGS) $< -o $@
-	scp -P $(SSHPORT) $< root@127.0.0.1:/root
 
-run-%: bin/%
-	scp -P $(SSHPORT) bin/$(<F) root@127.0.0.1:/root
+.SECONDEXPANSION:
+run-%: bin/% $$(wildcard %.c) $$(wildcard %.cpp)
+	scp -P $(SSHPORT) $(word 2,$^) bin/$(<F) root@127.0.0.1:/root
 	ssh -p $(SSHPORT) root@127.0.0.1 -t '/root/$(<F)'
 
 clean: 

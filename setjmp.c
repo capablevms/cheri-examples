@@ -10,7 +10,7 @@ int main()
 	jmp_buf buffer;
 	int res = setjmp(buffer);
 
-	uint32_t length = cheri_length_get(buffer);
+	uint32_t length = cheri_getlength(buffer);
 
 	// buffer[0] == _JB_MAGIC_SETJMP == 0xbe87fd8a2910af01
 	// buffer[1] == $csp
@@ -21,12 +21,10 @@ int main()
 	{
 		if (cheri_gettag(((void **)buffer)[idx]))
 		{
-			void *csp = cheri_csp_get();
-			uint64_t base = cheri_base_get(csp);
-			uint64_t length = cheri_length_get(csp);
+			void *csp = cheri_getcsp();
 			uint64_t address = cheri_getaddress(((void **)buffer)[idx]);
 
-			if (address >= base && address <= (base + length))
+			if (cheri_is_address_inbounds(csp, address))
 			{
 				printf("[STACK POINTER] ");
 			}
