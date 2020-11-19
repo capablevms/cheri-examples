@@ -65,11 +65,10 @@ int main()
 	while (curr != head)
 	{
 		printf("%ld\n", curr->data);
-		// chase reverse tail FIXME
+		// chase reverse tail
 		next = curr;
 		curr = prev;
 		prev = (cell_t *)((curr->ptr) ^ (WORD)next);
-		// move along one - move BACK one - FIXME - before or after???
 	}
 	printf("%ld\n", head->data);
 
