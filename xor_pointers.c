@@ -2,6 +2,10 @@
  * Jeremy Singer
  * Example of doubly-linked list data structure
  * featuring xor'd pointers for shared next/prev field
+ * 
+ * This code inspired by OOPSLA'20 talk:
+ * "Sound Garbage Collection for C using Pointer Provenance"
+ * https://dl.acm.org/doi/10.1145/3428244
  */
 
 #include <stdio.h>
