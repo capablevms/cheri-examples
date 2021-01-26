@@ -1,11 +1,24 @@
 /* xor_lists.c
  * Jeremy Singer
  * Example of doubly-linked list data structure
- * featuring xor'd pointers for shared next/prev field
- * 
- * This code inspired by OOPSLA'20 talk:
- * "Sound Garbage Collection for C using Pointer Provenance"
- * https://dl.acm.org/doi/10.1145/3428244
+ * featuring xor'd pointers for shared next/prev field.
+ *
+ * This is an example of pointer fiddling code that
+ * currently _won't_ work on CHERI platforms, since
+ * the XOR operation on a capability probably puts
+ * the pointer out of bounds (invalidating the
+ * capability so it cannot be dereferenced).
+ *
+ * Related Reading Material:
+ * 1) Wikipedia article on XOR linked list
+ *     https://en.wikipedia.org/wiki/XOR_linked_list
+ * 2) OOPSLA 2020 paper on
+ *     "Sound Garbage Collection for C using Pointer Provenance"
+ *     https://dl.acm.org/doi/10.1145/3428244
+ * 3) Complete spatial safety for C and C++ using
+ *    CHERI capabilities.
+ *     https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-949.pdf
+	   See Section 3.9.1 XOR-linked lists (p56)
  */
 
 #include <stdio.h>
@@ -14,6 +27,11 @@
 #define NUM_CELLS 100
 #define WORD long int
 
+/* linked list cell has two fields
+ *   data is cell payload
+ *   ptr is superposition of next/previous pointers,
+ *    which are XOR'd together
+ */
 typedef struct cell
 {
 	WORD data;
@@ -47,7 +65,7 @@ int main()
 		/* allocate a cell */
 		head = alloc_cell(i, head);
 	}
-	/* now we have 100 cells in a doubly-linked list */
+	/* now we have NUM_CELLS cells in a doubly-linked list */
 	/* traverse list from head to tail */
 	printf("%ld\n", head->data);
 	prev = head;
