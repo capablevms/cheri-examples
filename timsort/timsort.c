@@ -33,8 +33,6 @@ void insertionSort(bp_array bp)
  */
 void merge(bp_array bp)
 {
-	printf("merge \n");
-
 	// allocations
 	size_t lengthFirstHalf = get_base(bp);
 	size_t lengthSecondHalf = (get_length(bp) / sizeof(int)) - lengthFirstHalf;
