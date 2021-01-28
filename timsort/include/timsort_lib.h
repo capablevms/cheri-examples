@@ -111,17 +111,17 @@ struct bp_array_s packBP_mangled(void *pointer, size_t baseIndex, size_t sizeInB
 	return ret;
 }
 
-__attribute__((always_inline)) void *get_pointer_mangled(struct bp_array_s bp)
+void *get_pointer_mangled(struct bp_array_s bp)
 {
 	return bp.pointer;
 }
 
-__attribute__((always_inline)) size_t get_base_mangled(struct bp_array_s bp)
+size_t get_base_mangled(struct bp_array_s bp)
 {
 	return bp.base;
 }
 
-__attribute__((always_inline)) size_t get_length_mangled(struct bp_array_s bp)
+size_t get_length_mangled(struct bp_array_s bp)
 {
 	return bp.length;
 }
@@ -138,7 +138,7 @@ typedef struct bp_array_s bp_array;
 
 typedef void *bp_array;
 
-__attribute__((always_inline)) bp_array packBP(int *pointer, const size_t baseIndex,
+bp_array packBP(int *pointer, const size_t baseIndex,
 											   const size_t sizeInBytes)
 {
 	if (0 == baseIndex)
@@ -173,12 +173,12 @@ __attribute__((always_inline)) bp_array packBP(int *pointer, const size_t baseIn
 	return (bp_array)descriptor;
 }
 
-__attribute__((always_inline)) bool isMangled(bp_array bp)
+bool isMangled(bp_array bp)
 {
 	return 0 == cheri_getoffset(bp);
 }
 
-__attribute__((always_inline)) void *get_pointer(bp_array bp)
+void *get_pointer(bp_array bp)
 {
 	if (isMangled(bp))
 	{
@@ -188,7 +188,7 @@ __attribute__((always_inline)) void *get_pointer(bp_array bp)
 	return cheri_setoffset(ret, 0);
 }
 
-__attribute__((always_inline)) size_t get_base(bp_array bp)
+size_t get_base(bp_array bp)
 {
 	if (isMangled(bp))
 	{
@@ -197,7 +197,7 @@ __attribute__((always_inline)) size_t get_base(bp_array bp)
 	return cheri_getoffset(bp);
 }
 
-__attribute__((always_inline)) size_t get_length(bp_array bp)
+size_t get_length(bp_array bp)
 {
 	if (isMangled(bp))
 	{
@@ -210,7 +210,7 @@ __attribute__((always_inline)) size_t get_length(bp_array bp)
 
 #ifndef __CHERI_PURE_CAPABILITY__
 
-__attribute__((always_inline)) void callBP_dispatch(void (*function)(bp_array), bp_array args)
+void callBP_dispatch(void (*function)(bp_array), bp_array args)
 {
 	function(args);
 }
@@ -219,14 +219,14 @@ __attribute__((always_inline)) void callBP_dispatch(void (*function)(bp_array), 
 	callBP_dispatch((function), packBP((pointer), (base), (length)))
 
 #else
-__attribute__((always_inline)) void call_and_free(void (*function)(bp_array), void *descriptor)
+void call_and_free(void (*function)(bp_array), void *descriptor)
 {
 	function(descriptor);
 	free(descriptor);
 	return;
 }
 
-__attribute__((always_inline)) void callBP_dispatch(void (*function)(bp_array), void *pointer,
+void callBP_dispatch(void (*function)(bp_array), void *pointer,
 													size_t base, size_t length)
 {
 	bp_array descriptor = packBP(pointer, base, length);
