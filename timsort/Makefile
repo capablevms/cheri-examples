@@ -1,7 +1,7 @@
 CC=$(HOME)/cheri/output/sdk/bin/riscv64-unknown-freebsd13-clang
 CXX=$(HOME)/cheri/output/sdk/bin/riscv64-unknown-freebsd13-clang++
-CFLAGS=-march=rv64imafdcxcheri -mabi=l64pc128d --sysroot=$(HOME)/cheri/output/rootfs-riscv64-purecap -mno-relax -g -O0
-SSHPORT=10021
+CFLAGS=-march=rv64imafdcxcheri -mabi=l64pc128d --sysroot=$(HOME)/cheri/output/rootfs-riscv64-purecap -mno-relax -g -O2
+SSHPORT=10003
 export 
 
 cfiles := $(wildcard *.c)
