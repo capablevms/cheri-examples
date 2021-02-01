@@ -3,7 +3,7 @@
  * cont variable will be inaccessible from the things that link with this shared library.
  */
 
-#include "include/lib1.h"
+#include "include/static_variable.h"
 
 static int32_t count = -5;
 

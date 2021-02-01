@@ -1,16 +1,19 @@
 CC=$(HOME)/cheri/output/sdk/bin/riscv64-unknown-freebsd13-clang
 CFLAGS=-march=rv64imafdcxcheri -mabi=l64pc128d --sysroot=$(HOME)/cheri/output/rootfs-riscv64-hybrid -mno-relax -g
-SSHPORT=10021
+SSHPORT=10007
 
 main: main.c
-	$(CC) $(CFLAGS) -L. -l1 -l2 -g $< -o main
+	$(CC) $(CFLAGS) -O2 -fpie -L. -Wl,-rpath,. -ldl -lstatic_variable -lunexported_function -lcompartment_per_object -g $< -o main
 
-lib1.so: lib1.c
-	$(CC) $(CFLAGS) -g -fPIC -shared $< -o lib1.so
+libstatic_variable.so: static_variable.c include/static_variable.h
+	$(CC) $(CFLAGS) -O2 -g -fPIC -shared $< -o libstatic_variable.so
 
-lib2.so: lib2.c
-	$(CC) $(CFLAGS) -g -fPIC -shared $< -o lib2.so
+libunexported_function.so: unexported_function.c include/unexported_function.h
+	$(CC) $(CFLAGS) -O2 -g -fPIC -shared $< -o libunexported_function.so
+
+libcompartment_per_object.so: compartment_per_object.c include/compartment_per_object.h
+	$(CC) $(CFLAGS) -O2 -g -fPIC -shared $< -o libcompartment_per_object.so
 
 run:
-	scp -P $(SSHPORT) * root@127.0.0.1:/root/demo/
-	ssh -p $(SSHPORT) root@127.0.0.1 -t 'setenv LD_LIBRARY_PATH /root/demo; /root/demo/main'
+	scp -r -P $(SSHPORT) * root@127.0.0.1:/root/demo/
+	ssh -p $(SSHPORT) root@127.0.0.1 -t 'cd /root/demo; /root/demo/main'

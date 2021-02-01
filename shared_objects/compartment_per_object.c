@@ -14,12 +14,7 @@
 
 #include "../include/instructions.h"
 #include "../include/regs.h"
-#include "include/lib2.h"
-
-static struct Car *arena;
-static uint32_t size;
-
-void init() {}
+#include "include/compartment_per_object.h"
 
 void crash()
 {
