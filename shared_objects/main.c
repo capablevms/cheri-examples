@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dlfcn.h>
+#include <assert.h>
 
 #include "include/static_variable.h"
 #include "include/compartment_per_object.h"
@@ -39,10 +40,12 @@ void compartments_per_object() {
 
 void unexported_functions() {
 	printf("Finding do_work using dlsym (main): "); inspect_pointer(dlsym(NULL, "do_work"));
-	printf("test: %d\n", test());
+	void* function_to_search_for = test();
+	printf("test: %p\n", function_to_search_for);
 
 	printf(" ------- scanning pcc for sealed pointers ------- \n");
-	scan_range(cheri_getpcc());
+	bool found = scan_range(cheri_getpcc(), function_to_search_for);
+	assert(found == false);
 }
 
 int main()

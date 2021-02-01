@@ -5,8 +5,11 @@
  * show that the two differ. 
  */
 
+#include <cheri/cheric.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <dlfcn.h>
+#include <assert.h>
 #include "include/unexported_function.h"
 #include "include/find_sentries.h"
 
@@ -15,16 +18,16 @@ void do_work() {
 	printf("Doing work\n");
 }
 
-int test() {
-
-	
-
+void* test() {
 	printf("Finding do_work using dlsym (lib4):\nptr: "); inspect_pointer(dlsym(NULL, "do_work"));
 	printf("Obtaining a direct pointer to it: \nptr: "); inspect_pointer(&do_work);
 	printf("test ptr just to keep it in the pcc:\n ptr: %p\n", &test);
 	printf(" ------- scanning pcc for sealed pointers --------\n");
-	scan_range(cheri_getpcc());
-
+	bool found = scan_range(cheri_getpcc(), &do_work);
+	assert(found == true);	
 	do_work();
-	return 99;
+
+	// We return a non-tagged capability to show 
+	// and automatically test if there is outside access.
+	return cheri_cleartag(&do_work);
 }
