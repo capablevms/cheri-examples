@@ -9,3 +9,12 @@ for example in *.c; do
     fi
     make bin/"${example%%.*}"
 done
+
+mkdir build 
+cd build
+    
+cmake -DCMAKE_TOOLCHAIN_FILE=riscv64-purecap.cmake ..
+make
+
+cd ..
+rm -rfv build
