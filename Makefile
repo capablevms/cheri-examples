@@ -1,6 +1,6 @@
-CC=$(HOME)/cheri/output/sdk/bin/riscv64-unknown-freebsd13-clang
-CXX=$(HOME)/cheri/output/sdk/bin/riscv64-unknown-freebsd13-clang++
-CFLAGS=-march=rv64imafdcxcheri -mabi=l64pc128d --sysroot=$(HOME)/cheri/output/rootfs-riscv64-purecap -mno-relax -g -O0
+CC=$(HOME)/cheri/output/sdk/bin/clang
+CXX=$(HOME)/cheri/output/sdk/bin/clang++
+CFLAGS=-fuse-ld=lld --config cheribsd-riscv64-purecap.cfg
 SSHPORT=10021
 export 
 
