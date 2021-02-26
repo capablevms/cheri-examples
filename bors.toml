@@ -1,4 +1,4 @@
-status = ["buildbot/cheri-build-script"]
+status = ["buildbot/capablevms-test-script"]
 
 timeout_sec = 600 # 10 minutes
 
