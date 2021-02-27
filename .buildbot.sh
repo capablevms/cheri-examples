@@ -10,11 +10,18 @@ for example in *.c; do
     make bin/"${example%%.*}"
 done
 
-mkdir build 
-cd build
-    
-cmake -DCMAKE_TOOLCHAIN_FILE=riscv64-purecap.cmake ..
-make
+# arg-1 : Source directory
+# arg-2 : cmake toolchain file
+function build_cheri_examples()
+{
+    ARCH=$(echo ${2} | cut -d '.' -f 1)
+    BUILD_DIR=${1}/build/${ARCH}
 
-cd ..
-rm -rfv build
+    mkdir -p ${BUILD_DIR}
+    cmake -B ${BUILD_DIR} -S ${1}  -DCMAKE_TOOLCHAIN_FILE=${2}
+    cmake --build ${BUILD_DIR}
+}
+
+build_cheri_examples $(pwd) riscv64-purecap.cmake
+build_cheri_examples $(pwd) morello-purecap.cmake
+rm -rfv $(pwd)/build
