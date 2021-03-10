@@ -1,5 +1,5 @@
 /***
- * A example to see what the representable alignment mask is and 
+ * A example to see what the representable alignment mask is and
  * how it changes the alignment based on how high in memory it is.
  */
 

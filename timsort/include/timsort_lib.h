@@ -138,8 +138,7 @@ typedef struct bp_array_s bp_array;
 
 typedef void *bp_array;
 
-bp_array packBP(int *pointer, const size_t baseIndex,
-											   const size_t sizeInBytes)
+bp_array packBP(int *pointer, const size_t baseIndex, const size_t sizeInBytes)
 {
 	if (0 == baseIndex)
 	{
@@ -226,8 +225,7 @@ void call_and_free(void (*function)(bp_array), void *descriptor)
 	return;
 }
 
-void callBP_dispatch(void (*function)(bp_array), void *pointer,
-													size_t base, size_t length)
+void callBP_dispatch(void (*function)(bp_array), void *pointer, size_t base, size_t length)
 {
 	bp_array descriptor = packBP(pointer, base, length);
 

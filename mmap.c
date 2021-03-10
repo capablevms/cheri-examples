@@ -1,6 +1,7 @@
 #include "include/common.h"
 #include "include/instructions.h"
 #include "include/regs.h"
+#include <cheri/cheric.h>
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -8,7 +9,6 @@
 #include <string.h>
 #include <sys/cdefs.h>
 #include <sys/mman.h>
-#include <cheri/cheric.h>
 
 uint32_t *get_executable_block()
 {

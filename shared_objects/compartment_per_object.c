@@ -8,9 +8,9 @@
 
 #include <cheri/cheri.h>
 #include <cheri/cheric.h>
+#include <stddef.h>
 #include <sys/mman.h>
 #include <sys/types.h>
-#include <stddef.h>
 
 #include "../include/instructions.h"
 #include "../include/regs.h"
@@ -37,11 +37,11 @@ struct Car *new_car()
 		mmap(NULL, 4096, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANON | MAP_PRIVATE, -1, 0);
 
 	void **ptrs = mem;
-	
+
 	const uint32_t vtable_start_index = 2;
 	ptrs[vtable_start_index + 0] = honk;
 
-	const ptrdiff_t vtable_offset = ((char*)(ptrs + vtable_start_index) - (char*)ptrs);
+	const ptrdiff_t vtable_offset = ((char *)(ptrs + vtable_start_index) - (char *)ptrs);
 	const size_t vtable_size = 1 * 16;
 
 	uint32_t idx = 0;
@@ -55,7 +55,7 @@ struct Car *new_car()
 	struct Car *public_car =
 		(struct Car *)(((char *)mem) + sizeof(struct Car_priv) + functions_size);
 	struct Car_priv *private_car = (struct Car_priv *)(((char *)mem) + functions_size);
-	
+
 	private_car->maxSpeed = 10;
 	private_car->crash = &crash;
 

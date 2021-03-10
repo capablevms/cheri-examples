@@ -1,9 +1,9 @@
 #include "include/common.h"
 
+#include <cheri/cheric.h>
 #include <setjmp.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <cheri/cheric.h>
 
 int main()
 {
