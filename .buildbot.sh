@@ -2,6 +2,8 @@
 # vim: expandtab sts=0 sw=4 smarttab
 set -e
 
+find . -iname "*.c" -o -iname "*.h" -o -iname "*.cpp" -o -iname "*.hpp" | xargs ~/cheri/output/sdk/bin/clang-format --dry-run -Werror
+
 mkdir -p ./bin
 for example in *.c; do
     if [ "${example}" == "seal.c" ]; then

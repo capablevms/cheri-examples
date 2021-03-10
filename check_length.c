@@ -1,12 +1,12 @@
 /***
- * Testing to see what the representable 
- * lengths function returns for different 
+ * Testing to see what the representable
+ * lengths function returns for different
  * values.
  */
 
+#include <cheriintrin.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <cheriintrin.h>
 
 int main()
 {

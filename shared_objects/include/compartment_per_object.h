@@ -1,14 +1,16 @@
 #pragma once
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdint.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-struct Car_priv {
+struct Car_priv
+{
 	int maxSpeed;
 	void (*crash)();
 };
 
-struct Car {
+struct Car
+{
 	int speed;
 	void (*honk)();
 	char name[];
@@ -16,4 +18,4 @@ struct Car {
 
 void init();
 
-struct Car* new_car();
+struct Car *new_car();
