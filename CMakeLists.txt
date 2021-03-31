@@ -20,4 +20,6 @@ add_executable(sentry sentry.c)
 add_executable(set_bounds set_bounds.c) 
 add_executable(setjmp setjmp.c) 
 add_executable(stackscan stackscan.c) 
-add_executable(xor_pointers xor_pointers.c) 
+add_executable(xor_pointers xor_pointers.c)
+add_executable(bitmap_alloc_good example_allocators/bitmap_allocator/good_client.c
+                                 example_allocators/bitmap_allocator/bitmap_alloc.c)
