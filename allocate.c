@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/***
+ * Inspect capabilities metadata after a malloc.
+ ***/
+
 int main()
 {
 	size_t size = 31;

@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/***
+ * Inspect capabilities metadata of a simple function's address.
+ * The simple function is gcd (Greatest Common Divisor).
+ ***/
+
 int gcd(int a, int b)
 {
 	if (0 == a)
