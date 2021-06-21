@@ -1,4 +1,5 @@
 CC=$(HOME)/cheri/output/sdk/bin/clang
+CFORMAT=$(HOME)/cheri/output/sdk/bin/clang-format
 CXX=$(HOME)/cheri/output/sdk/bin/clang++
 CFLAGS=-fuse-ld=lld --config cheribsd-riscv64-purecap.cfg
 SSHPORT=10021
@@ -22,6 +23,9 @@ bin/%: %.cpp
 run-%: bin/% $$(wildcard %.c) $$(wildcard %.cpp)
 	scp -P $(SSHPORT) $(word 2,$^) bin/$(<F) root@127.0.0.1:/root
 	ssh -p $(SSHPORT) root@127.0.0.1 -t '/root/$(<F)'
+
+clang-format:
+	$(CFORMAT) $(cfiles)
 
 clean: 
 	rm -rv bin/*
