@@ -3,7 +3,7 @@ CFORMAT=$(HOME)/cheri/output/sdk/bin/clang-format
 CXX=$(HOME)/cheri/output/sdk/bin/clang++
 CFLAGS=-fuse-ld=lld --config cheribsd-riscv64-purecap.cfg
 SSHPORT=10021
-export 
+export
 
 cfiles := $(wildcard *.c)
 cppfiles := $(wildcard *.cpp)
