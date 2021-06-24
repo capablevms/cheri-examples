@@ -9,7 +9,7 @@ for example in *.c; do
     if [ "${example}" == "seal.c" ]; then
         continue
     fi
-    make bin/"${example%%.*}"
+    make -f Makefile.riscv64 bin/"${example%%.*}"
 done
 
 # arg-1 : Source directory
