@@ -1,17 +1,16 @@
+/***
+ * This is mostly an experiment and it doens't work
+ * The CHERI_GET_SEALCAP syscall is mips only
+ ***/
+
 #include "include/common.h"
+#include <cheri/cheri.h>
+#include <cheri/cheric.h>
 #include <cheriintrin.h>
 #include <machine/sysarch.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <cheri/cheri.h>
-#include <cheri/cheric.h>
-
-/***
- * This is mostly an experiment and it doens't work
- * The CHERI_GET_SEALCAP syscall is mips only
- ***/
 
 typedef struct cap
 {

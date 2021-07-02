@@ -1,9 +1,8 @@
 #include <cheri/cheri.h>
 #include <cheri/cheric.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-
-#include <stdbool.h>
 
 void inspect_pointer(void *ptr)
 {

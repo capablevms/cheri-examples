@@ -6,17 +6,15 @@
  * used to load additional data, that isn't available to the user.
  */
 
+#include "include/common.h"
+#include "include/instructions.h"
+#include "include/regs.h"
+#include <cheri/cheric.h>
 #include <err.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
-
-#include "include/common.h"
-#include "include/instructions.h"
-#include "include/regs.h"
-
-#include <cheri/cheric.h>
 
 struct data
 {
