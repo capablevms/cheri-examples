@@ -25,7 +25,7 @@ run-%: bin/% $$(wildcard %.c) $$(wildcard %.cpp)
 	ssh -p $(SSHPORT) root@127.0.0.1 -t '/root/$(<F)'
 
 clang-format:
-	$(CFORMAT) $(cfiles)
+	$(CFORMAT) -i $(cfiles)
 
 clean: 
 	rm -rv bin/*

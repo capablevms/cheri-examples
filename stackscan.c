@@ -1,5 +1,4 @@
 #include "include/common.h"
-
 #include <cheri/cheric.h>
 #include <setjmp.h>
 #include <stdint.h>

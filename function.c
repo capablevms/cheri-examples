@@ -1,12 +1,12 @@
-#include "include/common.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 /***
  * Inspect capabilities metadata of a simple function's address.
  * The simple function is gcd (Greatest Common Divisor).
  ***/
+
+#include "include/common.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int gcd(int a, int b)
 {

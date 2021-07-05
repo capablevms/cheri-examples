@@ -1,14 +1,14 @@
-#include "include/common.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 /***
  * This simple program shows how CHERI limits the
  * range of addresses that may be dereferenced.
  * Reading the value outside the range will give
  * an "In-address space security exception".
  ***/
+
+#include "include/common.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main()
 {

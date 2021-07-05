@@ -2,7 +2,7 @@ CC=$(HOME)/cheri/output/morello-sdk/bin/clang
 CFORMAT=$(HOME)/cheri/output/morello-sdk/bin/clang-format
 CXX=$(HOME)/cheri/output/morello-sdk/bin/clang++
 CFLAGS=-fuse-ld=lld --config cheribsd-morello-purecap.cfg
-SSHPORT=10085
+SSHPORT?=10085
 export
 
 cfiles := $(wildcard *.c)
@@ -25,7 +25,7 @@ run-%: bin/% $$(wildcard %.c) $$(wildcard %.cpp)
 	ssh -p $(SSHPORT) root@127.0.0.1 -t '/root/$(<F)'
 
 clang-format:
-	$(CFORMAT) $(cfiles)
+	$(CFORMAT) -i $(cfiles)
 
 clean: 
 	rm -rv bin/*
