@@ -17,14 +17,13 @@ EXAMPLES="bounds set_bounds general_bounds xor_pointers"
 ARCH=$(ssh -p $SSHPORT -t -o LogLevel=QUIET root@127.0.0.1 uname -m)
 
 for example in ${EXAMPLES}; do
-    if ! [ $(find $BUILD_DIR -prune -empty 2>/dev/null) ]; then
-        if ! [ -z "${ARCH##*riscv*}" ] && [ "$example" = "set_bounds" ]; then
+    if  [ ! $(find $BUILD_DIR -prune -empty 2>/dev/null) ]; then
+        if [ ! -z "${ARCH##*riscv*}" ] && [ "$example" = "set_bounds" ]; then
             echo "Skipping '$example' because you are not on riscv64..."
             continue
         fi
         scp -P $SSHPORT "$BUILD_DIR/$example" root@127.0.0.1:/root
         exit_status=0
-        # Put the argument, when not needed will be simply ignored
         RESULT={{$(ssh -p $SSHPORT -t -o LogLevel=QUIET root@127.0.0.1 "/root/$example 68")} && exit_status=1} || true
         echo -n ""$example"... "
         if [ $exit_status != 0 ]; then

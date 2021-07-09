@@ -12,6 +12,11 @@ for example in *.c; do
     make -f Makefile.riscv64 bin/"${example%%.*}"
 done
 
+# run tests
+BUILD_DIR="bin"
+source ./tests/run_tests.sh
+rm -rfv bin/*
+
 # arg-1 : Source directory
 # arg-2 : cmake toolchain file
 function build_cheri_examples()
