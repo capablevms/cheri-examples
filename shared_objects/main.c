@@ -17,6 +17,9 @@
 void static_variables()
 {
 	increment();
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 	increment();
 	increment();
 

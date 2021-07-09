@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
+int main(int argc, char *argv[])
 {
 	int32_t array[12] = {0};
 	int32_t *typed_array = &array;
@@ -36,12 +36,27 @@ int main()
 		printf("Count: %d, Value: %d\n", counter, *(typed_array + counter));
 	}
 #elif defined(__riscv)
-	// Simply increase the bounds
-	printf("Bounds [Choose a value greater than 48]:\n");
-	if (0 == scanf("%u", &bounds))
+	if (argc < 2)
 	{
-		error("Extraneous input");
+		// Simply increase the bounds
+		printf("Bounds [Choose a value greater than 48]:\n");
+		if (0 == scanf("%u", &bounds))
+		{
+			error("Extraneous input");
+		}
 	}
+	// Command line argument to simplify testing
+	else if (atoi(argv[1]) > 48)
+	{
+		bounds = atoi(argv[1]);
+	}
+	else
+	{
+		printf("Please choose a value greater than 48.");
+		// This will cause the test to fail if a value lower than 64 has been chosen
+		exit(0);
+	}
+
 	printf("Explicitly setting the bounds outside the range causes the following exception: ");
 	fflush(stdout);
 	int32_t custom_bounds_array = cheri_setbounds(array, bounds);
