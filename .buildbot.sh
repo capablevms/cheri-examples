@@ -14,8 +14,7 @@ done
 
 # run tests
 BUILD_DIR="bin"
-chmod u+x ./tests/run_tests.sh
-./tests/run_tests.sh
+sh ./tests/run_tests.sh
 rm -rfv bin/*
 
 # arg-1 : Source directory
