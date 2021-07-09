@@ -14,6 +14,7 @@ done
 
 # run tests
 BUILD_DIR="bin"
+chmod u+x ./tests/run_tests.sh
 ./tests/run_tests.sh
 rm -rfv bin/*
 
