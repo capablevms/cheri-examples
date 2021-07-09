@@ -14,7 +14,7 @@ done
 
 # run tests
 BUILD_DIR="bin"
-source ./tests/run_tests.sh
+./tests/run_tests.sh
 rm -rfv bin/*
 
 # arg-1 : Source directory
