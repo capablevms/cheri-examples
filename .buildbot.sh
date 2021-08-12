@@ -12,6 +12,32 @@ for example in *.c; do
     make -f Makefile.riscv64 bin/"${example%%.*}"
 done
 
+# Copy the test-script to `cheribuild`
+cp ./tests/run_cheri_examples.py $HOME/build/test-scripts/.
+
+# Run the tests on the `qemu-system riscv64`
+args=(
+    # Architecture
+    --architecture riscv64
+    # Qemu System to use
+    --qemu-cmd $HOME/cheri/output/sdk/bin/qemu-system-riscv64cheri
+    # Kernel (to avoid the default one)
+    --kernel $HOME/cheri/output/rootfs-riscv64-purecap/boot/kernel/kernel
+    # Bios (to avoid the default one)
+    --bios bbl-riscv64cheri-virt-fw_jump.bin
+    # Disk Image
+    --disk-image $HOME/cheri/output/cheribsd-riscv64-purecap.img
+    # Required build-dir in CheriBSD
+    --build-dir .
+    --ssh-port 10021
+    --ssh-key $HOME/.ssh/id_ed25519.pub
+    )
+
+python3 $HOME/build/test-scripts/run_cheri_examples.py "${args[@]}"
+rm -rfv bin/*
+
+BUILD_DIR="bin"
+
 # arg-1 : Source directory
 # arg-2 : cmake toolchain file
 function build_cheri_examples()
@@ -25,5 +51,7 @@ function build_cheri_examples()
 }
 
 build_cheri_examples $(pwd) riscv64-purecap.cmake
-build_cheri_examples $(pwd) morello-purecap.cmake
+
+# FIXME: EXCLUDING MORELLO to close PR#26
+# build_cheri_examples $(pwd) morello-purecap.cmake
 rm -rfv $(pwd)/build
