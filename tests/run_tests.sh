@@ -1,6 +1,7 @@
 #!/bin/sh
 # Test runner to test the following examples:
-# bounds.c, set_bounds.c, general_bounds.c, xor_pointers.c.
+# bounds.c, set_bounds.c, general_bounds.c, xor_pointers.c,
+# read_only.c (from the employee example)
 #
 # *** NOTE ***
 # The following examples do not need to be
@@ -13,8 +14,16 @@ set -e
 : "${BUILD_DIR:="../bin"}"
 : "${SSHPORT:=10021}"
 # Examples that must trigger an "In-address space security exception"
-EXAMPLES="bounds set_bounds general_bounds xor_pointers"
+EXAMPLES="bounds set_bounds general_bounds xor_pointers read_only"
+EMPLOYEE_DIR="./employee/bin"
 ARCH=$(ssh -o "StrictHostKeyChecking no" -p $SSHPORT -t root@127.0.0.1 uname -m)
+
+if  [ ! $(find $EMPLOYEE_DIR -prune -empty 2>/dev/null) ]; then
+    cp $EMPLOYEE_DIR/read_only $BUILD_DIR/read_only
+else
+    echo "WARNING: you have not built the employee example yet!"
+    echo "SKIPPING employee/read_only..."
+fi
 
 for example in ${EXAMPLES}; do
     if  [ ! $(find $BUILD_DIR -prune -empty 2>/dev/null) ]; then
@@ -25,6 +34,9 @@ for example in ${EXAMPLES}; do
         scp -o "StrictHostKeyChecking no" -P $SSHPORT "$BUILD_DIR/$example" root@127.0.0.1:/root
         exit_status=0
         RESULT={{$(ssh -o "StrictHostKeyChecking no" -p $SSHPORT -t root@127.0.0.1 "/root/$example 68")} && exit_status=1} || true
+        if [ "$example" = "read_only" ]; then
+            example=employee/$example
+        fi
         echo -n ""$example"... "
         if [ $exit_status != 0 ]; then
             echo "FAILED! See below for more details."
