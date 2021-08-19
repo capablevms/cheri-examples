@@ -14,9 +14,11 @@ examples := $(patsubst %.c,bin/%,$(cfiles)) $(patsubst %.cpp,bin/%,$(cfiles))
 all: $(examples)
 	
 bin/%: %.c
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $< -o $@
 
 bin/%: %.cpp
+	@mkdir -p $(@D)
 	$(CXX) $(CFLAGS) $< -o $@
 
 .SECONDEXPANSION:
