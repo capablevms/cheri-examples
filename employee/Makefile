@@ -10,9 +10,11 @@ full_privileges := full_privileges.c employee.c
 all: bin/full_privileges bin/read_only
 
 bin/read_only: $(read_only)
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $^ -o $@
 
 bin/full_privileges: $(full_privileges)
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $^ -o $@
 
 run:
