@@ -4,27 +4,24 @@ CFLAGS=-fuse-ld=lld --config cheribsd-riscv64-purecap.cfg
 SSHPORT=10021
 export
 
-employee := full_privileges.c read_only.c employee.c include/employee.h
-read_only := read_only.c employee.c
-full_privileges := full_privileges.c employee.c
+cfiles := full_privileges.c read_only.c
+employee := $(patsubst %.c,bin/%,$(cfiles))
 
-all: bin/full_privileges bin/read_only
+.PHONY: all run clean
 
-bin/read_only: $(read_only)
+all: $(employee)
+
+bin/%: %.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
-bin/full_privileges: $(full_privileges)
-	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) $^ -o $@
-
-run:
-	scp -P $(SSHPORT) bin/* root@127.0.0.1:/root
-	ssh -p $(SSHPORT) root@127.0.0.1 -t '/root/full_privileges'
-	ssh -p $(SSHPORT) root@127.0.0.1 -t '/root/read_only'
+.SECONDEXPANSION:
+run-%: bin/% $$(wildcard %.c)
+	scp -P $(SSHPORT) $(word 2,$^) bin/$(<F) root@127.0.0.1:/root
+	ssh -p $(SSHPORT) root@127.0.0.1 -t '/root/$(<F)'
 
 clang-format:
-	$(CFORMAT) -i $(employee)
+	$(CFORMAT) -i $(cfiles) include/employee.h
 
 clean: 
 	rm -R bin/*

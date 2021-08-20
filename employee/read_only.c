@@ -4,7 +4,6 @@
  * change, e.g. the salary.
  */
 
-#include "../include/common.h"
 #include "include/employee.h"
 #include <assert.h>
 #include <stdint.h>
@@ -14,7 +13,6 @@
 int main()
 {
 	struct employee employee = {1000, "Good", "Employee", 55000.0};
-	printf("--- EMPLOYEE ---\n");
 	// set the permissions to read-only
 	struct employee *ro_employee = set_read_only(&employee);
 	assert((cheri_perms_get(ro_employee) & CHERI_PERM_STORE) == 0);
@@ -27,14 +25,4 @@ int main()
 	fflush(stdout);
 	change_salary(ro_employee, new_salary);
 	print_details(ro_employee);
-}
-
-/*
- * Traverse the struct to set the permissions.
- */
-struct employee *set_read_only(struct employee *e)
-{
-	e->name = (char *)cheri_perms_and(e->name, CHERI_PERM_LOAD);
-	e->surname = (char *)cheri_perms_and(e->surname, CHERI_PERM_LOAD);
-	return (struct employee *)cheri_perms_and(e, CHERI_PERM_LOAD | CHERI_PERM_LOAD_CAP);
 }
