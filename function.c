@@ -50,7 +50,7 @@ int main()
 
 	int c_gcd = gcd(a, b);
 	printf("The gcd of these numbers is: %d\n", c_gcd);
-	inspect_pointer(*gcd);
+	pp_cap(*gcd);
 
 	return 0;
 }

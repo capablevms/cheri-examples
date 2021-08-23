@@ -27,7 +27,7 @@ int main()
 			{
 				printf("[STACK POINTER] ");
 			}
-			inspect_pointer(((void **)buffer)[idx]);
+			pp_cap(((void **)buffer)[idx]);
 		}
 	}
 }

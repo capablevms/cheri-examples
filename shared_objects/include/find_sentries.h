@@ -34,7 +34,7 @@ bool scan_range(void *ptr, void *exact)
 					printf("[Range match] ");
 				}
 
-				inspect_pointer(current);
+				pp_cap(current);
 			}
 		}
 	}

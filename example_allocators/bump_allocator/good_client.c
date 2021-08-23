@@ -29,7 +29,7 @@ int main()
 	{
 		int *x = (int *)bump_alloc(1 * sizeof(int));
 		if (DEBUG_PRINTF)
-			inspect_pointer(x);
+			pp_cap(x);
 		if (x)
 		{
 			*x = 42;

@@ -33,7 +33,7 @@ typedef union
 int main()
 {
 	void *pcc = cheri_pcc_get();
-	inspect_pointer(pcc);
+	pp_cap(pcc);
 
 	void *searling_root;
 	if (sysarch(CHERI_GET_SEALCAP, &searling_root) < 0)
@@ -48,14 +48,14 @@ int main()
 	data.arr[1] = 0;
 
 	first = cheri_seal(first, other);
-	inspect_pointer(first);
+	pp_cap(first);
 
 	return 0;
 	for (uint32_t i = 0; i < 64; i++)
 	{
 		data.arr[0] |= (1 << i);
 		printf("i: %d ", i);
-		inspect_pointer(data.ptr);
+		pp_cap(data.ptr);
 		data.arr[0] = 0;
 	}
 }

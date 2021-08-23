@@ -18,5 +18,5 @@ int main()
 	}
 
 	void *memory = malloc(size);
-	inspect_pointer(memory);
+	pp_cap(memory);
 }

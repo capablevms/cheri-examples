@@ -50,8 +50,8 @@ void scan_range(void *start, void *end)
 
 	void **location = (void **)start;
 	puts("Scanning range: ");
-	inspect_pointer(start);
-	inspect_pointer(end);
+	pp_cap(start);
+	pp_cap(end);
 	puts("\n");
 
 	while (location > end)
@@ -66,7 +66,7 @@ void scan_range(void *start, void *end)
 			{
 				printf("[Executable] ");
 			}
-			inspect_pointer(*location);
+			pp_cap(*location);
 		}
 		location -= 1;
 	}

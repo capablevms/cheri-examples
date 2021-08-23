@@ -10,7 +10,7 @@ void insertionSort(bp_array bp)
 	size_t length = (get_length(bp) / sizeof(int)) - base;
 
 	int *arr = get_pointer(bp);
-	inspect_pointer(arr);
+	pp_cap(arr);
 
 	int ix, ixValue, ixP;
 	for (ix = base + 1; ix < (base + length); ix++)
