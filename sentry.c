@@ -46,15 +46,15 @@ void simple_sentry(int arg)
 // arguments to the next registers.
 void gen_oop(uint32_t *code, void *function)
 {
-	intptr_t *code_data = (intptr_t *)code;
+	intptr_t *code_data = (intptr_t *) code;
 
 	// The additional data needs to be stored somewhere in memory
 	// where it can not be accessed by the user of the function.
 	// This is why it is stored in the same place where the code will be.
 	// As the code is not modifiable and not readable this data is also
 	// protected.
-	code_data[255] = (intptr_t)function;
-	code_data[254] = (intptr_t)malloc(sizeof(struct data));
+	code_data[255] = (intptr_t) function;
+	code_data[254] = (intptr_t) malloc(sizeof(struct data));
 
 	uint32_t idx = 0;
 	code[idx++] = auipcc(cs2, 1);
@@ -74,8 +74,8 @@ void gen_oop(uint32_t *code, void *function)
 
 void gen_simple(uint32_t *code, void *function)
 {
-	intptr_t *code_data = (intptr_t *)code;
-	code_data[255] = (intptr_t)function;
+	intptr_t *code_data = (intptr_t *) code;
+	code_data[255] = (intptr_t) function;
 
 	uint32_t idx = 0;
 	code[idx++] = auipcc(cs2, 1);
@@ -85,8 +85,8 @@ void gen_simple(uint32_t *code, void *function)
 
 void gen_override(uint32_t *code, void *function)
 {
-	intptr_t *code_data = (intptr_t *)code;
-	code_data[255] = (intptr_t)function;
+	intptr_t *code_data = (intptr_t *) code;
+	code_data[255] = (intptr_t) function;
 
 	// Here we again generate code for calling the passed function,
 	// but the code modifies the first argument to be different then

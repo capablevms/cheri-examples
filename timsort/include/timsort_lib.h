@@ -32,7 +32,7 @@ int *random_chunk(size_t arr_length)
 
 int cmpfunc(const void *a, const void *b)
 {
-	return (*(int *)a - *(int *)b);
+	return (*(int *) a - *(int *) b);
 }
 
 bool arrEq(int arr_a[], int arr_b[], size_t lowerBound, size_t upperBound)
@@ -150,7 +150,7 @@ bp_array packBP(int *pointer, const size_t baseIndex, const size_t sizeInBytes)
 		}
 		*largeDescriptor = packBP_mangled(pointer, baseIndex, sizeInBytes);
 
-		return (bp_array)largeDescriptor;
+		return (bp_array) largeDescriptor;
 	}
 
 	int *descriptor = cheri_setoffset(pointer, 0);
@@ -166,10 +166,10 @@ bp_array packBP(int *pointer, const size_t baseIndex, const size_t sizeInBytes)
 		}
 		*largeDescriptor = packBP_mangled(pointer, baseIndex, sizeInBytes);
 
-		return (bp_array)largeDescriptor;
+		return (bp_array) largeDescriptor;
 	}
 
-	return (bp_array)descriptor;
+	return (bp_array) descriptor;
 }
 
 bool isMangled(bp_array bp)
@@ -181,7 +181,7 @@ void *get_pointer(bp_array bp)
 {
 	if (isMangled(bp))
 	{
-		return cheri_setoffset(get_pointer_mangled(*(struct bp_array_s *)bp), 0);
+		return cheri_setoffset(get_pointer_mangled(*(struct bp_array_s *) bp), 0);
 	}
 	void *ret = bp;
 	return cheri_setoffset(ret, 0);
@@ -191,7 +191,7 @@ size_t get_base(bp_array bp)
 {
 	if (isMangled(bp))
 	{
-		return get_base_mangled(*(struct bp_array_s *)bp);
+		return get_base_mangled(*(struct bp_array_s *) bp);
 	}
 	return cheri_getoffset(bp);
 }
@@ -200,7 +200,7 @@ size_t get_length(bp_array bp)
 {
 	if (isMangled(bp))
 	{
-		return get_length_mangled(*(struct bp_array_s *)bp);
+		return get_length_mangled(*(struct bp_array_s *) bp);
 	}
 	return cheri_getlength(bp);
 }

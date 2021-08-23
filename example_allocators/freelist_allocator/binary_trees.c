@@ -25,7 +25,7 @@ treeNode *NewTreeNode(treeNode *left, treeNode *right)
 {
 	treeNode *new;
 
-	new = (treeNode *)alloc(sizeof(treeNode));
+	new = (treeNode *) alloc(sizeof(treeNode));
 
 	new->left = left;
 	new->right = right;
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 	 * size-class assumptions
 	 */
 	pages = ((2 << (stretchDepth + 3)) * sizeof(treeNode)) / BYTES_IN_PAGE;
-	printf("treenode size is %u bytes\n", (unsigned int)sizeof(treeNode));
+	printf("treenode size is %u bytes\n", (unsigned int) sizeof(treeNode));
 	printf("we need %u pages\n", pages);
 
 	/* allocate memory pool */

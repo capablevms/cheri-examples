@@ -41,7 +41,7 @@ struct Car *new_car()
 	const uint32_t vtable_start_index = 2;
 	ptrs[vtable_start_index + 0] = honk;
 
-	const ptrdiff_t vtable_offset = ((char *)(ptrs + vtable_start_index) - (char *)ptrs);
+	const ptrdiff_t vtable_offset = ((char *) (ptrs + vtable_start_index) - (char *) ptrs);
 	const size_t vtable_size = 1 * 16;
 
 	uint32_t idx = 0;
@@ -53,8 +53,8 @@ struct Car *new_car()
 
 	uint32_t functions_size = vtable_offset + vtable_size;
 	struct Car *public_car =
-		(struct Car *)(((char *)mem) + sizeof(struct Car_priv) + functions_size);
-	struct Car_priv *private_car = (struct Car_priv *)(((char *)mem) + functions_size);
+		(struct Car *) (((char *) mem) + sizeof(struct Car_priv) + functions_size);
+	struct Car_priv *private_car = (struct Car_priv *) (((char *) mem) + functions_size);
 
 	private_car->maxSpeed = 10;
 	private_car->crash = &crash;

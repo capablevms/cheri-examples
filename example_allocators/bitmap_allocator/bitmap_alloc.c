@@ -79,8 +79,8 @@ void init_alloc(int num_chunks, int chunk_size)
 	char *res = mmap(NULL, adjusted_num_chunks * adjusted_chunk_size, PROT_READ | PROT_WRITE,
 					 MAP_ANON | MAP_PRIVATE, -1, 0);
 	/* request memory for our bitmap */
-	bitmap = (unsigned char *)mmap(NULL, adjusted_num_chunks / BITS_PER_BYTE,
-								   PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	bitmap = (unsigned char *) mmap(NULL, adjusted_num_chunks / BITS_PER_BYTE,
+									PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
 
 	if (res == MAP_FAILED || bitmap == MAP_FAILED)
 	{
@@ -91,9 +91,9 @@ void init_alloc(int num_chunks, int chunk_size)
 	/* NB mmap min bounds for capability is 1 page (4K) */
 	buffer = res;
 	/* check buffer is aligned */
-	assert((uintptr_t)buffer % sizeof(void *) == 0);
+	assert((uintptr_t) buffer % sizeof(void *) == 0);
 	/* check bitmap is aligned */
-	assert((uintptr_t)bitmap % sizeof(void *) == 0);
+	assert((uintptr_t) bitmap % sizeof(void *) == 0);
 
 	bytes_per_chunk = adjusted_chunk_size;
 	buffer_size = adjusted_num_chunks * adjusted_chunk_size;
@@ -125,14 +125,14 @@ char *alloc_chunk()
 	// return the corresponding chunk
 	// (setting its capability bounds)
 	int i = 0;
-	while (bitmap[i] == (unsigned char)0xff)
+	while (bitmap[i] == (unsigned char) 0xff)
 	{
 		i++;
 		if (i >= bitmap_size)
 			break;
 	}
 	// do we have a 0?
-	if (i < bitmap_size && bitmap[i] != (unsigned char)0xff)
+	if (i < bitmap_size && bitmap[i] != (unsigned char) 0xff)
 	{
 		// find the lowest 0 ...
 		int j = 0;
@@ -148,7 +148,7 @@ char *alloc_chunk()
 		// now i is the word index, j is the bit index
 		// set this bit to 1 ...
 		// and work out the chunk to allocate
-		updated_byte = bitmap[i] + (unsigned char)(1 << j);
+		updated_byte = bitmap[i] + (unsigned char) (1 << j);
 		bitmap[i] = updated_byte;
 
 		chunk_index = i * BITS_PER_BYTE + j;
@@ -173,7 +173,7 @@ void free_chunk(void *chunk)
 	assert(bitmap_index < bitmap_size);
 	int bitmap_offset = chunk_index % BITS_PER_BYTE;
 	/* set this bitmap entry to 0 */
-	unsigned char updated_byte = bitmap[bitmap_index] & (unsigned char)(~(1 << bitmap_offset));
+	unsigned char updated_byte = bitmap[bitmap_index] & (unsigned char) (~(1 << bitmap_offset));
 	bitmap[bitmap_index] = updated_byte;
 	return;
 }

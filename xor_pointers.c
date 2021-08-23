@@ -40,16 +40,16 @@ typedef struct cell
 
 cell_t *alloc_cell(WORD payload, cell_t *tail)
 {
-	cell_t *cell = (cell_t *)malloc(sizeof(cell_t));
+	cell_t *cell = (cell_t *) malloc(sizeof(cell_t));
 	cell->data = payload;
 	/* xor this cell's address into the tail's ptr field */
 	if (tail != NULL)
-		tail->ptr ^= (WORD)cell;
+		tail->ptr ^= (WORD) cell;
 	/* store tail address in this cell's ptr field
 	 * NOTE most recently allocated cell (i.e. head)
 	 * only stores a single ptr, not an XOR'd pair
 	 */
-	cell->ptr = (WORD)tail;
+	cell->ptr = (WORD) tail;
 	return cell;
 }
 
@@ -69,12 +69,12 @@ int main()
 	/* traverse list from head to tail */
 	printf("%ld\n", head->data);
 	prev = head;
-	curr = (cell_t *)prev->ptr;
+	curr = (cell_t *) prev->ptr;
 	while (curr != NULL)
 	{
 		printf("%ld\n", curr->data);
 		// chase tail
-		next = (cell_t *)((curr->ptr) ^ (WORD)prev);
+		next = (cell_t *) ((curr->ptr) ^ (WORD) prev);
 		// move along one
 		prev = curr;
 		curr = next;
@@ -83,14 +83,14 @@ int main()
 	/* let's traverse back to the start of the list */
 	next = curr;
 	curr = prev;
-	prev = (cell_t *)((curr->ptr) ^ (WORD)next);
+	prev = (cell_t *) ((curr->ptr) ^ (WORD) next);
 	while (curr != head)
 	{
 		printf("%ld\n", curr->data);
 		// chase reverse tail
 		next = curr;
 		curr = prev;
-		prev = (cell_t *)((curr->ptr) ^ (WORD)next);
+		prev = (cell_t *) ((curr->ptr) ^ (WORD) next);
 	}
 	printf("%ld\n", head->data);
 

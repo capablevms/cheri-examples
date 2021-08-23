@@ -36,7 +36,7 @@ void change_salary(struct employee *e, double salary)
  */
 struct employee *set_read_only(struct employee *e)
 {
-	e->name = (char *)cheri_perms_and(e->name, CHERI_PERM_LOAD);
-	e->surname = (char *)cheri_perms_and(e->surname, CHERI_PERM_LOAD);
-	return (struct employee *)cheri_perms_and(e, CHERI_PERM_LOAD | CHERI_PERM_LOAD_CAP);
+	e->name = (char *) cheri_perms_and(e->name, CHERI_PERM_LOAD);
+	e->surname = (char *) cheri_perms_and(e->surname, CHERI_PERM_LOAD);
+	return (struct employee *) cheri_perms_and(e, CHERI_PERM_LOAD | CHERI_PERM_LOAD_CAP);
 }

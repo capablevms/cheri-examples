@@ -40,7 +40,7 @@ int main()
 		/* now try to do some allocations */
 		for (i = 0; i < n; i++)
 		{
-			list *tmp = (list *)alloc_chunk();
+			list *tmp = (list *) alloc_chunk();
 			if (tmp)
 			{
 				tmp->payload = i;
