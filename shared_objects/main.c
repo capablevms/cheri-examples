@@ -45,7 +45,7 @@ void compartments_per_object()
 void unexported_functions()
 {
 	printf("Finding do_work using dlsym (main): ");
-	inspect_pointer(dlsym(NULL, "do_work"));
+	pp_cap(dlsym(NULL, "do_work"));
 	void *function_to_search_for = test();
 	printf("test: %p\n", function_to_search_for);
 

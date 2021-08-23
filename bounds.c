@@ -18,7 +18,7 @@ int main()
 	uint64_t length = cheri_length_get(typed_array);
 	for (uint32_t counter = 0; counter <= (length / sizeof(int32_t)) + 15; counter++)
 	{
-		inspect_pointer(typed_array + counter);
+		pp_cap(typed_array + counter);
 		// Read value to crash
 		printf("Count: %d, Value: %d\n", counter, *(typed_array + counter));
 	}

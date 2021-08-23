@@ -21,9 +21,9 @@ __attribute__((visibility("hidden"))) void do_work()
 void *test()
 {
 	printf("Finding do_work using dlsym (lib4):\nptr: ");
-	inspect_pointer(dlsym(NULL, "do_work"));
+	pp_cap(dlsym(NULL, "do_work"));
 	printf("Obtaining a direct pointer to it: \nptr: ");
-	inspect_pointer(&do_work);
+	pp_cap(&do_work);
 	printf("test ptr just to keep it in the pcc:\n ptr: %p\n", &test);
 	printf(" ------- scanning pcc for sealed pointers --------\n");
 	bool found = scan_range(cheri_getpcc(), &do_work);

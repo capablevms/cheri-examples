@@ -108,8 +108,8 @@ int main()
 	code = get_executable_block();
 	code = generate_purecap(code);
 
-	inspect_pointer(cheri_getpcc());
-	inspect_pointer(code);
+	pp_cap(cheri_getpcc());
+	pp_cap(code);
 
 	int (*code_function)() = (int (*)())code;
 	int result = code_function();

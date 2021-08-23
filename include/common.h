@@ -7,7 +7,7 @@
  * Print information about a capability
  */
 
-void inspect_pointer(void *ptr)
+void pp_cap(void *ptr)
 {
 	uint64_t length = cheri_length_get(ptr);
 	uint64_t address = cheri_address_get(ptr);
@@ -19,12 +19,10 @@ void inspect_pointer(void *ptr)
 
 	uint64_t offset = cheri_offset_get(ptr);
 
-	printf("*** CAPABILITY INFO for ***\n");
-	printf("%#lp\n", ptr);
-	printf("Tag: %d, Perms: %04lx, Type: %lx, Address: %04lx, Base: %04lx, End: %04lx, Flags: %lx, Length: %04lx, Offset: %04lx\n"
-		   ,
+	printf("Capability: %#lp\n", ptr);
+	printf("Tag: %d, Perms: %04lx, Type: %lx, Address: %04lx, Base: %04lx, End: %04lx, Flags: %lx, "
+		   "Length: %04lx, Offset: %04lx\n",
 		   tag, perms, type, address, base, base + length, flags, length, offset);
-	printf("****************************\n");
 }
 
 void error(char *string)
