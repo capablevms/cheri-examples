@@ -5,6 +5,7 @@ UseTab: Always
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: Empty
 AllowAllArgumentsOnNextLine: true
+SpaceAfterCStyleCast: true
 BreakBeforeBraces: Allman
 BraceWrapping:
 	AfterControlStatement: Always

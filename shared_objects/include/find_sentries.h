@@ -18,7 +18,7 @@ bool scan_range(void *ptr, void *exact)
 	for (void *iter = cheri_setoffset(ptr, 0); cheri_getoffset(iter) < cheri_getlength(iter);
 		 iter = cheri_incoffset(iter, 16))
 	{
-		void *current = *(void **)iter;
+		void *current = *(void **) iter;
 		if (is_pointer(current))
 		{
 			if (cheri_getsealed(current))

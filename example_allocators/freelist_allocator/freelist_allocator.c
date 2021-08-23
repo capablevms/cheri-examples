@@ -43,13 +43,13 @@ char *insert_linked_list_pointers(size_t cell_size, size_t limit, char *start, c
 
 	while (next < max)
 	{
-		((char **)curr)[0] = next;
+		((char **) curr)[0] = next;
 		curr = next;
 		next = curr + cell_size;
 	}
 	// at the end, concatenate this newly formed
 	// list with existing freelist
-	((char **)curr)[0] = freelist;
+	((char **) curr)[0] = freelist;
 
 	return start;
 }
@@ -114,7 +114,7 @@ char *alloc(size_t bytes)
 	if (freelist_to_use != NULL)
 	{
 		char *head = freelist_to_use;
-		char *tail = ((char **)head)[0];
+		char *tail = ((char **) head)[0];
 		switch (size)
 		{
 		case SMALL:
@@ -161,6 +161,6 @@ void dealloc(void *buffer)
 
 char *cons_onto_freelist(char *cell, char *freelist)
 {
-	((char **)cell)[0] = freelist;
+	((char **) cell)[0] = freelist;
 	return cell;
 }

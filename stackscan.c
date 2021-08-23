@@ -48,7 +48,7 @@ bool is_exec(void *ptr)
 void scan_range(void *start, void *end)
 {
 
-	void **location = (void **)start;
+	void **location = (void **) start;
 	puts("Scanning range: ");
 	pp_cap(start);
 	pp_cap(end);
@@ -77,13 +77,13 @@ void scan_frames()
 	// We dont's scan the part of the stack taken by the current function
 	// I promise the collect function doesn't allocate
 	void *stack_bot = __builtin_frame_address(0);
-	void *previous_frame = *(void **)stack_bot;
+	void *previous_frame = *(void **) stack_bot;
 
 	inspect_stack(stack_bot);
 	inspect_stack(previous_frame);
 	while (previous_frame < stack_top)
 	{
-		void **next_frame = (void **)previous_frame;
+		void **next_frame = (void **) previous_frame;
 		if (!is_stack_pointer(*next_frame))
 		{
 			printf("Couldn't find a stack pointer at: %p, looking up the stack", next_frame);
@@ -121,7 +121,7 @@ int test_3()
 
 uint32_t *test()
 {
-	uint32_t *values = (uint32_t *)malloc((size_t)test_3());
+	uint32_t *values = (uint32_t *) malloc((size_t) test_3());
 	values[0] = 42;
 	values[1] = 42;
 	return values;

@@ -18,16 +18,16 @@ int main()
 	// buffer[14..31] = ???
 	for (uint32_t idx; idx < (length / 16); idx++)
 	{
-		if (cheri_gettag(((void **)buffer)[idx]))
+		if (cheri_gettag(((void **) buffer)[idx]))
 		{
 			void *csp = cheri_getcsp();
-			uint64_t address = cheri_getaddress(((void **)buffer)[idx]);
+			uint64_t address = cheri_getaddress(((void **) buffer)[idx]);
 
 			if (cheri_is_address_inbounds(csp, address))
 			{
 				printf("[STACK POINTER] ");
 			}
-			pp_cap(((void **)buffer)[idx]);
+			pp_cap(((void **) buffer)[idx]);
 		}
 	}
 }

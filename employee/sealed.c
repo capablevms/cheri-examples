@@ -25,19 +25,19 @@ int main()
 	assert(cheri_perms_get(sealcap) & CHERI_PERM_SEAL);
 	uint8_t *new_small_salary;
 	// Seal `new_small_salary` using previously requested `sealcap`
-	new_small_salary = (uint8_t *)malloc(sizeof(uint8_t));
-	new_small_salary = (uint8_t *)cheri_seal(new_small_salary, sealcap);
+	new_small_salary = (uint8_t *) malloc(sizeof(uint8_t));
+	new_small_salary = (uint8_t *) cheri_seal(new_small_salary, sealcap);
 	assert(cheri_is_sealed(new_small_salary));
 	uint8_t *small_salary;
-	small_salary = (uint8_t *)malloc(sizeof(uint8_t));
+	small_salary = (uint8_t *) malloc(sizeof(uint8_t));
 	assert(cheri_perms_get(small_salary) & (CHERI_PERM_LOAD | CHERI_PERM_STORE));
 	pp_cap(small_salary);
 	// Make `small_salary` read-only
-	small_salary = (uint8_t *)cheri_perms_and(&small_salary, CHERI_PERM_LOAD);
+	small_salary = (uint8_t *) cheri_perms_and(&small_salary, CHERI_PERM_LOAD);
 	assert(cheri_perms_get(small_salary) & CHERI_PERM_LOAD);
 	pp_cap(small_salary);
 	// Restore it to read-write using previously sealed capability `new_small_salary`
-	small_salary = (uint8_t *)cheri_unseal(new_small_salary, sealcap);
+	small_salary = (uint8_t *) cheri_unseal(new_small_salary, sealcap);
 	assert(cheri_perms_get(small_salary) & (CHERI_PERM_LOAD | CHERI_PERM_STORE));
 	pp_cap(small_salary);
 }

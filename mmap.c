@@ -111,7 +111,7 @@ int main()
 	pp_cap(cheri_getpcc());
 	pp_cap(code);
 
-	int (*code_function)() = (int (*)())code;
+	int (*code_function)() = (int (*)()) code;
 	int result = code_function();
 	printf("Result: %d\n\n", result);
 	return result;
