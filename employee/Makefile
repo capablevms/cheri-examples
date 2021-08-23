@@ -4,7 +4,7 @@ CFLAGS=-fuse-ld=lld --config cheribsd-riscv64-purecap.cfg
 SSHPORT=10021
 export
 
-cfiles := full_privileges.c read_only.c
+cfiles := full_privileges.c read_only.c sealed.c
 employee := $(patsubst %.c,bin/%,$(cfiles))
 
 .PHONY: all run clean
