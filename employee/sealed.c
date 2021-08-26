@@ -19,7 +19,7 @@ int main()
 	size_t sealcap_size = sizeof(sealcap);
 	if (sysctlbyname("security.cheri.sealcap", &sealcap, &sealcap_size, NULL, 0) < 0)
 	{
-		error("Fatal error. Cannot get `securiy.cheri.sealcap`.");
+		error("Fatal error. Cannot get `security.cheri.sealcap`.");
 		exit(1);
 	}
 	assert(cheri_perms_get(sealcap) & CHERI_PERM_SEAL);
