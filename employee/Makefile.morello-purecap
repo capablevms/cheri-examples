@@ -1,0 +1,7 @@
+CHERIBASE ?= $(HOME)/cheri
+SDKBASE ?= $(CHERIBASE)/output/morello-sdk
+CFLAGS := --config cheribsd-morello-purecap.cfg $(CFLAGS)
+PLATFORM := morello-purecap
+export
+
+include Makefile.common

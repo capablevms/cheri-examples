@@ -1,0 +1,7 @@
+CHERIBASE ?= $(HOME)/cheri
+SDKBASE ?= $(CHERIBASE)/output/sdk
+CFLAGS := --config cheribsd-riscv64-purecap.cfg $(CFLAGS)
+PLATFORM := riscv64-purecap
+export
+
+include Makefile.common
