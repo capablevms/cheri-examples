@@ -1,0 +1,11 @@
+# Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common configuration for 'riscv64-purecap' platforms.
+# This should not be invoked directly.
+
+CHERIBASE ?= $(HOME)/cheri
+SDKBASE ?= $(CHERIBASE)/output/sdk
+# TODO: This doesn't work without lld. Why not?
+CFLAGS := --config cheribsd-riscv64-purecap.cfg -fuse-ld=lld $(CFLAGS)
+PLATFORM := riscv64-purecap

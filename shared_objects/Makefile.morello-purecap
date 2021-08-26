@@ -3,4 +3,4 @@
 
 include ../build/Makefile.vars.morello-purecap
 include ../build/Makefile.vars.common
-include build/Makefile.employee
+include build/Makefile.shared_objects

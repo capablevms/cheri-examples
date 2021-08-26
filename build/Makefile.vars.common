@@ -1,0 +1,23 @@
+# Copyright (c) 2020-2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common configuration for all 'Make' targets.
+# This should not be invoked directly.
+
+# Set by platform-specific makefiles. For example: ~/cheri/output/sdk
+ifndef SDKBASE
+$(error SDKBASE is not set)
+endif
+
+# For example: morello-purecap
+ifndef PLATFORM
+$(error PLATFORM is not set)
+endif
+
+CC := $(SDKBASE)/bin/clang
+CFORMAT := $(SDKBASE)/bin/clang-format
+BINDIR := bin/$(PLATFORM)
+
+RUNUSER ?= root
+RUNHOST ?= localhost
+RUNDIR ?=

@@ -1,0 +1,11 @@
+# Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the timsort example.
+# This should not be invoked directly.
+
+RUNDIR := $(RUNDIR)/timsort
+HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+export
+
+include ../build/Makefile.simple

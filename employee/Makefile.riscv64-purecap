@@ -1,7 +1,6 @@
-CHERIBASE ?= $(HOME)/cheri
-SDKBASE ?= $(CHERIBASE)/output/sdk
-CFLAGS := --config cheribsd-riscv64-purecap.cfg $(CFLAGS)
-PLATFORM := riscv64-purecap
-export
+# Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
 
-include Makefile.common
+include ../build/Makefile.vars.riscv64-purecap
+include ../build/Makefile.vars.common
+include build/Makefile.employee

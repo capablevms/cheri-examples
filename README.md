@@ -1,33 +1,58 @@
 # cheri-examples
-cheri sample C programs for RISC-V and Morello targets in *pure capability* (purecap) mode.
 
-------
-## Build instructions with CMake
-Build all the example code with CMake using default settings :
-1. Create a separate build directory (\<build-dir\>) outside the source directory (\<source-dir\>).
-2. Generate the build files using either **Unix Makefiles** (*default*) or **Ninja** (specfied
-   with **-G**). Currently only the *RISC-V* and *Morello* cheri-purecap toolchain files have
-   been created.
-   1. If executing from inside the build directory :
+Examples of CHERI fundamental operations, interesting corner cases, and simple
+demonstrative applications.
 
-   `cmake -DCMAKE_TOOLCHAIN_FILE=riscv64-purecap.cmake <relative-path-to-source-dir>`
+A makefile is provided for each supported platform, and a basic build command
+looks like this:
 
-   2. If executing from outside the build directory :
+```
+$ make -f Makefile.<platform>
+```
 
-   `cmake -B <build-dir> -S <source-dir> -DCMAKE_TOOLCHAIN_FILE=riscv64-purecap.cmake`
+For most examples, each `.c` file compiles to a single, self-contained example,
+and compiles to a binary with the same name (without the `.c`).
 
-3. Build all the examples
-   1. If executing from inside the build directory,  `make all` *OR* `ninja all`
-   2. If executing from outside the build directory, `cmake --build <build-dir>`
+Note that this only builds examples at the top level. Some examples are grouped
+into their own directories, with their own makefiles. However, the available
+make targets are consistent, where possible. Refer to their respective README
+files for details.
 
-#### CMake options:
-* **-DCMAKE_TOOLCHAIN_FILE**: Use `-DCMAKE_TOOLCHAIN_FILE=<toolchain-file>` to select
-  architecture to compile binary for. Only *riscv64-purecap.cmake* and *morello-purecap.cmake*
-  are currently supported.
-* **-DSDK**: Use `-DSDK=<source-to-sdk>` to point to the *CHERI* SDK directory.
-  Default paths:
-  1. *RISC-V*: ${HOME}/cheri/output/sdk
-  2. *Morello*: ${HOME}/cheri/output/morello-sdk
-* **-G**: Choose preferred build system
-  - Use `-G "Unix Makefiles"` to build using *makefiles* (*default*).
-  - Use `-G Ninja` to build using *ninja*.
+## Prerequisites
+
+- An SDK for your `<platform>`, like those built by [`cheribuild`][cheribuild].
+  By default, the makefiles will search `~/cheri/` for an appropriate SDK, but
+  this can be overridden by defining `CHERIBASE`. Alternatively, a direct path
+  to the SDK can be given in `SDKBASE`.
+- For `run-<binary>` targets, a machine or model that can run the result,
+  reachable by SSH.
+
+[cheribuild]: https://github.com/CTSRD-CHERI/cheribuild
+
+## Usage
+
+Targets available for all example directories are:
+
+- `all`, the default, which builds all binaries,
+- `clang-format`, to format all example code,
+- `clean`, to remove generated files, for this `<platform>` only.
+
+The top level examples, and most examples in sub-directories, also allow
+individual examples to be built or run:
+
+- `bin/<binary>`, to build a specific binary,
+- `run-<binary>`, to `scp` a binary and run it.
+
+Refer to their respective README files for details.
+
+All build output is stored in `bin/<platform>`.
+
+Note that the `run-<binary>` targets require `SSHPORT` to be defined. `RUNUSER`
+and `RUNHOST` can also be specified if required, but default to `root` and
+`localhost`, respectively, since this is convenient for CheriBSD models.
+
+For example:
+
+```
+$ SSH_PORT=12345 make -f Makefile.morello-purecap run-seal
+```
