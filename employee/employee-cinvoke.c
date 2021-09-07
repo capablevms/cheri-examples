@@ -46,7 +46,7 @@ int main()
 	// obj->datacap = small_salary;
 	// // Seal `cheri_object` using previously requested `sealcap`
 	// obj = (struct cheri_object *) cheri_seal(obj, sealcap);
-	assert(cheri_is_sealed(obj->codecap));
+	// assert(cheri_is_sealed(obj->codecap));
 	// assert(cheri_is_sealed(obj));
 
 	// Seal only its parts, i.e. codecap and datacap
