@@ -14,8 +14,8 @@
 
 struct cheri_object
 {
-	void *__capability codecap;
 	void *__capability datacap;
+	void *__capability codecap;
 };
 
 void print_salary(uint8_t salary);
@@ -50,10 +50,10 @@ int main()
 	// assert(cheri_is_sealed(obj));
 
 	// Seal only its parts, i.e. codecap and datacap
-	obj->codecap = cheri_seal(&print_salary, sealcap);
 	obj->datacap = cheri_seal(small_salary, sealcap);
-	assert(cheri_is_sealed(obj->codecap));
+	obj->codecap = cheri_seal(&print_salary, sealcap);
 	assert(cheri_is_sealed(obj->datacap));
+	assert(cheri_is_sealed(obj->codecap));
 
 	// FIXME: "Invalid permission for mapped object"
 	invoke(obj);
