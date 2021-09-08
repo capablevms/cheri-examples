@@ -21,6 +21,8 @@ struct cheri_object
 void print_salary(uint8_t salary);
 void invoke(struct cheri_object * pair);
 
+// TODO SEAL (immediate) for morello
+
 int main()
 {
 
@@ -49,32 +51,37 @@ int main()
 	// assert(cheri_is_sealed(obj->codecap));
 	// assert(cheri_is_sealed(obj));
 
-	// Seal only its parts, i.e. codecap and datacap
-	obj->datacap = cheri_seal(small_salary, sealcap);
-	obj->codecap = cheri_seal(&print_salary, sealcap);
-	assert(cheri_is_sealed(obj->datacap));
-	assert(cheri_is_sealed(obj->codecap));
+	// FIXME: commented to try without sealing
+	obj->datacap = small_salary;
+	obj->codecap = &print_salary;
+	// Seal only its parts, i.e. datacap and codecap
+	// obj->datacap = cheri_seal(small_salary, sealcap);
+	// obj->codecap = cheri_seal(&print_salary, sealcap);
+	// assert(cheri_is_sealed(obj->datacap));
+	// assert(cheri_is_sealed(obj->codecap));
 
 	// FIXME: "Invalid permission for mapped object"
 	invoke(obj);
 
 	// assuming the above line works should we be able to
-	// print_salary(small_salary)?
+	// print_salary(*small_salary)?
 
 	return 0;
 }
 
 inline void invoke(struct cheri_object * cheri_obj){
-	// Function pointer (print_salary) of target function
-	// void (*codecap)(void) =  cheri_obj->codecap;
 	// Data for the function
 	// uint8_t * datacap = (uint8_t *) cheri_obj->datacap;
+	// Function pointer (print_salary) of target function
+	// void (*codecap)(void) =  cheri_obj->codecap;
 	asm(
 		"ldpblr c0, [%w[pair]]\n\t"
+		"ret\n\t"
 		: /* output regs */
 		: [pair]"r"(cheri_obj) /* input regs */
   		: /* all caller-saved regs */
 	);
+	
 }
 
 void print_salary(uint8_t salary){
