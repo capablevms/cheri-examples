@@ -52,11 +52,11 @@ int main()
 	
 	obj->datacap = seal_immediate(small_salary);
 	obj->codecap = seal_immediate(&print_salary);
-	printf("After sealing...\n");
-	pp_cap(&print_salary);
-	pp_cap(small_salary);
-	assert(cheri_is_sealed(obj->datacap));
-	assert(cheri_is_sealed(obj->codecap));
+	// printf("After sealing...\n");
+	// pp_cap(&print_salary);
+	// pp_cap(small_salary);
+	// assert(cheri_is_sealed(obj->datacap));
+	// assert(cheri_is_sealed(obj->codecap));
 
 	invoke(obj);
 
@@ -70,10 +70,10 @@ inline void invoke(struct cheri_object * cheri_obj){
 	// void (*codecap)(void) =  cheri_obj->codecap;
 	asm(
 		"ldpblr c0, [%w[pair]]\n\t"
-		"ret\n\t"
 		: /* output regs */
 		: [pair]"r"(cheri_obj) /* input regs */
-  		: /* all caller-saved regs */
+  		: "c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","clr","d8","d9","d10","d11","d12","d13","d14","d15"
+		  /* clobbered registers */
 	);
 	
 }
@@ -81,15 +81,15 @@ inline void invoke(struct cheri_object * cheri_obj){
 inline void *__capability seal_immediate(void *__capability cap){
 	void *__capability sealed_cap;
 	asm(
-		"seal c1, %w[to_seal], rb\n\t" /* 10 encoded form */
-		: [c1] "=r" (sealed_cap)
+		"seal %0, %w[to_seal], rb\n\t" /* 10 encoded form */
+		: "=r" (sealed_cap)
 		: [to_seal] "r" (cap)
-		: /* all caller-saved regs */
+		: 
 	);
 	return sealed_cap;
 }
 
 void print_salary(uint8_t salary){
 	printf("Salary: %d", salary);
-	fflush(stdout);	
+	fflush(stdout);
 }
