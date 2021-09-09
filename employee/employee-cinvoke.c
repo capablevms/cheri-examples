@@ -20,26 +20,24 @@ struct cheri_object
 
 void print_salary(uint8_t salary);
 void invoke(struct cheri_object * pair);
+void *__capability seal_immediate(void *__capability cap);
 
-// TODO SEAL (immediate) for morello
 
 int main()
 {
 
-	// Request special capability `sealcap` from the operating system
-	// in order to use it as key to seal our capabilities
-	void *__capability sealcap;
-	size_t sealcap_size = sizeof(sealcap);
-	if (sysctlbyname("security.cheri.sealcap", &sealcap, &sealcap_size, NULL, 0) < 0)
-	{
-		error("Fatal error. Cannot get `securiy.cheri.sealcap`.");
-		exit(1);
-	}
-	assert(cheri_perms_get(sealcap) & CHERI_PERM_SEAL);
+	// // Request special capability `sealcap` from the operating system
+	// // in order to use it as key to seal our capabilities
+	// void *__capability sealcap;
+	// size_t sealcap_size = sizeof(sealcap);
+	// if (sysctlbyname("security.cheri.sealcap", &sealcap, &sealcap_size, NULL, 0) < 0)
+	// {
+	// 	error("Fatal error. Cannot get `securiy.cheri.sealcap`.");
+	// 	exit(1);
+	// }
+	// assert(cheri_perms_get(sealcap) & CHERI_PERM_SEAL);
 	struct cheri_object * obj = (struct cheri_object *) malloc(sizeof(struct cheri_object)); 
 	uint8_t *small_salary = (uint8_t *) malloc(sizeof(uint8_t));
-	// This should copy the OType of `y` and derive `x` as in `x = cheri_type_copy(x, y)
-	// small_salary = cheri_type_copy(small_salary, &print_salary);
 	pp_cap(&print_salary);
 	pp_cap(small_salary);
 
@@ -51,20 +49,16 @@ int main()
 	// assert(cheri_is_sealed(obj->codecap));
 	// assert(cheri_is_sealed(obj));
 
-	// FIXME: commented to try without sealing
-	obj->datacap = small_salary;
-	obj->codecap = &print_salary;
-	// Seal only its parts, i.e. datacap and codecap
-	// obj->datacap = cheri_seal(small_salary, sealcap);
-	// obj->codecap = cheri_seal(&print_salary, sealcap);
-	// assert(cheri_is_sealed(obj->datacap));
-	// assert(cheri_is_sealed(obj->codecap));
+	
+	obj->datacap = seal_immediate(small_salary);
+	obj->codecap = seal_immediate(&print_salary);
+	printf("After sealing...\n");
+	pp_cap(&print_salary);
+	pp_cap(small_salary);
+	assert(cheri_is_sealed(obj->datacap));
+	assert(cheri_is_sealed(obj->codecap));
 
-	// FIXME: "Invalid permission for mapped object"
 	invoke(obj);
-
-	// assuming the above line works should we be able to
-	// print_salary(*small_salary)?
 
 	return 0;
 }
@@ -84,8 +78,18 @@ inline void invoke(struct cheri_object * cheri_obj){
 	
 }
 
+inline void *__capability seal_immediate(void *__capability cap){
+	void *__capability sealed_cap;
+	asm(
+		"seal c1, %w[to_seal], rb\n\t" /* 10 encoded form */
+		: [c1] "=r" (sealed_cap)
+		: [to_seal] "r" (cap)
+		: /* all caller-saved regs */
+	);
+	return sealed_cap;
+}
+
 void print_salary(uint8_t salary){
 	printf("Salary: %d", salary);
 	fflush(stdout);	
 }
-
