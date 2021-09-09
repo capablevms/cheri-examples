@@ -49,15 +49,16 @@ int main()
 	// assert(cheri_is_sealed(obj->codecap));
 	// assert(cheri_is_sealed(obj));
 
-	obj->codecap = &print_salary;
+	// obj->codecap = &print_salary;
 	obj->datacap = small_salary;
+	assert(!cheri_is_sealed(obj->codecap));
 	// obj->datacap = seal_immediate(small_salary);
-	// obj->codecap = seal_immediate(&print_salary);
+	obj->codecap = seal_immediate(&print_salary);
+	assert(cheri_is_sealed(obj->codecap));
 	// printf("After sealing...\n");
 	// pp_cap(&print_salary);
 	// pp_cap(small_salary);
 	// assert(cheri_is_sealed(obj->datacap));
-	// assert(cheri_is_sealed(obj->codecap));
 
 	invoke(obj);
 
@@ -79,16 +80,16 @@ inline void invoke(struct cheri_object * cheri_obj){
 	
 }
 
-// inline void *__capability seal_immediate(void *__capability cap){
-// 	void *__capability sealed_cap;
-// 	asm(
-// 		"seal %0, %w[to_seal], rb\n\t" /* 10 encoded form */
-// 		: "=r" (sealed_cap)
-// 		: [to_seal] "r" (cap)
-// 		: 
-// 	);
-// 	return sealed_cap;
-// }
+inline void *__capability seal_immediate(void *__capability cap){
+	void *__capability sealed_cap;
+	asm(
+		"seal %w[sealed_cap], %w[cap], rb\n\t"
+		: [sealed_cap] "=r" (sealed_cap)
+		: [cap] "r" (cap)
+		: 
+	);
+	return sealed_cap;
+}
 
 void print_salary(uint8_t salary){
 	printf("Salary: %d\n", salary);
