@@ -19,48 +19,34 @@ struct cheri_object
 };
 
 void print_salary(uint8_t salary);
+void print_something();
 void invoke(struct cheri_object * pair);
 void *__capability seal_immediate(void *__capability cap);
 
 
 int main()
 {
-
-	// // Request special capability `sealcap` from the operating system
-	// // in order to use it as key to seal our capabilities
-	// void *__capability sealcap;
-	// size_t sealcap_size = sizeof(sealcap);
-	// if (sysctlbyname("security.cheri.sealcap", &sealcap, &sealcap_size, NULL, 0) < 0)
-	// {
-	// 	error("Fatal error. Cannot get `securiy.cheri.sealcap`.");
-	// 	exit(1);
-	// }
-	// assert(cheri_perms_get(sealcap) & CHERI_PERM_SEAL);
 	struct cheri_object * obj = (struct cheri_object *) malloc(sizeof(struct cheri_object)); 
 	uint8_t *small_salary = (uint8_t *) malloc(sizeof(uint8_t));
 	pp_cap(&print_salary);
 	pp_cap(small_salary);
-
-	// Seal the entire struct
-	// obj->codecap = &print_salary;
-	// obj->datacap = small_salary;
-	// // Seal `cheri_object` using previously requested `sealcap`
-	// obj = (struct cheri_object *) cheri_seal(obj, sealcap);
-	// assert(cheri_is_sealed(obj->codecap));
-	// assert(cheri_is_sealed(obj));
-
-	// obj->codecap = &print_salary;
+	obj->codecap = &print_something;
+	*small_salary = 12;
 	obj->datacap = small_salary;
-	assert(!cheri_is_sealed(obj->codecap));
+	assert(!cheri_is_sealed(obj->datacap));
 	// obj->datacap = seal_immediate(small_salary);
-	obj->codecap = seal_immediate(&print_salary);
+	assert(cheri_is_sentry(obj->codecap));
 	assert(cheri_is_sealed(obj->codecap));
-	// printf("After sealing...\n");
-	// pp_cap(&print_salary);
-	// pp_cap(small_salary);
-	// assert(cheri_is_sealed(obj->datacap));
-
+	// obj->codecap = seal_immediate(&print_salary);
 	invoke(obj);
+	printf("Just in case, this is small_salary: %d\n", *small_salary);
+
+	// qemu system crash:
+	// cheri_utils.h:225 "Should only be used with sentry cap"
+	// ~/cheri/morello-qemu/target/cheri-common/cheri_utils.h
+	// A sentry is already sealed (by definition!) and every consequent call to 
+	// sealing functions will clear the tag!!!
+	
 
 	return 0;
 }
@@ -83,9 +69,9 @@ inline void invoke(struct cheri_object * cheri_obj){
 inline void *__capability seal_immediate(void *__capability cap){
 	void *__capability sealed_cap;
 	asm(
-		"seal %w[sealed_cap], %w[cap], rb\n\t"
-		: [sealed_cap] "=r" (sealed_cap)
-		: [cap] "r" (cap)
+		"seal %[sealed_cap], %[cap], rb\n\t"
+		: [sealed_cap] "=C" (sealed_cap)
+		: [cap] "C" (cap)
 		: 
 	);
 	return sealed_cap;
@@ -95,3 +81,8 @@ void print_salary(uint8_t salary){
 	printf("Salary: %d\n", salary);
 	fflush(stdout);
 }
+
+void print_something(){
+	printf("Hello, I have been unsealed!?\n");
+}
+
