@@ -44,7 +44,7 @@ int main()
 	// qemu system crash:
 	// cheri_utils.h:225 "Should only be used with sentry cap"
 	// ~/cheri/morello-qemu/target/cheri-common/cheri_utils.h
-	// A sentry is already sealed (by definition!) and every consequent call to 
+	// A sentry is already sealed (by definition!) and every subsequent call to 
 	// sealing functions will clear the tag!!!
 	
 
