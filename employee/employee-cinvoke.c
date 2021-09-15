@@ -38,6 +38,7 @@ int main()
 	assert(cheri_is_sealed(obj->codecap));
 	obj = seal_immediate_pair(obj);
 	assert(cheri_is_sealed(obj));
+	pp_cap(obj);
 	
 	ldpblr(obj);
 
@@ -46,10 +47,10 @@ int main()
 
 inline void ldpblr(CHERI_OBJECT * obj){
 	asm(
-		"ldpblr c0, [%w[pair]]\n\t"
+		"ldpblr c29, [%w[obj]]\n\t"
 		: /* output regs */
-		: [pair]"r"(obj) /* input regs */
-  		: "c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","clr","d8","d9","d10","d11","d12","d13","d14","d15"
+		: [obj]"r"(obj) /* input regs */
+  		: "c29","c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","clr","d8","d9","d10","d11","d12","d13","d14","d15"
 		  /* clobbered registers */
 	);
 }
