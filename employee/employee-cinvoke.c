@@ -23,7 +23,7 @@ CHERI_OBJECT * obj;
 // TODO: refactor, move this stuff elsewhere
 void print_salary();
 void ldpblr(struct cheri_object * pair);
-void *__capability seal_immediate(void *__capability cap);
+CHERI_OBJECT * seal_immediate_pair(CHERI_OBJECT * obj);
 
 int main()
 {
@@ -36,7 +36,7 @@ int main()
 	assert(!cheri_is_sealed(obj->datacap));
 	assert(cheri_is_sentry(obj->codecap));
 	assert(cheri_is_sealed(obj->codecap));
-	obj = (CHERI_OBJECT *) seal_immediate(obj);
+	obj = seal_immediate_pair(obj);
 	assert(cheri_is_sealed(obj));
 	
 	ldpblr(obj);
@@ -44,25 +44,25 @@ int main()
 	return 0;
 }
 
-inline void ldpblr(struct cheri_object * cheri_obj){
+inline void ldpblr(CHERI_OBJECT * obj){
 	asm(
 		"ldpblr c0, [%w[pair]]\n\t"
 		: /* output regs */
-		: [pair]"r"(cheri_obj) /* input regs */
+		: [pair]"r"(obj) /* input regs */
   		: "c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","clr","d8","d9","d10","d11","d12","d13","d14","d15"
 		  /* clobbered registers */
 	);
 }
 
-inline void *__capability seal_immediate(void *__capability cap){
-	void *__capability sealed_cap;
+inline CHERI_OBJECT * seal_immediate_pair(CHERI_OBJECT * obj){
+	CHERI_OBJECT * sealed_obj;
 	asm(
-		"seal %[sealed_cap], %[cap], rb\n\t"
-		: [sealed_cap] "=C" (sealed_cap)
-		: [cap] "C" (cap)
+		"seal %[sealed_obj], %[obj], lpb\n\t"
+		: [sealed_obj] "=C" (sealed_obj)
+		: [obj] "C" (obj)
 		: 
 	);
-	return sealed_cap;
+	return sealed_obj;
 }
 
 void print_salary(){	
