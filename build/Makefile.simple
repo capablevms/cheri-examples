@@ -37,12 +37,12 @@ $(BINDIR)/%: %.c $(HFILES)
 $(RUNTGTS): run-%: $(BINDIR)/%
 ifdef SSHPORT
 ifdef RUNDIR
-	ssh -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
-	scp -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)
-	ssh -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t 'cd $(RUNDIR) && ./$(<F)'
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t 'cd $(RUNDIR) && ./$(<F)'
 else
-	scp -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):
-	ssh -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t ./$(<F)
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t ./$(<F)
 endif
 else
 	@echo "'$@' requires SSHPORT to be defined."

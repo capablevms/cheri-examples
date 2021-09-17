@@ -42,9 +42,9 @@ $(BINDIR)/lib%.so: %.c $(HFILES)
 
 run-shared_objects: $(BINDIR)/main $(SOFILES)
 ifdef SSHPORT
-	ssh -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
-	scp -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)
-	ssh -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t 'cd $(RUNDIR) && ./$(<F)'
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t 'cd $(RUNDIR) && ./$(<F)'
 else
 	@echo "'$@' requires SSHPORT to be defined."
 	@false
