@@ -1,8 +1,14 @@
 /* This program  atomically unseal a pair of capabilities
  * (code and data) by calling `ldpblr`, i.e.
  * "Load Pair of capabilities and Branch with Link".
+ * It shows that `ldpblr` can unseal the pair but the unsealed
+ * result is not copied to any intermediate register. Thus,
+ * it is not available outside the call. This program, in fact,
+ * crashes when tries to read `datacap`.
+ * 
  * See "ARM Architecture Reference Manual Supplement Morello"
- * (https://developer.arm.com/documentation/ddi0606/latest).
+ * (https://developer.arm.com/documentation/ddi0606/latest)
+ * for further details regarding `ldpblr`.
  */
 
 #include "../include/common.h"
@@ -20,7 +26,6 @@ typedef struct cheri_object
 
 CHERI_OBJECT * obj;
 
-// TODO: refactor, move this stuff elsewhere
 void print_salary();
 void ldpblr(struct cheri_object * pair);
 CHERI_OBJECT * seal_immediate_pair(CHERI_OBJECT * obj);
@@ -38,7 +43,6 @@ int main()
 	assert(cheri_is_sealed(obj->codecap));
 	obj = seal_immediate_pair(obj);
 	assert(cheri_is_sealed(obj));
-	pp_cap(obj);
 	
 	ldpblr(obj);
 
@@ -47,10 +51,10 @@ int main()
 
 inline void ldpblr(CHERI_OBJECT * obj){
 	asm(
-		"ldpblr c29, [%w[obj]]\n\t"
+		"ldpblr c0, [%w[obj]]\n\t"
 		: /* output regs */
 		: [obj]"r"(obj) /* input regs */
-  		: "c29","c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","clr","d8","d9","d10","d11","d12","d13","d14","d15"
+  		: "c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","clr","d8","d9","d10","d11","d12","d13","d14","d15"
 		  /* clobbered registers */
 	);
 }
@@ -67,8 +71,12 @@ inline CHERI_OBJECT * seal_immediate_pair(CHERI_OBJECT * obj){
 }
 
 void print_salary(){	
+	// Since `obj` is sealed, the following line
+	// causes an `In-address security exception`
 	uint16_t * salary_ptr = (obj->datacap);
 	printf("Salary: %d\n", *salary_ptr);
 }
+
+
 
 
