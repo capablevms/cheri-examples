@@ -1,0 +1,7 @@
+CHERIBASE ?= $(HOME)/cheri
+SDKBASE ?= $(CHERIBASE)/output/morello-sdk
+CFLAGS := --config cheribsd-morello-hybrid.cfg $(CFLAGS)
+PLATFORM := morello-hybrid
+export
+
+include Makefile.common
