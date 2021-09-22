@@ -1,0 +1,50 @@
+# Copyright (c) 2020-2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for simple examples, which compile each %.c file to a single
+# bin/<platform>/% executable.
+# This should not be invoked directly.
+
+ifndef BINDIR
+$(error build/Makefile.vars should set BINDIR)
+endif
+
+CFILES ?= $(wildcard *.c)
+HFILES ?= $(wildcard include/*.h)
+BINS := $(patsubst %.c,$(BINDIR)/%,$(CFILES))
+RUNTGTS := $(patsubst $(BINDIR)/%,run-%,$(BINS))
+
+.PHONY: all clang-format clean $(RUNTGTS)
+
+all: $(BINS)
+
+clang-format:
+	$(CFORMAT) -i $(CFILES) $(HFILES)
+
+# Remove outputs, but only remove the top-level 'bin/' if it's empty. This
+# mitigates the risk of accidental damage, e.g. if run from a user's home when
+# they have a ~/bin.
+clean:
+	if [ -d bin ]; then \
+		rm -rf $(BINDIR); \
+		rmdir bin --ignore-fail-on-non-empty; \
+	fi
+
+$(BINDIR)/%: %.c $(HFILES)
+	@mkdir -p $(BINDIR)
+	$(CC) $(CFLAGS) $< -o $@
+
+$(RUNTGTS): run-%: $(BINDIR)/%
+ifdef SSHPORT
+ifdef RUNDIR
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t 'cd $(RUNDIR) && ./$(<F)'
+else
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t ./$(<F)
+endif
+else
+	@echo "'$@' requires SSHPORT to be defined."
+	@false
+endif

@@ -3,4 +3,8 @@
 
 include ../build/Makefile.vars.morello-purecap
 include ../build/Makefile.vars.common
-include build/Makefile.employee
+
+RUNDIR := $(RUNDIR)/timsort
+export
+
+include ../build/Makefile.simple

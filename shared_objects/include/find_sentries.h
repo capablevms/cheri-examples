@@ -1,11 +1,10 @@
-#include <cheri/cheric.h>
 #include <stdbool.h>
 
 #include "../../include/common.h"
 
 bool is_pointer(void *ptr)
 {
-	if (cheri_gettag(ptr))
+	if (cheri_tag_get(ptr))
 	{
 		return true;
 	}
@@ -15,21 +14,21 @@ bool is_pointer(void *ptr)
 bool scan_range(void *ptr, void *exact)
 {
 	bool found = false;
-	for (void *iter = cheri_setoffset(ptr, 0); cheri_getoffset(iter) < cheri_getlength(iter);
-		 iter = cheri_incoffset(iter, 16))
+	for (void *iter = cheri_offset_set(ptr, 0); cheri_offset_get(iter) < cheri_length_get(iter);
+		 iter = cheri_offset_set(iter, cheri_offset_get(iter) + 16))
 	{
 		void *current = *(void **) iter;
 		if (is_pointer(current))
 		{
-			if (cheri_getsealed(current))
+			if (cheri_is_sealed(current))
 			{
-				if (cheri_getaddress(current) == cheri_getaddress(exact))
+				if (cheri_address_get(current) == cheri_address_get(exact))
 				{
 					found = true;
 					printf("[Exact match] ");
 				}
-				else if (cheri_gettop(current) == cheri_gettop(exact) &&
-						 cheri_getbase(current) == cheri_getbase(exact))
+				else if (cheri_length_get(current) == cheri_length_get(exact) &&
+						 cheri_base_get(current) == cheri_base_get(exact))
 				{
 					printf("[Range match] ");
 				}

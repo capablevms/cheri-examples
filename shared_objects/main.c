@@ -3,7 +3,6 @@
  */
 
 #include <assert.h>
-#include <cheri/cheric.h>
 #include <dlfcn.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -17,9 +16,6 @@
 void static_variables()
 {
 	increment();
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 	increment();
 	increment();
 
@@ -50,7 +46,7 @@ void unexported_functions()
 	printf("test: %p\n", function_to_search_for);
 
 	printf(" ------- scanning pcc for sealed pointers ------- \n");
-	bool found = scan_range(cheri_getpcc(), function_to_search_for);
+	bool found = scan_range(cheri_pcc_get(), function_to_search_for);
 	assert(found == false);
 }
 
