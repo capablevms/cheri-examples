@@ -1,7 +1,7 @@
 # Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
 # SPDX-License-Identifier: MIT OR Apache-2.0
 
-# Common configuration for 'riscv64-purecap' platforms.
+# Common configuration for 'morello-purecap' platforms.
 # This should not be invoked directly.
 
 CHERIBASE ?= $(HOME)/cheri
