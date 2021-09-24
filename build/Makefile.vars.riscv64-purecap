@@ -6,6 +6,5 @@
 
 CHERIBASE ?= $(HOME)/cheri
 SDKBASE ?= $(CHERIBASE)/output/sdk
-# TODO: This doesn't work without lld. Why not?
-CFLAGS := --config cheribsd-riscv64-purecap.cfg -fuse-ld=lld $(CFLAGS)
+CFLAGS := --config cheribsd-riscv64-purecap.cfg $(CFLAGS)
 PLATFORM := riscv64-purecap
