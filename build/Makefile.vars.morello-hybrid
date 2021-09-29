@@ -1,0 +1,10 @@
+# Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common configuration for 'morello-purecap' platforms.
+# This should not be invoked directly.
+
+CHERIBASE ?= $(HOME)/cheri
+SDKBASE ?= $(CHERIBASE)/output/morello-sdk
+CFLAGS := --config cheribsd-morello-hybrid.cfg $(CFLAGS)
+PLATFORM := morello-hybrid

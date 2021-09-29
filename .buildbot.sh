@@ -22,15 +22,7 @@ for dir in . employee shared_objects timsort; do
     pushd "$dir"
     for platform in $PLATFORMS; do
         make -f Makefile.$platform clean
-        if [ -d bin/$platform ]; then
-            echo "Error: 'make clean' did not clean the output directory."
-            false
-        fi
         make -f Makefile.$platform all
-        if [ ! -d bin/$platform ]; then
-            echo "Error: 'make all' did not produce the expected output."
-            false
-        fi
     done
     popd
 done
