@@ -7,7 +7,7 @@
  * Print information about a capability
  */
 
-void pp_cap(void *ptr)
+void pp_cap(void *__capability ptr)
 {
 	uint64_t length = cheri_length_get(ptr);
 	uint64_t address = cheri_address_get(ptr);
