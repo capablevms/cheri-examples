@@ -15,23 +15,24 @@ echo "Checking clang-format..."
 CLANG_FORMAT="$CHERIBASE"/output/sdk/bin/clang-format
 find . -iname "*.c" -o -iname "*.h" -o -iname "*.cpp" -o -iname "*.hpp" | xargs "$CLANG_FORMAT" --dry-run -Werror
 
-echo "Checking that all examples build for all platforms..."
+echo "Checking that all the purecap examples build for all platforms..."
 PLATFORMS='riscv64-purecap morello-purecap'
 # TODO: Add "example_allocators".
 for dir in . employee shared_objects timsort; do
     pushd "$dir"
     for platform in $PLATFORMS; do
         make -f Makefile.$platform clean
-        if [ -d bin/$platform ]; then
-            echo "Error: 'make clean' did not clean the output directory."
-            false
-        fi
         make -f Makefile.$platform all
-        if [ ! -d bin/$platform ]; then
-            echo "Error: 'make all' did not produce the expected output."
-            false
-        fi
     done
+    popd
+done
+
+echo "Checking that all the hybrid examples build on Morello..."
+platform='morello-hybrid'
+for dir in hybrid; do
+    pushd "$dir"
+        make -f Makefile.$platform clean
+        make -f Makefile.$platform all
     popd
 done
 
