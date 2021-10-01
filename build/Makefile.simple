@@ -9,6 +9,7 @@ ifndef BINDIR
 $(error build/Makefile.vars should set BINDIR)
 endif
 
+SHARED_SOURCES ?=
 CFILES ?= $(wildcard *.c)
 HFILES ?= $(wildcard include/*.h)
 BINS := $(patsubst %.c,$(BINDIR)/%,$(CFILES))
@@ -30,9 +31,9 @@ clean:
 		rmdir bin --ignore-fail-on-non-empty; \
 	fi
 
-$(BINDIR)/%: %.c $(HFILES)
+$(BINDIR)/%: %.c $(SHARED_SOURCES) $(HFILES)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< $(SHARED_SOURCES) -o $@
 
 $(RUNTGTS): run-%: $(BINDIR)/%
 ifdef SSHPORT
