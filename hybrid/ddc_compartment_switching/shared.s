@@ -8,8 +8,6 @@
 .global switch_compartment
 .type switch_compartment, "function"
 switch_compartment:
-    // int switch_compartment(int a, int b, void * stack, size_t size)
-    //
     // For the purposes of this demo, `stack + size` must be 16-byte-aligned, so
     // that it is suitable for use as a stack pointer with no additional
     // alignment logic. In addition, the range [stack, stack+size) must be
@@ -31,25 +29,23 @@ switch_compartment:
     //
     // Arguments are arranged as follows:
     //
-    //      w0: a
-    //      w1: b
-    //      x2: stack   (pointer, not capability, since this is hybrid)
-    //      x3: size
+    //      x0: stack   (pointer, not capability, since this is hybrid)
+    //      x1: size
     //
     // The result will be returned in w0.
 
     // Derive a new DDC to cover the new stack.
     mrs       c10, DDC
-    scvalue   c11, c10, x2
-    scbndse   c11, c11, x3
+    scvalue   c11, c10, x0
+    scbndse   c11, c11, x1
     msr       DDC, c11
 
     // Replace the stack pointer.
     mov       x12, sp
-    add       sp, x2, x3
+    add       sp, x0, x1
 
     // Save the old DDC, stack pointer and return address on the new stack, so
-    // we can restore it when we return..
+    // we can restore it when we return.
     // This is the leaky part of the compartmentalisation. If strict
     // compartments are required, some other technique must be used, such as a
     // privileged switcher or sealing mechanism (e.g. using `ldpblr`).
@@ -69,15 +65,11 @@ switch_compartment:
     // Note that this is _not_ an AAPCS64 frame record, even though it looks a
     // bit like one. We don't touch FP here, and since it is not a capability
     // (in hybrid mode), unwinding would fail anyway.
-
-    // Clean capabilities left in arguments.
-    mov w0, w0  // `a`
-    mov w1, w1  // `b`
-    bl (clean + 8)
+    bl clean
     bl compartment_simple_fun
     // Clean capabilities left in the return value.
     mov w0, w0
-    bl (clean + 4)
+    bl clean
 
     // Restore the caller's context and compartment.
     ldr       c10, [sp]
@@ -91,7 +83,7 @@ switch_compartment:
 
     // Inner helper for cleaning capabilities from registers, either side of an
     // AAPCS64 function call where some level of distrust exists between caller
-    // and callee..
+    // and callee.
     //
     // Depending on the trust model, this might not be required, but the process
     // is included here for demonstration purposes. Note that if data needs to
