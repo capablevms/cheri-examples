@@ -29,7 +29,7 @@ done
 
 echo "Checking that all the hybrid examples build on Morello..."
 platform='morello-hybrid'
-for dir in hybrid; do
+for dir in hybrid hybrid/ddc_compartment_switching; do
     pushd "$dir"
         make -f Makefile.$platform clean
         make -f Makefile.$platform all
@@ -39,21 +39,19 @@ done
 export SSHPORT=10021
 export PYTHONPATH="$CHERIBUILD"/test-scripts
 
-echo "Running tests for 'riscv64' using QEMU."
+echo "Running tests for 'morello-hybrid' using QEMU..."
 args=(
-    --architecture riscv64
+    --architecture morello-hybrid
     # Qemu System to use
-    --qemu-cmd $HOME/cheri/output/sdk/bin/qemu-system-riscv64cheri
-    # Kernel (to avoid the default one)
-    --kernel $HOME/cheri/output/rootfs-riscv64-purecap/boot/kernel/kernel
-    # Bios (to avoid the default one)
-    --bios bbl-riscv64cheri-virt-fw_jump.bin
-    --disk-image $HOME/cheri/output/cheribsd-riscv64-purecap.img
+    --qemu-cmd $HOME/cheri/output/morello-sdk/bin/qemu-system-morello
+    --bios edk2-aarch64-code.fd
+    --disk-image $HOME/cheri/output/cheribsd-morello-hybrid.img
     # Required build-dir in CheriBSD
     --build-dir .
     --ssh-port $SSHPORT
     --ssh-key $HOME/.ssh/id_ed25519.pub
     )
-BUILDBOT_PLATFORM=riscv64-purecap python3 tests/run_cheri_examples.py "${args[@]}"
+BUILDBOT_PLATFORM=morello-hybrid python3 tests/run_cheri_examples.py "${args[@]}"
 
-# TODO: Run tests for Morello too.
+# TODO: Run tests for `morello-purecap` and `riscv64-purecap` too
+# This is related to https://github.com/CTSRD-CHERI/cheribuild/issues/182
