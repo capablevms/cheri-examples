@@ -4,7 +4,7 @@
  ***/
 
 #if !defined(__aarch64__)
-#error "This utility functions are Morello only"
+#error "These utility functions are Morello only"
 #endif
 
 void write_ddc(void *__capability cap);
