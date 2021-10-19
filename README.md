@@ -54,5 +54,5 @@ and `RUNHOST` can also be specified if required, but default to `root` and
 For example:
 
 ```
-$ SSH_PORT=12345 make -f Makefile.morello-purecap run-seal
+$ SSHPORT=12345 make -f Makefile.morello-purecap run-seal
 ```
