@@ -28,13 +28,9 @@ int main()
 	size_t compartment_size = 2000;
 	simple_block[1900] = 80;
 
-	// Make the function within the sentry explicitly executable by
-	// inheriting the PCC executable permission
-	void *__capability switch_exec =
-		cheri_perms_and((void *__capability) switch_compartment,
-						cheri_perms_get(cheri_pcc_get()) | CHERI_PERM_EXECUTE);
 	// Wrap our function in a sentry
-	int (*__capability wrap_fn)(void *, size_t) = cheri_sentry_create(switch_exec);
+	int (*__capability wrap_fn)(void *, size_t) =
+		cheri_sentry_create((void *__capability) switch_compartment);
 
 	assert(cheri_is_valid(wrap_fn));
 	assert(cheri_is_sentry(wrap_fn));
