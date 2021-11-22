@@ -1632,14 +1632,13 @@ uint32_t wfi()
 }
 
 uint32_t xor
-	(uint32_t rd, uint32_t rs1, uint32_t rs2)
-{
-	uint32_t i = 0x00004033; // 33 40 00 00
-	i |= (((rd >> 0) & 0b11111) << 7);
-	i |= (((rs1 >> 0) & 0b11111) << 15);
-	i |= (((rs2 >> 0) & 0b11111) << 20);
-	return i;
-}
+	(uint32_t rd, uint32_t rs1, uint32_t rs2) {
+		uint32_t i = 0x00004033; // 33 40 00 00
+		i |= (((rd >> 0) & 0b11111) << 7);
+		i |= (((rs1 >> 0) & 0b11111) << 15);
+		i |= (((rs2 >> 0) & 0b11111) << 20);
+		return i;
+	}
 
 	uint32_t xori(uint32_t rd, uint32_t rs1, uint32_t imm)
 {
