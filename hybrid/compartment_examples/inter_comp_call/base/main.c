@@ -19,8 +19,8 @@
  * executable area is approximated (`main.c:96`).
  */
 
-#include "../../../include/common.h"
-#include "../../include/utils.h"
+#include "../../../../include/common.h"
+#include "../../../include/utils.h"
 
 #include <assert.h>
 #include <stddef.h>

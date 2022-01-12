@@ -62,9 +62,12 @@ function run {
 # Tests that should fail
 run to_fail hybrid/ddc_compartment_switching ddc_compartment_switching_nok
 run to_fail hybrid ddc_invalid ddc_null
+run to_fail hybrid/compartment_examples/inter_comp_call/secure-try_deref main
 # Tests that should pass
 run OK hybrid/ddc_compartment_switching ddc_compartment_switching
 run OK hybrid basic_ddc
+run OK hybrid/compartment_examples/inter_comp_call/base main
+run OK hybrid/compartment_examples/inter_comp_call/secure main
 
 # TODO: 'timsort' works, but takes a very long time. Is it useful to test a
 # smaller data set?
