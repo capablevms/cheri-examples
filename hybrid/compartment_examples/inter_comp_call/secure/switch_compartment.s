@@ -1,23 +1,3 @@
-// Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
-// SPDX-License-Identifier: MIT OR Apache-2.0
-
-#include "main.h"
-
-.global comp_f_fn
-.global comp_g_fn
-.global comp_f_fn_end
-.global comp_g_fn_end
-
-.text
-.balign 4
-
-.global executive_switch
-.type executive_switch, "function"
-executive_switch:
-    mov      c29, c0
-    mov      x0, #0
-    bl       switch_compartment
-
 /* The compartment switch function. Expects compartment information to be
  * stored in memory (defined by the capability stored in register `c29`).
  * Performs a compartment switch based on the id saved in `x0` (currently just
@@ -52,14 +32,11 @@ switch_compartment:
     ldr       x11, [x29, x11]
     mov       sp, x11
 
-    // Derive a new clr to restore PCC, and store it.
-    cvtp      c11, lr
-
     // Install compartment DDC
     msr       DDC, c1
 
-    // Save old DDC (c2), old SP (x12), old LR (c11) on stack
-    stp       c2, c11, [sp, #-48]!
+    // Save old DDC (c2), old SP (x12), old CLR (clr) on stack
+    stp       c2, clr, [sp, #-48]!
     str       x12, [sp, #32]
 
     // Stack layout at this point:
@@ -94,46 +71,6 @@ switch_compartment:
     mov       sp, x12
 
     ret       clr
-
-.type get_comp_switcher_ref, "function"
-get_comp_switcher_ref:
-    mov       x1, #5000
-    sub       x1, x1, #16
-    add       c0, c0, x1
-    ret
-
-/* Compartment from which we call the switcher to perform inter-compartment
- * transition. The call is via a capability, to update the PCC bounds
- * appropriately to cover `switch_compartment`.
- */
-.type comp_f_fn, "function"
-comp_f_fn:
-    // Retrieve local capability containing switcher information
-    mrs       c1, DDC
-    gclim     x1, c1
-    sub       x1, x1, #16
-    ldr       c1, [x1]
-
-    // Try to dereference it to retrieve switcher DDC; this is expected to fail
-    // due to the local capability being sealed (`main.c:143`).
-    ldr       c1, [c1]
-
-    ldr       clr, [sp], #16
-
-    ret       clr
-comp_f_fn_end:
-
-/* The function in this compartment just writes to some memory within its
- * bounds, to ensure it is properly called.
- */
-.type comp_g_fn, "function"
-comp_g_fn:
-    mrs       c10, DDC
-    mov       x11, 42
-    str       x11, [x10, #4000]
-
-    ret clr
-comp_g_fn_end:
 
     // Inner helper for cleaning capabilities from registers, either side of an
     // AAPCS64 function call where some level of distrust exists between caller
@@ -184,4 +121,5 @@ clean:
     // We need LR (x30) to return. The call to this helper already cleaned it.
     // Don't replace SP; this needs special handling by the caller anyway.
     ret
+switch_compartment_end:
 

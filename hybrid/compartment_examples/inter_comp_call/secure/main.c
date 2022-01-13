@@ -61,8 +61,9 @@ extern void executive_switch(void *__capability);
 extern int switch_compartment();
 extern void comp_f_fn();
 extern void comp_g_fn();
-extern void *comp_f_fn_end;
-extern void *comp_g_fn_end;
+extern void comp_f_fn_end();
+extern void comp_g_fn_end();
+extern void switch_compartment_end();
 
 /*******************************************************************************
  * Types & Consts
@@ -133,7 +134,8 @@ struct comp comps[COMP_COUNT];
 void init_comps()
 {
 	void *__capability switch_cap = (void *__capability) switch_compartment;
-	switch_cap = cheri_bounds_set(switch_cap, 80 * 4);
+	size_t switcher_size = (uintptr_t) switch_compartment_end - (uintptr_t) switch_compartment;
+	switch_cap = cheri_bounds_set(switch_cap, switcher_size);
 	switcher_caps[1] = switch_cap;
 
 	void *__capability comps_addr = (void *__capability) &comps;
@@ -173,8 +175,6 @@ void add_comp(uint8_t *_start_addr, void (*_comp_fn)(), void *_comp_fn_end)
 	// Set up a capability pointing to the function we want to call within the
 	// compartment. This will be loaded as the PCC when the function is called.
 	void *__capability comp_fn = (void *__capability) _comp_fn;
-	// 40 is arbitary; meant to be the size of the executable function within
-	// compartment
 	size_t comp_fn_size = (uintptr_t) _comp_fn_end - (uintptr_t) _comp_fn;
 	comp_fn = cheri_bounds_set(comp_fn, comp_fn_size);
 	new_comp.comp_fn = comp_fn;
