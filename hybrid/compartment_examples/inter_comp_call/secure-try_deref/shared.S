@@ -26,4 +26,4 @@ executive_switch:
 
 #include "switch_compartment.s"
 
-#include "compartments.s"
+#include "compartments-try_deref.s"
