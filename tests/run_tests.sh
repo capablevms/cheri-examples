@@ -63,6 +63,8 @@ function run {
 run to_fail hybrid/ddc_compartment_switching ddc_compartment_switching_nok
 run to_fail hybrid ddc_invalid ddc_null
 run to_fail hybrid/compartment_examples/inter_comp_call/secure-try_deref main
+run to_fail hybrid/compartment_examples/inter_comp_call/secure-redirect_clr main
+run to_fail hybrid/compartment_examples/inter_comp_call/secure-update_ddc main
 # Tests that should pass
 run OK hybrid/ddc_compartment_switching ddc_compartment_switching
 run OK hybrid basic_ddc

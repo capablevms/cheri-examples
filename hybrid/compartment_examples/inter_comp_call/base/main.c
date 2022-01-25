@@ -70,7 +70,7 @@ struct comp
 };
 
 // ASM offsets, included here for validation
-#include "main.h"
+#include "../include/base.h"
 
 static_assert(COMP_SIZE == sizeof(struct comp), "Invalid `COMP_SIZE` provided");
 static_assert(COMP_OFFSET_STK_ADDR == offsetof(struct comp, stack_addr),

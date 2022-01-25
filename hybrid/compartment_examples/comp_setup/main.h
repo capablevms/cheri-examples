@@ -1,6 +1,0 @@
-#define COMP_COUNT 1
-#define COMP_SIZE 80
-#define COMP_OFFSET_STK_ADDR 8
-#define COMP_OFFSET_STK_LEN 16
-#define COMP_OFFSET_DDC 48
-#define COMP_OFFSET_PCC 64
