@@ -17,7 +17,7 @@
 # - SSHUSER (defaults to 'root')
 # - SSHHOST (defaults to 'localhost')
 #
-# TODO: Extend this to cover interactive examples and other architectures. 
+# TODO: Extend this to cover interactive examples and other architectures.
 # For now, we just test examples on `morello-hybrid`.
 
 set -e
@@ -56,20 +56,27 @@ function run {
 
 # TODO: `mmap` also fails, but looks like it is intended to pass.
 
-# TODO: PURECAP tests
-
-# HYBRID TESTS
-# Tests that should fail
-run to_fail hybrid/ddc_compartment_switching ddc_compartment_switching_nok
-run to_fail hybrid ddc_invalid ddc_null
-run to_fail hybrid/compartment_examples/inter_comp_call/secure-try_deref main
-run to_fail hybrid/compartment_examples/inter_comp_call/secure-redirect_clr main
-run to_fail hybrid/compartment_examples/inter_comp_call/secure-update_ddc main
-# Tests that should pass
-run OK hybrid/ddc_compartment_switching ddc_compartment_switching
-run OK hybrid basic_ddc
-run OK hybrid/compartment_examples/inter_comp_call/base main
-run OK hybrid/compartment_examples/inter_comp_call/secure main
+# PURECAP tests
+# TODO: add previous examples
+if [ "$1" = "riscv64" ]; then
+    run OK shared_objects shared_objects-pcc_bounds_check_main
+elif [ "$1" = "morello-hybrid" ]; then
+    # HYBRID TESTS
+    # Tests that should fail
+    run to_fail hybrid/ddc_compartment_switching ddc_compartment_switching_nok
+    run to_fail hybrid ddc_invalid ddc_null
+    run to_fail hybrid/compartment_examples/inter_comp_call/secure-try_deref main
+    run to_fail hybrid/compartment_examples/inter_comp_call/secure-redirect_clr main
+    run to_fail hybrid/compartment_examples/inter_comp_call/secure-update_ddc main
+    # Tests that should pass
+    run OK hybrid/ddc_compartment_switching ddc_compartment_switching
+    run OK hybrid basic_ddc
+    run OK hybrid/compartment_examples/inter_comp_call/base main
+    run OK hybrid/compartment_examples/inter_comp_call/secure main
+else
+    echo "$1 not supported (yet)."
+    exit 1
+fi
 
 # TODO: 'timsort' works, but takes a very long time. Is it useful to test a
 # smaller data set?
