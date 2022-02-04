@@ -10,6 +10,7 @@
 
 #include "include/compartment_per_object.h"
 #include "include/find_sentries.h"
+#include "include/static_function.h"
 #include "include/static_variable.h"
 #include "include/unexported_function.h"
 

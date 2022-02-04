@@ -16,7 +16,7 @@ endif
 
 CFILES := $(wildcard *.c)
 HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
-LIBNAMES := static_variable unexported_function compartment_per_object
+LIBNAMES := static_variable unexported_function compartment_per_object static_function
 SOFILES := $(patsubst %,$(BINDIR)/lib%.so,$(LIBNAMES))
 
 .PHONY: all clang-format clean run-shared_objects
@@ -32,15 +32,15 @@ clean:
 		rmdir bin --ignore-fail-on-non-empty; \
 	fi
 
-$(BINDIR)/main: main.c $(HFILES) $(SOFILES)
+$(BINDIR)/%: %.c $(HFILES) $(SOFILES)
 	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) -fpie -L $(BINDIR) -Wl,-rpath,. -ldl $(patsubst %,-l%,$(LIBNAMES)) $< -o $(BINDIR)/main
+	$(CC) $(CFLAGS) -fpie -L $(BINDIR) -Wl,-rpath,. -ldl $(patsubst %,-l%,$(LIBNAMES)) $< -o $@
 
 $(BINDIR)/lib%.so: %.c $(HFILES)
 	@mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) -fPIC -shared $< -o $@
 
-run-shared_objects: $(BINDIR)/main $(SOFILES)
+run-shared_objects-%: $(BINDIR)/% $(SOFILES)
 ifdef SSHPORT
 	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
 	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)

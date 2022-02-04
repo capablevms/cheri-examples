@@ -34,7 +34,8 @@ def run_cheri_examples_tests(qemu: boot_cheribsd.QemuCheriBSDInstance, args: arg
         boot_cheribsd.set_ld_library_path_with_sysroot(qemu)
     boot_cheribsd.info("Running tests for cheri-examples")
 
-    return os.system("./tests/run_tests.sh") == 0
+    # Run the tests according to the architecture
+    return os.system(f"./tests/run_tests.sh {args.architecture}") == 0
 
 
 if __name__ == '__main__':
