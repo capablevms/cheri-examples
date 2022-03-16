@@ -73,6 +73,7 @@ elif [ "$1" = "morello-hybrid" ]; then
     run OK hybrid basic_ddc
     run OK hybrid/compartment_examples/inter_comp_call/base main
     run OK hybrid/compartment_examples/inter_comp_call/secure main
+    run OK syscall-restrict syscall-restrict
 else
     echo "$1 not supported (yet)."
     exit 1
