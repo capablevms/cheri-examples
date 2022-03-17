@@ -1,7 +1,7 @@
 #!/bin/bash
 # vim: expandtab sts=0 sw=4 smarttab
 #
-# Copyright (c) 2020-2021 The CapableVMs "CHERI Examples" Contributors.
+# Copyright (c) 2020-2022 The CapableVMs "CHERI Examples" Contributors.
 # SPDX-License-Identifier: MIT OR Apache-2.0
 
 set -e
@@ -30,7 +30,7 @@ done
 
 echo "Checking that all the hybrid examples build on Morello..."
 platform='morello-hybrid'
-for dir in hybrid hybrid/ddc_compartment_switching; do
+for dir in hybrid hybrid/ddc_compartment_switching syscall-restrict; do
     pushd "$dir"
     make -f Makefile.$platform clean
     make -f Makefile.$platform all
