@@ -33,8 +33,8 @@ if [ -z "$BUILDBOT_PLATFORM" ]; then
 fi
 $ERROR && exit 1
 
-export SSH_OPTIONS='-o "StrictHostKeyChecking no"'
-export SCP_OPTIONS='-o "StrictHostKeyChecking no"'
+export SSH_OPTIONS='-vvv -o "StrictHostKeyChecking no"'
+export SCP_OPTIONS='-vvv -o "StrictHostKeyChecking no"'
 
 function run {
     pushd "$2"
