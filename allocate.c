@@ -19,4 +19,5 @@ int main()
 
 	void *memory = malloc(size);
 	pp_cap(memory);
+	return 0;
 }
