@@ -76,3 +76,6 @@ fi
 
 # TODO: Run tests for `morello-purecap` and `riscv64-purecap` too
 # This is related to https://github.com/CTSRD-CHERI/cheribuild/issues/182
+
+
+#
