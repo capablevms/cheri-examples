@@ -6,6 +6,11 @@
 **  Modified by:  M. Richards, 20 Oct 1998
 **    made minor corrections to improve ANSI compliance (suggested
 **    by David Levine)
+**  Modified by:  Jeremy Singer, 25 May 2022
+**    adapted to use uintptr_t for compatibility with architectures
+**    that do not have word-sized pointers (e.g. CHERI) 
+**    also adapted to use Boehm-Demers-Weiser GC instead of system
+**    malloc, when compiled with -DGC
 **
 **  Compile with, say
 **
@@ -18,6 +23,7 @@
 */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "harness.h"
@@ -86,8 +92,8 @@ struct task
     struct packet  *t_wkq;
     int             t_state;
     struct task    *(*t_fn)(struct packet *);
-    long            t_v1;
-    long            t_v2;
+    uintptr_t       t_v1;
+    uintptr_t       t_v2;
 };
 
 char  alphabet[28] = "0ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -95,8 +101,8 @@ struct task *tasktab[11]  =  {(struct task *)10,0,0,0,0,0,0,0,0,0,0};
 struct task *tasklist    =  0;
 struct task *tcb;
 long    taskid;
-long    v1;
-long    v2;
+uintptr_t v1;
+uintptr_t v2;
 int     qpktcount    =  0;
 int     holdcount    =  0;
 int     tracing      =  0;
@@ -109,8 +115,8 @@ void createtask(int id,
                 struct packet *wkq,
                 int state,
                 struct task *(*fn)(struct packet *),
-                long v1,
-                long v2)
+                uintptr_t v1,
+                uintptr_t v2)
 {
     struct task *t = (struct task *)MALLOC(sizeof(struct task));
 
@@ -309,7 +315,7 @@ struct task *handlerfn(struct packet *pkt)
     count = workpkt->p_a1;
 
     if ( count > BUFSIZE ) {
-      v1 = (long)(((struct packet *)v1)->p_link);
+      v1 = (uintptr_t)(((struct packet *)v1)->p_link);
       return ( qpkt(workpkt) );
     }
 
@@ -317,7 +323,7 @@ struct task *handlerfn(struct packet *pkt)
       struct packet *devpkt;
 
       devpkt = (struct packet *)v2;
-      v2 = (long)(((struct packet *)v2)->p_link);
+      v2 = (uintptr_t)(((struct packet *)v2)->p_link);
       devpkt->p_a1 = workpkt->p_a2[count];
       workpkt->p_a1 = count+1;
       return( qpkt(devpkt) );
@@ -337,7 +343,7 @@ struct task *devfn(struct packet *pkt)
     }
     else
     {
-        v1 = (long)pkt;
+        v1 = (uintptr_t)pkt;
         if (tracing) trace(pkt->p_a1);
         return ( holdself() );
     }
