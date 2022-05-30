@@ -22,6 +22,13 @@
 
 #include "harness.h"
 
+#ifdef GC
+  #include "gc.h"
+  #define MALLOC GC_MALLOC
+#else
+  #define MALLOC malloc
+#endif // GC
+
 #ifdef bench100
 #define                Count           10000*100
 #define                Qpktcountval    2326410
@@ -105,7 +112,7 @@ void createtask(int id,
                 long v1,
                 long v2)
 {
-    struct task *t = (struct task *)malloc(sizeof(struct task));
+    struct task *t = (struct task *)MALLOC(sizeof(struct task));
 
     tasktab[id] = t;
     t->t_link   = tasklist;
@@ -122,7 +129,7 @@ void createtask(int id,
 struct packet *pkt(struct packet *link, int id, int kind)
 {
     int i;
-    struct packet *p = (struct packet *)malloc(sizeof(struct packet));
+    struct packet *p = (struct packet *)MALLOC(sizeof(struct packet));
 
     for (i=0; i<=BUFSIZE; i++)
         p->p_a2[i] = 0;
