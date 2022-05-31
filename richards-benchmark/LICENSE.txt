@@ -1,0 +1,3 @@
+The Richards benchmark has been placed into the public domain by
+Martin Richards. The benchmark harness has been placed into the
+public domain by Stefan Marr
