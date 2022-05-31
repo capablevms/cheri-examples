@@ -1,3 +1,5 @@
+// clang-format off
+
 /** A simple harness for the C benchmarks
  *
  * It is included by every benchmark file and provides the time measuring,

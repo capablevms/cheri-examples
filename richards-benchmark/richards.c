@@ -1,3 +1,5 @@
+// clang-format off
+
 /*  C version of the systems programming language benchmark
 **  Author:  M. J. Jordan  Cambridge Computer Laboratory.
 **
