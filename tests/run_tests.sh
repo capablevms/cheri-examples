@@ -18,7 +18,6 @@
 # - SSHHOST (defaults to 'localhost')
 #
 # TODO: Extend this to cover interactive examples and other architectures.
-# For now, we just test examples on `morello-hybrid`.
 
 set -e
 
@@ -58,7 +57,7 @@ function run {
 
 # PURECAP tests
 # TODO: add previous examples
-if [ "$1" = "riscv64" ]; then
+if [ "$1" = "riscv64" ] || [ "$1" = "morello-purecap" ]; then
     run OK shared_objects shared_objects-pcc_bounds_check_main
 elif [ "$1" = "morello-hybrid" ]; then
     # HYBRID TESTS
@@ -75,7 +74,7 @@ elif [ "$1" = "morello-hybrid" ]; then
     run OK hybrid/compartment_examples/inter_comp_call/secure main
     run OK syscall-restrict syscall-restrict
 else
-    echo "$1 not supported (yet)."
+    echo "$1 not recognised."
     exit 1
 fi
 

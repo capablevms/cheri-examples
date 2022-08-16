@@ -40,7 +40,7 @@ done
 export SSHPORT=10021
 export PYTHONPATH="$CHERIBUILD"/test-scripts
 
-if [ "$1" = "riscv64" ]; then
+if [ "$1" = "riscv64-purecap" ]; then
     echo "Running tests for 'riscv64-purecap' using QEMU."
     args=(
         --architecture riscv64
@@ -69,10 +69,21 @@ elif [ "$1" = "morello-hybrid" ]; then
         --ssh-key $HOME/.ssh/id_ed25519.pub
     )
     BUILDBOT_PLATFORM=morello-hybrid python3 tests/run_cheri_examples.py "${args[@]}"
+elif [ "$1" = "morello-purecap" ]; then
+    echo "Running tests for 'morello-purecap' using QEMU..."
+	args=(
+	--architecture morello-purecap
+	# Qemu System to use
+	--qemu-cmd $HOME/cheri/output/morello-sdk/bin/qemu-system-morello
+	--bios edk2-aarch64-code.fd
+	--disk-image $HOME/cheri/output/cheribsd-morello-purecap.img
+	# Required build-dir in CheriBSD
+	--build-dir .
+	--ssh-port $SSHPORT
+	--ssh-key $HOME/.ssh/id_ed25519.pub
+	)
+    BUILDBOT_PLATFORM=morello-purecap python3 tests/run_cheri_examples.py "${args[@]}"
 else
-    echo "$1 not supported (yet)."
+    echo "$1 not recognised."
     exit 1
 fi
-
-# TODO: Run tests for `morello-purecap` and `riscv64-purecap` too
-# This is related to https://github.com/CTSRD-CHERI/cheribuild/issues/182
