@@ -56,3 +56,5 @@ For example:
 ```
 $ SSHPORT=12345 make -f Makefile.morello-purecap run-seal
 ```
+
+Testing new CI...
