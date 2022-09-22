@@ -6,14 +6,13 @@
 
 set -e
 
-export CHERIBASE=~/cheri
+CHERI_DIR=/home/buildbot/cheri/output
 CHERIBUILD=~/build
-export TEST_TARGET=$1
 
 echo "Checking clang-format..."
 # Note that `sdk` and `morello-sdk` contain different versions of clang-format,
 # so we have to pick one and use it consistently.
-CLANG_FORMAT="$CHERIBASE"/output/sdk/bin/clang-format
+CLANG_FORMAT=$CHERI_DIR/morello-sdk/bin/clang-format
 find . -iname "*.c" -o -iname "*.h" -o -iname "*.cpp" -o -iname "*.hpp" | xargs "$CLANG_FORMAT" --dry-run -Werror
 
 echo "Checking that all the purecap examples build for all platforms..."
@@ -40,50 +39,45 @@ done
 export SSHPORT=10021
 export PYTHONPATH="$CHERIBUILD"/test-scripts
 
-if [ "$1" = "riscv64-purecap" ]; then
-    echo "Running tests for 'riscv64-purecap' using QEMU."
-    args=(
-        --architecture riscv64
-        # Qemu System to use
-        --qemu-cmd $HOME/cheri/output/sdk/bin/qemu-system-riscv64cheri
-        --kernel $HOME/cheri/output/rootfs-riscv64-purecap/boot/kernel/kernel
-        --bios bbl-riscv64cheri-virt-fw_jump.bin
-        --disk-image $HOME/cheri/output/cheribsd-riscv64-purecap.img
-        # Required build-dir in CheriBSD
-        --build-dir .
-        --ssh-port $SSHPORT
-        --ssh-key $HOME/.ssh/id_ed25519.pub
-    )
-    BUILDBOT_PLATFORM=riscv64-purecap python3 tests/run_cheri_examples.py "${args[@]}"
-elif [ "$1" = "morello-hybrid" ]; then
-    echo "Running tests for 'morello-hybrid' using QEMU..."
-    args=(
-        --architecture morello-hybrid
-        # Qemu System to use
-        --qemu-cmd $HOME/cheri/output/morello-sdk/bin/qemu-system-morello
-        --bios edk2-aarch64-code.fd
-        --disk-image $HOME/cheri/output/cheribsd-morello-hybrid.img
-        # Required build-dir in CheriBSD
-        --build-dir .
-        --ssh-port $SSHPORT
-        --ssh-key $HOME/.ssh/id_ed25519.pub
-    )
-    BUILDBOT_PLATFORM=morello-hybrid python3 tests/run_cheri_examples.py "${args[@]}"
-elif [ "$1" = "morello-purecap" ]; then
-    echo "Running tests for 'morello-purecap' using QEMU..."
-	args=(
-	--architecture morello-purecap
-	# Qemu System to use
-	--qemu-cmd $HOME/cheri/output/morello-sdk/bin/qemu-system-morello
-	--bios edk2-aarch64-code.fd
-	--disk-image $HOME/cheri/output/cheribsd-morello-purecap.img
-	# Required build-dir in CheriBSD
-	--build-dir .
-	--ssh-port $SSHPORT
-	--ssh-key $HOME/.ssh/id_ed25519.pub
-	)
-    BUILDBOT_PLATFORM=morello-purecap python3 tests/run_cheri_examples.py "${args[@]}"
-else
-    echo "$1 not recognised."
-    exit 1
-fi
+echo "Running tests for 'riscv64-purecap' using QEMU."
+args=(
+    --architecture riscv64
+    # Qemu System to use
+    --qemu-cmd $CHERI_DIR/sdk/bin/qemu-system-riscv64cheri
+    --kernel $CHERI_DIR/rootfs-riscv64-purecap/boot/kernel/kernel
+    --bios bbl-riscv64cheri-virt-fw_jump.bin
+    --disk-image $CHERI_DIR/cheribsd-riscv64-purecap.img
+    # Required build-dir in CheriBSD
+    --build-dir .
+    --ssh-port $SSHPORT
+    --ssh-key $HOME/.ssh/id_ed25519.pub
+)
+BUILDBOT_PLATFORM=riscv64-purecap python3 tests/run_cheri_examples.py "${args[@]}"
+
+echo "Running tests for 'morello-hybrid' using QEMU..."
+args=(
+    --architecture morello-hybrid
+    # Qemu System to use
+    --qemu-cmd $CHERI_DIR/sdk/bin/qemu-system-morello
+    --bios edk2-aarch64-code.fd
+    --disk-image $CHERI_DIR/cheribsd-morello-hybrid.img
+    # Required build-dir in CheriBSD
+    --build-dir .
+    --ssh-port $SSHPORT
+    --ssh-key $HOME/.ssh/id_ed25519.pub
+)
+BUILDBOT_PLATFORM=morello-hybrid python3 tests/run_cheri_examples.py "${args[@]}"
+
+echo "Running tests for 'morello-purecap' using QEMU..."
+args=(
+--architecture morello-purecap
+# Qemu System to use
+--qemu-cmd $CHERI_DIR/sdk/bin/qemu-system-morello
+--bios edk2-aarch64-code.fd
+--disk-image $CHERI_DIR/cheribsd-morello-purecap.img
+# Required build-dir in CheriBSD
+--build-dir .
+--ssh-port $SSHPORT
+--ssh-key $HOME/.ssh/id_ed25519.pub
+)
+BUILDBOT_PLATFORM=morello-purecap python3 tests/run_cheri_examples.py "${args[@]}"
