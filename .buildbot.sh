@@ -6,9 +6,6 @@
 
 set -e
 
-CHERI_DIR=/home/buildbot/cheri/output
-CHERIBUILD=~/build
-
 echo "Checking clang-format..."
 # Note that `sdk` and `morello-sdk` contain different versions of clang-format,
 # so we have to pick one and use it consistently.
@@ -37,7 +34,6 @@ for dir in hybrid hybrid/ddc_compartment_switching syscall-restrict; do
 done
 
 export SSHPORT=10021
-export PYTHONPATH="$CHERIBUILD"/test-scripts
 
 echo "Running tests for 'riscv64-purecap' using QEMU."
 args=(
