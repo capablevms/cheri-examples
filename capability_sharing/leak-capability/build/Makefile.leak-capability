@@ -1,0 +1,39 @@
+# Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the leak-capability examples.
+# This should not be invoked directly.
+
+ifdef RUNDIR
+RUNDIR := $(RUNDIR)/leak-capability
+else
+RUNDIR := leak-capability
+endif
+
+HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+export
+
+RUN_SH := ./run.sh
+
+include ../../build/Makefile.simple
+
+.PHONY: scp-run-sh
+
+run-leak-capability: $(BINS) scp-run-sh
+ifdef RUNDIR
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $(BINS) $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'cd $(RUNDIR) && $(RUN_SH)'
+else
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $(BINS) $(RUNUSER)@$(RUNHOST):
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) '$(RUN_SH)'
+endif
+
+scp-run-sh:
+ifdef RUNDIR
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $(RUN_SH) $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'chmod +x $(RUNDIR)/$(RUN_SH)'
+else
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $(RUN_SH) $(RUNUSER)@$(RUNHOST):
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'chmod +x $(RUN_SH)'
+endif

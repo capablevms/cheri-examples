@@ -59,6 +59,9 @@ function run {
 # TODO: add previous examples
 if [ "$1" = "riscv64" ] || [ "$1" = "morello-purecap" ]; then
     run OK shared_objects shared_objects-pcc_bounds_check_main
+    run OK capability_sharing/cap-to-file cap_to_file
+    run OK capability_sharing/read-cap-from-file read-cap-from-file
+    run OK capability_sharing/leak-capability leak-capability
 elif [ "$1" = "morello-hybrid" ]; then
     # HYBRID TESTS
     # Tests that should fail

@@ -1,0 +1,30 @@
+# Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the read-cap-from-file examples.
+# This should not be invoked directly.
+
+ifdef RUNDIR
+RUNDIR := $(RUNDIR)/read-cap-from-file
+else
+RUNDIR := read-cap-from-file
+endif
+
+HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+export
+
+CAP_FILE := "./test-cap.bin"
+
+include ../../build/Makefile.simple
+
+.PHONY: scp-cap-file
+
+run-read-cap-from-file: scp-cap-file run-main
+
+scp-cap-file:
+ifdef RUNDIR
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $(CAP_FILE) $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+else
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $(CAP_FILE) $(RUNUSER)@$(RUNHOST):
+endif
