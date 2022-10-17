@@ -1,6 +1,6 @@
 # Read a capability from a file
 
-This example is not automatically built by the top-level makefiles, but are
+This example is not automatically built by the top-level makefiles, but is
 built in a similar manner:
 
 ```
