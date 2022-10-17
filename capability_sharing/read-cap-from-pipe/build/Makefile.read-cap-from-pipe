@@ -1,0 +1,18 @@
+# Copyright (c) 2022 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the read-cap-from-pipe examples.
+# This should not be invoked directly.
+
+ifdef RUNDIR
+RUNDIR := $(RUNDIR)/read-cap-from-pipe
+else
+RUNDIR := read-cap-from-pipe
+endif
+
+HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+export
+
+RUN_SH := ./run.sh
+
+include ../../build/Makefile.simple

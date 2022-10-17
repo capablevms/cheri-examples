@@ -66,6 +66,8 @@ if [ "$1" = "riscv64" ] || [ "$1" = "morello-purecap" ]; then
     run OK capability_sharing/mmap-shared-vs-private private_anon_main
     run OK capability_sharing/mmap-shared-vs-private private_file_main
     run OK capability_sharing/mmap-shared-vs-private shared_anon_main
+    run OK capability_sharing/read-cap-from-pipe main
+    run OK capability_sharing/read-cap-from-pipe-with-sh read-cap-from-pipe-with-sh
     # Tests that should fail
     run to_fail capability_sharing/mmap-shared-vs-private shared_file_main
 elif [ "$1" = "morello-hybrid" ]; then
