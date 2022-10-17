@@ -1,0 +1,13 @@
+# Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the mmap_shared_vs_private example.
+# This should not be invoked directly.
+CFLAGS += -I./include
+RUNDIR := $(RUNDIR)/mmap_shared_vs_private
+HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+SHARED_SOURCES := util.c
+
+export
+
+include ../../build/Makefile.simple
