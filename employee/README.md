@@ -7,4 +7,4 @@ built in a similar manner:
 $ make -f Makefile.<platform>
 ```
 
-Refer to the top-level [README][../README.md] for usage details.
+Refer to the top-level [README](../README.md) for usage details.

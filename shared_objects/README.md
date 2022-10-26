@@ -11,4 +11,4 @@ Unlike most other examples, these compile to a single executable (with
 accompanying shared objects). There is only a single `run-shared_objects`
 target, and the example is selected interactively.
 
-Otherwise, refer to the top-level [README][../README.md] for usage details.
+Otherwise, refer to the top-level [README](../README.md) for usage details.
