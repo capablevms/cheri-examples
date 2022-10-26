@@ -17,4 +17,4 @@ $ make -f Makefile.<platform> run-shared_anon_main
 $ make -f Makefile.<platform> run-shared_file_main
 ```
 
-Refer to the top-level [README][../README.md] for usage details.
+Refer to the top-level [README](../../README.md) for usage details.
