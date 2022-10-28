@@ -1,7 +1,7 @@
 // Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-#include "main.h"
+#include "include/base.h"
 
 .global comp_f_fn
 
