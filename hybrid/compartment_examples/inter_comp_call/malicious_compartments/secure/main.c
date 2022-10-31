@@ -39,8 +39,8 @@
  https://github.com/capablevms/cheri-examples/tree/master/hybrid/compartment_examples/inter_comp_call
  */
 
-#include "../../../../include/common.h"
-#include "../../../include/utils.h"
+#include "../../../../../include/common.h"
+#include "../../../../include/utils.h"
 
 #include <assert.h>
 #include <stddef.h>

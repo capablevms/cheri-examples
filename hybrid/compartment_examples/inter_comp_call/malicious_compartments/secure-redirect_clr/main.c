@@ -1,13 +1,18 @@
-/* This example attempts to modify the DDC of `switch_compartment`, assuming it
- * knows the address where it resides (leaked via `c20` in `executive_switch()`
- * in `shared-update_ddc.S`, and excluded from the `clean()` call in
- * `switch_compartment()). However, as it lies outside the DDC of the
- * compartment, attempting to load from the respective memory address causes a
- * fault (as attempted in `comp_f_fn` of `compartments-update_ddc.S`).
+/* This example attempts to set a `clr` (`cvtp` instruction in `comp_f_fn` in
+ * `compartments.S`) which would jump to a malicious function
+ * (`comp_f_malicious` in `compartments.S`) after `switch_compartment` returns.
+ * The execution faults when entering the malicious function via returning from
+ * `switch_compartment` (final `ret` of `switch_compartment()`) as the bounds
+ * on the capability loaded into `clr` are inherited from the PCC of the
+ * compartment via the `cvtp` instruction, being the only way the compartment
+ * itself can create new capabilities from scratch (assuming no access to other
+ * capabilities).
+ *
+ * Note that `compartments.S` refers to `compartments-redirect_clr.S`.
  */
 
-#include "../../../../include/common.h"
-#include "../../../include/utils.h"
+#include "../../../../../include/common.h"
+#include "../../../../include/utils.h"
 
 #include <assert.h>
 #include <stddef.h>

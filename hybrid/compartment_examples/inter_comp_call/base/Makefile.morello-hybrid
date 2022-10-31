@@ -3,7 +3,7 @@
 
 SHARED_SOURCES := shared.s
 CFILES := $(wildcard *.c)
-ROOTDIR=../../../..
+ROOTDIR = ../../../..
 
 include $(ROOTDIR)/build/Makefile.vars.morello-hybrid
 include $(ROOTDIR)/build/Makefile.vars.common
