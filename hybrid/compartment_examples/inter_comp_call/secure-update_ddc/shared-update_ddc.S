@@ -13,3 +13,6 @@ executive_switch:
     cvtp     clr, lr
     b        switch_compartment
     ret      clr
+
+#define INTER_COMP_LEAK_DDC 1
+#include "../switch_compartment.S"

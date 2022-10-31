@@ -1,7 +1,7 @@
 # Copyright (c) 2022 The CapableVMs "CHERI Examples" Contributors.
 # SPDX-License-Identifier: MIT OR Apache-2.0
 
-SHARED_SOURCES := $(wildcard *.S) $(wildcard *.S)
+SHARED_SOURCES := $(wildcard *.S)
 HFILES := $(wildcard ../include/*.h) $(wildcard ../../../include/*.h) $(wildcard ../../../../include/*.h)
 ROOTDIR=../../../..
 
