@@ -3,7 +3,12 @@
  * Performs a compartment switch based on the id saved in `x0` (currently just
  * an integer index into the `comps` array).
  */
+
+#include "include/secure.h"
+
 .global switch_compartment
+.global switch_compartment_end
+
 .type switch_compartment, "function"
 switch_compartment:
     // Store entering compartment's DDC, and move to memory containing
@@ -35,7 +40,7 @@ switch_compartment:
     // Install compartment DDC
     msr       DDC, c1
 
-    // Save old DDC (c2), old SP (x12), old CLR (clr) on stack
+    // Save old DDC (c2), old SP (x12), old LR (clr) on stack
     stp       c2, clr, [sp, #-48]!
     str       x12, [sp, #32]
 
