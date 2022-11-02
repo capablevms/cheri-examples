@@ -81,8 +81,8 @@ switch_compartment:
 // Select the appropriate `clean` implementation. Some examples use a correct
 // `clean` implementation, whereas `secure-update_ddc` uses one that
 // intentionally fails to clear `x20`.
-#ifdef INTER_COMP_LEAK_DDC
-    #include "clean_leak_ddc.s"
+#ifdef INTER_COMP_LEAK_X20
+    #include "clean_leak_x20.s"
 #else
     #include "clean.s"
 #endif

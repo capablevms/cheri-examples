@@ -1,5 +1,5 @@
-// A broken version of `clean.S`, which simulates leaking the address of
-// switcher DDC
+// A broken version of `clean.S`, which simulates leaking a register, used to
+// evaluate security issues
 clean:
     mov x0, #0
     mov x1, #0
@@ -25,7 +25,7 @@ clean:
     mov x18, x18
     // x19-x29 are callee-saved, but only the lower 64 bits.
     mov x19, x19
-    // Simulate leaking address of switcher DDC
+    // Simulate leaking a register, used to evaluate security issues
     // mov x20, x20
     mov x21, x21
     mov x22, x22

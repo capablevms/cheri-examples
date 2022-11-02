@@ -14,5 +14,10 @@ executive_switch:
     b        switch_compartment
     ret      clr
 
-#define INTER_COMP_LEAK_DDC 1
+
+// `switch_compartment.S` conditionally includes one of two `clean`
+// implementations. Setting `INTER_COMP_LEAK_X20` tells `switch-compartment.S`
+// select the "broken" version of `clean` (which simulates leaking a register).
+// In this example, x20 contains the DDC of the compartment switcher.
+#define INTER_COMP_LEAK_X20 1
 #include "../switch_compartment.S"
