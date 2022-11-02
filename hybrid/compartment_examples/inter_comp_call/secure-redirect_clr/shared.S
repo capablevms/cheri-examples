@@ -9,6 +9,8 @@
 executive_switch:
     mov      c29, c0
     mov      x0, #0
+    // Clean up x20 after returning from compartment switch
+    mov      x13, #0
     cvtp     clr, lr
     b        switch_compartment
     ret      clr

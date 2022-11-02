@@ -33,6 +33,8 @@ comp_f_fn:
     gclim     x1, c1
     sub       x1, x1, #16
     ldr       c1, [x1]
+    // set leak_x20
+    mov       x13, #0
     ldpblr    c29, [c1]
 
     ldr       clr, [sp], #16

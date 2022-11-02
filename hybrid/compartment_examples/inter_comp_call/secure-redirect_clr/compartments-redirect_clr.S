@@ -15,6 +15,8 @@
 comp_f_fn:
     // Set compartment ID we want to switch to
     mov       x0, #1
+    // Clean up x20 after returning from compartment switch
+    mov      x13, #0
 
     // Try to set the CLR to jump to a malicious function
     adr       x10, comp_f_malicious

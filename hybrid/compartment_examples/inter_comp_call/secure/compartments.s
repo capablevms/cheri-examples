@@ -11,6 +11,8 @@
 comp_f_fn:
     // Set compartment ID we want to switch to
     mov       x0, #1
+    // set leak_x20
+    mov       x13, #0
 
     // Store the `clr` for exitting `comp_f_fn`; this is overwritten by
     // `switch_compartment`.
