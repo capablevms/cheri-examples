@@ -1,3 +1,12 @@
+// Compartment functions
+.global comp_f_fn
+.global comp_g_fn
+
+// Labels for size computations
+.global comp_f_fn_end
+.global comp_g_fn_end
+.global switch_compartment_end
+
 /* Compartment from which we call the switcher to perform inter-compartment
  * transition. The call is via a capability, to update the PCC bounds
  * appropriately to cover `switch_compartment`.

@@ -3,6 +3,11 @@
  * appropriately to cover `switch_compartment`.
  */
 .type comp_f_fn, "function"
+.globl comp_f_fn
+.globl comp_f_fn_end
+.globl comp_g_fn
+.globl comp_g_fn_end
+
 comp_f_fn:
     // Set compartment ID we want to switch to
     mov       x0, #1

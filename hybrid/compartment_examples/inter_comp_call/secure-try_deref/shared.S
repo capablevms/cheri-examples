@@ -1,15 +1,6 @@
 // Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-// Compartment functions
-.global comp_f_fn
-.global comp_g_fn
-
-// Labels for size computations
-.global comp_f_fn_end
-.global comp_g_fn_end
-.global switch_compartment_end
-
 .text
 .balign 4
 
@@ -21,7 +12,3 @@ executive_switch:
     cvtp     clr, lr
     b        switch_compartment
     ret      clr
-
-#include "../switch_compartment.S"
-
-#include "compartments-try_deref.s"

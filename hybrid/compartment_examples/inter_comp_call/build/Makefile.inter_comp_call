@@ -1,0 +1,48 @@
+# Copyright (c) 2020-2021 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the shared_object example.
+# This should not be invoked directly.
+
+ifndef BINDIR
+$(error build/Makefile.vars should set BINDIR)
+endif
+
+ifdef RUNDIR
+RUNDIR := $(RUNDIR)/inter_comp_call
+else
+RUNDIR := inter_comp_call
+endif
+
+CFILES := $(wildcard *.c)
+ASM_SRC := switch_compartment.S
+HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+
+.PHONY: all clang-format clean run-inter_comp_call
+
+all: $(BINDIR)/main
+
+clang-format:
+	$(CFORMAT) -i $(CFILES) $(HFILES)
+
+clean:
+	if [ -d bin ]; then \
+		rm -rf $(BINDIR); \
+		rmdir bin --ignore-fail-on-non-empty; \
+	fi
+
+.SECONDEXPANSION:
+$(BINDIR)/%: $$(wildcard %/*.s) $$(wildcard %/*.S) $$(wildcard %/*.c) $(ASM_SRC)
+	$(info $+ %)
+	@mkdir -p $(BINDIR)
+	$(CC) $(CFLAGS) -L $(BINDIR) $+ -o $@
+
+run-inter_comp_call-%: $(BINDIR)/%
+ifdef SSHPORT
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t 'cd $(RUNDIR) && ./$(<F)'
+else
+	@echo "'$@' requires SSHPORT to be defined."
+	@false
+endif

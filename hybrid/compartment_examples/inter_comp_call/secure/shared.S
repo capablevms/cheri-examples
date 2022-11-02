@@ -21,7 +21,3 @@ executive_switch:
     cvtp     clr, lr
     b        switch_compartment
     ret      clr
-
-#include "../switch_compartment.S"
-
-#include "compartments.s"
