@@ -30,6 +30,7 @@ comp_f_fn_end:
  */
 .type comp_g_fn, "function"
 comp_g_fn:
+    mrs       c10, DDC
     mov       x11, 42
     str       x11, [x10, #4000]
 
