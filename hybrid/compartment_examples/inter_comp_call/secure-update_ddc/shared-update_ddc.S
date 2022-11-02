@@ -14,7 +14,6 @@ executive_switch:
     b        switch_compartment
     ret      clr
 
-
 // `switch_compartment.S` conditionally includes one of two `clean`
 // implementations. Setting `INTER_COMP_LEAK_X20` tells `switch-compartment.S`
 // select the "broken" version of `clean` (which simulates leaking a register).
