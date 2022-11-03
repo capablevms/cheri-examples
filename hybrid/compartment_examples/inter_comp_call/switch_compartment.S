@@ -52,9 +52,6 @@ switch_compartment:
 
     // Determine which version of `clean` we are going to use
     cbnz      x13, 1f
-    // XXX This instruction triggers a SIGPROT when switch_compartment is called
-    // via comp_f_fn (but it works when `switch_compartment` is called via
-    // `executive_switch`).
     adr       x21, clean_all
     b         2f
 1:
