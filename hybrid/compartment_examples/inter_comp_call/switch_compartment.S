@@ -55,10 +55,10 @@ switch_compartment:
     // XXX This instruction triggers a SIGPROT when switch_compartment is called
     // via comp_f_fn (but it works when `switch_compartment` is called via
     // `executive_switch`).
-    ldr       x13, =clean_all
+    adr       x13, clean_all
     b         2f
 1:
-    ldr       x13, =clean_leak_x20
+    adr       x13, clean_leak_x20
 2:
     // Store the address of `clean` on the stack
     str       x13, [sp, #40]
