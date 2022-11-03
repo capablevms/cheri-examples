@@ -55,13 +55,13 @@ switch_compartment:
     // XXX This instruction triggers a SIGPROT when switch_compartment is called
     // via comp_f_fn (but it works when `switch_compartment` is called via
     // `executive_switch`).
-    adr       x13, clean_all
+    adr       x21, clean_all
     b         2f
 1:
-    adr       x13, clean_leak_x20
+    adr       x21, clean_leak_x20
 2:
     // Store the address of `clean` on the stack
-    str       x13, [sp, #40]
+    str       x21, [sp, #40]
 
     // Stack layout at this point:
     //
@@ -78,10 +78,8 @@ switch_compartment:
     //            `stack` -> ________________________v
 
     // Clean all registers, except register used to call function within
-    // compartment we are transitioning to
-    ldr       x21, [sp, #40]
-    // Add 4 to skip over the first instruction of the clean function (i.e. do
-    // not clear c0)
+    // compartment we are transitioning to (add 4 to skip over the first
+    // instruction of the clean function)
     add       x21, x21, #4
     blr       x21
 
