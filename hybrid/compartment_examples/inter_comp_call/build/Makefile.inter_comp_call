@@ -15,8 +15,8 @@ RUNDIR := inter_comp_call
 endif
 
 CFILES := $(wildcard *.c)
-ASM_SRC := switch_compartment.S
 HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+SHARED_SOURCES := secure_switch_compartment.S
 
 .PHONY: all clang-format clean run-inter_comp_call
 
@@ -32,7 +32,7 @@ clean:
 	fi
 
 .SECONDEXPANSION:
-$(BINDIR)/%: $$(wildcard %/*.s) $$(wildcard %/*.S) $$(wildcard %/*.c) $(ASM_SRC)
+$(BINDIR)/%: $$(wildcard %/*.s) $$(wildcard %/*.S) $$(wildcard %/*.c) $(SHARED_SOURCES)
 	$(info $+ %)
 	@mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) -L $(BINDIR) $+ -o $@
