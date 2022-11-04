@@ -33,7 +33,6 @@ clean:
 
 .SECONDEXPANSION:
 $(BINDIR)/%: $$(wildcard %/*.s) $$(wildcard %/*.S) $$(wildcard %/*.c) $(SHARED_SOURCES)
-	$(info $+ %)
 	@mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) -L $(BINDIR) $+ -o $@
 
