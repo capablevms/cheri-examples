@@ -27,7 +27,7 @@ comp_f_fn:
     scvalue   c2, c2, x3
     str       c2, [x20]
 
-    // Retrieve local capability containing switcher information for `pdlblr`
+    // Retrieve local capability containing switcher information for `ldpblr`
     // instruction (DDC is used as it contains the address where the capability
     // is stored in this particular example)
     gclim     x1, c1

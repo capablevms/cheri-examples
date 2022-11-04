@@ -18,7 +18,7 @@ comp_f_fn:
     // `switch_compartment`.
     str       clr, [sp, #-16]!
 
-    // Retrieve local capability containing switcher information for `pdlblr`
+    // Retrieve local capability containing switcher information for `ldpblr`
     // instruction (DDC is used as it contains the address where the capability
     // is stored in this particular example)
     mrs       c1, DDC
