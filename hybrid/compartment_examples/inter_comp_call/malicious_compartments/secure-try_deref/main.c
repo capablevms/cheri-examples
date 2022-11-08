@@ -1,18 +1,46 @@
-/* This example attempts to set a `clr` (`cvtp` instruction in `comp_f_fn` in
- * `compartments.S`) which would jump to a malicious function
- * (`comp_f_malicious` in `compartments.S`) after `switch_compartment` returns.
- * The execution faults when entering the malicious function via returning from
- * `switch_compartment` (final `ret` of `switch_compartment()`) as the bounds
- * on the capability loaded into `clr` are inherited from the PCC of the
- * compartment via the `cvtp` instruction, being the only way the compartment
- * itself can create new capabilities from scratch (assuming no access to other
- * capabilities).
+/* In this example, we tighten security even further, building on previous
+ * examples [1]. We store the DDC and the PCC of `switch_compartment`
+ * consecutively within its own bounds. Then, we create a capability pointing
+ * to the DDC, which is sealed such that it can only be used in an `lpb`-type
+ * call, and provide local copies of this capability to each compartment. Thus,
+ * compartments are allowed to call `switch_compartment` via `ldpblr`, without
+ * access to either its PCC or DDC (by nature of capabilities).
  *
- * Note that `compartments.S` refers to `compartments-redirect_clr.S`.
+ * The local copies are stored in the heap space of each compartment (as we do
+ * not implement memory management at this point, this has no bearing at
+ * present, but most likely will in the future). This could essentially be
+ * considered a separate region of memory. Further, when using the local
+ * capabilities to call `switch_compartment` from a compartment, the
+ * destination register *must* be `c29`.
+ *
+ * Note that in the current design, each compartment has a single function it
+ * executes when it is called. Allowing multiple entry points can be modelled
+ * by having more capabilities be saved, in addition to the compartment
+ * switching one, in each compartment's heap. Alternatively, we could, within
+ * the compartment switcher, determine in which compartment we need to switch
+ * to call a given function, based on PCC bounds for each compartment.
+
+ * Additionally, we also changed the expected memory layout in the
+ * compartments. In the absence of a custom memory allocator, we note that the
+ * heap is not used, except for manually storing the local capability copy as
+ * detailed above. Current compartment memory layout:
+ *
+ *       -----------------  < DDC + total_comp_size
+ *      |  switcher_call  |
+ *      |                 |
+ *      |       ^         |
+ *      |      HEAP       |
+ * sp > |-----------------| < DDC + comp_stack_size
+ *      |     STACK       |
+ *      |       v         |
+ *       -----------------  < `DDC value`
+ *
+ * [1]
+ https://github.com/capablevms/cheri-examples/tree/master/hybrid/compartment_examples/inter_comp_call
  */
 
-#include "../../../../include/common.h"
-#include "../../../include/utils.h"
+#include "../../../../../include/common.h"
+#include "../../../../include/utils.h"
 
 #include <assert.h>
 #include <stddef.h>
@@ -62,8 +90,9 @@ void *__capability switcher_call;
  *   of the stack) (8B)
  * - address to the start (highest address) of the compartment's stack
  *   (corresponding to the lowest address of the heap) (8B)
- * - the size of the stack (8B)
- * - the size of the heap (8B)
+ *   the size of the stack (8B)
+ * - address to the top (highest addressof the compartment's heap (8B)
+ *   the size of the heap (8B)
  * - alignment padding (8B)
  * - the ddc corresponding to the compartment (16B)
  * - the function within the compartment to be executed upon switching (16B)
@@ -129,7 +158,7 @@ void add_comp(uint8_t *_start_addr, void (*_comp_fn)(), void *_comp_fn_end)
 	new_comp.stack_len = comp_stack_size;
 	new_comp.heap_len = total_comp_size - comp_stack_size;
 
-	// Ensure 16-byte alignment throughout the compartment bounds
+	// Ensure 16-byte alignment throught the compartment bounds
 	assert(((uintptr_t) new_comp.compartment_start) % 16 == 0);
 	assert(((uintptr_t) new_comp.stack_addr) % 16 == 0);
 	assert(total_comp_size % 16 == 0);

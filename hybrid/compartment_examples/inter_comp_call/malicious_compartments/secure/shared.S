@@ -1,8 +1,6 @@
 // Copyright (c) 2021 The CapableVMs "CHERI Examples" Contributors.
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-#include "../include/secure.h"
-
 // Compartment functions
 .global comp_f_fn
 .global comp_g_fn
@@ -23,7 +21,3 @@ executive_switch:
     cvtp     clr, lr
     b        switch_compartment
     ret      clr
-
-#include "switch_compartment.s"
-
-#include "compartments-try_deref.s"

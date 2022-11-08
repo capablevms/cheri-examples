@@ -1,0 +1,58 @@
+# Copyright (c) 2020-2022 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the shared_object example.
+# This should not be invoked directly.
+
+ifndef BINDIR
+$(error build/Makefile.vars should set BINDIR)
+endif
+
+ifdef RUNDIR
+RUNDIR := $(RUNDIR)/inter_comp_call
+else
+RUNDIR := inter_comp_call
+endif
+
+# Examples that use a a compartment switcher with a broken `clean`
+# implementation which "leaks" the x20/c20 register to the compartment.
+LEAK_X20_EXAMPLES := secure-update_ddc
+LEAK_X20_TARGETS := $(addprefix run-inter_comp_call-, $(LEAK_X20_EXAMPLES))
+
+EXAMPLES = secure secure-redirect_clr secure-try_deref secure-update_ddc
+CFILES := $(foreach dir, $(EXAMPLES), $(wildcard $(dir)/*.c))
+SHARED_SOURCES := $(wildcard shared/*.S shared/*.s)
+HFILES := $(wildcard include/*.h ../include/*.h)
+
+.PHONY: all clang-format clean run-inter_comp_call
+
+all: $(BINDIR)/main
+
+clang-format:
+	$(CFORMAT) -i $(CFILES) $(HFILES)
+
+clean:
+	if [ -d bin ]; then \
+		rm -rf $(BINDIR); \
+		rmdir bin --ignore-fail-on-non-empty; \
+	fi
+
+.SECONDEXPANSION:
+$(BINDIR)/%: $$(wildcard %/*.s) $$(wildcard %/*.S) $$(wildcard %/*.c) $(SHARED_SOURCES)
+	@mkdir -p $(BINDIR)
+	$(CC) $(CFLAGS) -L $(BINDIR) $+ -o $@
+
+# switch_compartment.S conditionally includes one of the two clean
+# implementations. Setting INTER_COMP_LEAK_X20 tells switch-compartment.S to
+# select the "broken" version of clean (which simulates leaking a register).
+$(LEAK_X20_TARGETS): CFLAGS += -D INTER_COMP_LEAK_X20
+
+run-inter_comp_call-%: $(BINDIR)/%
+ifdef SSHPORT
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) 'mkdir -p $(RUNDIR)'
+	scp $(SCP_OPTIONS) -P $(SSHPORT) $^ $(RUNUSER)@$(RUNHOST):$(RUNDIR)
+	ssh $(SSH_OPTIONS) -p $(SSHPORT) $(RUNUSER)@$(RUNHOST) -t 'cd $(RUNDIR) && ./$(<F)'
+else
+	@echo "'$@' requires SSHPORT to be defined."
+	@false
+endif
