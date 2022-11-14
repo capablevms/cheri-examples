@@ -11,4 +11,5 @@ executive_switch:
     mov      x0, #0
     cvtp     clr, lr
     b        switch_compartment
-    ret      clr
+    // Unreachable (switch_compartment returns to main)
+    udf      #0xdead
