@@ -1,0 +1,6 @@
+# Copyright (c) 2023 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+include ../build/Makefile.vars.morello-purecap
+include ../build/Makefile.vars.common
+include build/Makefile.review

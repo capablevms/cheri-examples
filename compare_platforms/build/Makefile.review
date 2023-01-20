@@ -1,0 +1,11 @@
+# Copyright (c) 2023 The CapableVMs "CHERI Examples" Contributors.
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# Common Makefile for the privesc examples.
+# This should not be invoked directly.
+
+RUNDIR := $(RUNDIR)/review
+HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
+export
+
+include ../build/Makefile.simple
