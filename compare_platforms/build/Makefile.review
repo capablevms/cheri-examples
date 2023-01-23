@@ -1,7 +1,7 @@
 # Copyright (c) 2023 The CapableVMs "CHERI Examples" Contributors.
 # SPDX-License-Identifier: MIT OR Apache-2.0
 
-# Common Makefile for the privesc examples.
+# Common Makefile for the compare_platforms example.
 # This should not be invoked directly.
 
 RUNDIR := $(RUNDIR)/review
