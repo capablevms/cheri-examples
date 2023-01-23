@@ -110,6 +110,10 @@ int main()
     assert((size_t)(username + smallsz) <= (size_t)realname); 
     assert((size_t)(privatereview + biggersz) <= (size_t)publicreview);
     assert((size_t)(realname + smallsz) <= (size_t)permissions);
+    
+    bool b_improved = false;
+    char *newpublicreview = malloc(biggersz);
+    strcpy(newpublicreview, "5 ***** strong accept. This author deserves two Nobels and an ice cream.\n");
 
 #ifdef __CHERI_PURE_CAPABILITY__
     printf("\nsmallsz=%zx, CRRL(smallsz)=%zx\n", smallsz,
@@ -128,10 +132,6 @@ int main()
     printf("publicreview=%p permissions=%p diff=%tx\n", publicreview, permissions, permissions - publicreview);
     printf("realname=%p permissions=%p diff=%tx\n", realname, permissions, permissions - realname);
 #endif 
-  
-    bool b_improved = false;
-    char *newpublicreview = malloc(biggersz);
-    strcpy(newpublicreview, "5 ***** strong accept. This author deserves two Nobels and an ice cream.\n");
   
 #ifdef __CHERI_PURE_CAPABILITY__
     if(can_write(&review) == false) {
