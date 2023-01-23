@@ -3,30 +3,18 @@
  * compare the two.
  * 
  * In a CHERI environment, it will:
- *     Step 1: Use can_read to check if the struct's "permissions" member 
-includes write permissions.
+ *     Step 1: Use can_read to check if the struct's "permissions" member includes write permissions.
  *     Step 2: Use capabilities to enforce read-only permissions
- *             (see 
-https://github.com/capablevms/cheri-examples/blob/master/employee/include/employee.h).
- *     Step 3: Try to write to the read-only struct members, and SIGPROT.
+ *             (see https://github.com/capablevms/cheri-examples/blob/master/employee/include/employee.h).
+ *     Step 3: Offer the user a choice to:
+ *             a) try to write to the read-only struct members, and SIGPROT; or
+ *             b) try to exceed the bounds of an object and add write permissions (which will crash).
  *
  * In a non-CHERI environment, it will:
- *     Step 1: Use can_read to check if the struct's "permissions" member 
-includes write permissions.
- *     Step 2: Try to exceed the bounds of an object and add write 
-permissions
- *             (see 
-https://ctsrd-cheri.github.io/cheri-exercises/exercises/buffer-overflow-heap/index.html).
+ *     Step 1: Use can_read to check if the struct's "permissions" member includes write permissions.
+ *     Step 2: Try to exceed the bounds of an object and add write permissions
+ *             (see https://ctsrd-cheri.github.io/cheri-exercises/exercises/buffer-overflow-heap/index.html).
  *     Step 3: Rewrite the review.
- *
- * In a CHERI environment, the overflow attack will be unreachable.
- * In morello-purecap, it would crash immediately whether or not the 
-struct
- * had been set as read only.
- *
- * In a non-CHERI environment, this attack should succeed in corrupting 
-some of the data.
- *
  */
 
 #ifdef __CHERI_PURE_CAPABILITY__
