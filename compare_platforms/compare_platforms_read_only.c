@@ -96,21 +96,25 @@ int main()
     size_t biggersz = 0x1001;
     
     char *username = malloc(smallsz);
-    strcpy(username, "Reviewer 2");    
+    strcpy(username, "Reviewer 2"); 
+    review.username = username;
+       
     char *realname = malloc(smallsz);
     strcpy(realname, "Baba Yaga");
+    review.realname = realname;
+    
     char *privatereview = malloc(biggersz);
     strcpy(privatereview, "I cannot believe I read this appalling piece of dreck from start to finish. The authors should be ashamed, and I hope I get an opportunity to tell them so to their faces.");
+    review.privatereview = privatereview;
+    
     char *publicreview = malloc(biggersz);
     strcpy(publicreview, "I am a little unclear as to the contribution. I think the authors could strengthen their case considerably if they conducted an RCT. Weak reject.");
+    review.publicreview = publicreview;
+    
     char *permissions = malloc(smallsz);
     strcpy(permissions, "r");
-    
-    review.username = username;
-    review.realname = realname;
-    review.privatereview = privatereview;
-    review.publicreview = publicreview;
     review.permissions = permissions;
+    
     print_details(&review);
     
     assert((size_t)(username + smallsz) <= (size_t)realname); 
@@ -167,6 +171,7 @@ int main()
         const size_t oversz = review.permissions - review.realname + 2 - smallsz;
         overflow_reviewer_realname(smallsz+2, oversz, &review);
         
+        // If we reached this line, we should have acquired write privileges on the review.
         b_improved = change_publicreview(&review, newpublicreview, bWeak);
         print_details(&review);
     }
