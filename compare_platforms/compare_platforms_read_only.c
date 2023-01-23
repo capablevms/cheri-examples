@@ -125,15 +125,7 @@ int main()
     printf("privatereview=%#p publicreview=%#p diff=%tx\n", privatereview, publicreview, publicreview - privatereview);
     printf("publicreview=%#p permissions=%#p diff=%tx\n", publicreview, permissions, permissions - publicreview);
     printf("realname=%#p permissions=%#p diff=%tx\n", realname, permissions, permissions - realname);
-#else
-    printf("\nusername=%p realname=%p diff=%tx\n", username, realname, realname - username);
-    printf("realname=%p privatereview=%p diff=%tx\n", realname, privatereview, privatereview - realname);
-    printf("privatereview=%p publicreview=%p diff=%tx\n", privatereview, publicreview, publicreview - privatereview);
-    printf("publicreview=%p permissions=%p diff=%tx\n", publicreview, permissions, permissions - publicreview);
-    printf("realname=%p permissions=%p diff=%tx\n", realname, permissions, permissions - realname);
-#endif 
-  
-#ifdef __CHERI_PURE_CAPABILITY__
+    
     if(can_write(&review) == false) {
         printf("\nSetting the review to read-only.\n");
         struct review *ro_review = set_read_only(&review);
@@ -152,30 +144,29 @@ int main()
         fflush(stdout);
         b_improved = false;
     }
-# else
+#else
+    printf("\nusername=%p realname=%p diff=%tx\n", username, realname, realname - username);
+    printf("realname=%p privatereview=%p diff=%tx\n", realname, privatereview, privatereview - realname);
+    printf("privatereview=%p publicreview=%p diff=%tx\n", privatereview, publicreview, publicreview - privatereview);
+    printf("publicreview=%p permissions=%p diff=%tx\n", publicreview, permissions, permissions - publicreview);
+    printf("realname=%p permissions=%p diff=%tx\n", realname, permissions, permissions - realname);
+    
     b_improved = change_publicreview(&review, newpublicreview, true);
-#endif
+#endif 
 
-    // This code will be unreachable in a CHERI environment,
-    // but it would crash whether or not the struct had been set to read-only.
+    // Contrast the behaviour of this code in a CHERI vs. non-CHERI environment.
     if(b_improved == false) {
-        
+        // This "one past the end" crashes in a morello-purecap environment.
         printf("\nOverflowing reviewer realname by 1\n");
         memset(review.realname + smallsz+1, 'w', 1);
-    
-        // Now we can see the changes, if any. The permissions should have changed.
         print_details(&review);
     
-        // Overflow the realname even more, which in a CHERI
-        // environment should crash if it hasn't already.
         const size_t oversz = review.permissions - review.realname + 2 - smallsz;
         printf("\nOverflowing reviewer realname by %zx\n", oversz);
         memset(review.realname + smallsz+2, 'w', oversz);
-    
         print_details(&review);
         
         b_improved = change_publicreview(&review, newpublicreview, bWeak);
-        
         print_details(&review);
     }
 
