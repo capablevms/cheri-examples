@@ -8,7 +8,7 @@
  *             (see https://github.com/capablevms/cheri-examples/blob/master/employee/include/employee.h).
  *     Step 3: Offer the user a choice to:
  *             a) try to write to the read-only struct members, and SIGPROT; or
- *             b) try to exceed the bounds of an object and add write permissions (which will crash).
+ *             b) try to exceed the bounds of an object and add write permissions (which will also SIGPROT).
  *
  * In a non-CHERI environment, it will:
  *     Step 1: Use can_read to check if the struct's "permissions" member includes write permissions.
@@ -79,6 +79,12 @@ struct review *set_read_only(struct review *rv)
     #endif
 }
 
+void overflow_reviewer_realname(size_t offset, size_t reps, struct review *rv) 
+{
+    printf("\nOverflowing reviewer realname by %zx\n", reps);
+    memset(rv->realname + offset, 'w', reps);
+    print_details(rv);
+}
 
 int main()
 {
@@ -156,15 +162,10 @@ int main()
 
     // Contrast the behaviour of this code in a CHERI vs. non-CHERI environment.
     if(b_improved == false) {
-        // This "one past the end" crashes in a morello-purecap environment.
-        printf("\nOverflowing reviewer realname by 1\n");
-        memset(review.realname + smallsz+1, 'w', 1);
-        print_details(&review);
+        overflow_reviewer_realname(smallsz+1, 1, &review);
     
         const size_t oversz = review.permissions - review.realname + 2 - smallsz;
-        printf("\nOverflowing reviewer realname by %zx\n", oversz);
-        memset(review.realname + smallsz+2, 'w', oversz);
-        print_details(&review);
+        overflow_reviewer_realname(smallsz+2, oversz, &review);
         
         b_improved = change_publicreview(&review, newpublicreview, bWeak);
         print_details(&review);
