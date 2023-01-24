@@ -61,7 +61,7 @@ void print_details(struct review *rv)
     printf("Reviewer's Real Name: %s \n", rv->realname);
     printf("Private Review: %s\n", rv->privatereview);
     printf("Public Review: %s\n", rv->publicreview);
-    printf("Review's Read-Write Permissions: %s\n", rv->permissions);
+    printf("Permissions: %s\n", rv->permissions);
     fflush(stdout);
 }
 
@@ -83,7 +83,8 @@ void overflow_reviewer_realname(size_t offset, size_t reps, struct review *rv)
 {
     printf("\nOverflowing reviewer realname by %zx\n", reps);
     memset(rv->realname + offset, 'w', reps);
-    print_details(rv);
+    printf("Permissions: %s\n", rv->permissions);
+    fflush(stdout);
 }
 
 int main(int argc, char* argv[])
@@ -126,26 +127,11 @@ int main(int argc, char* argv[])
     char *newpublicreview = malloc(biggersz);
     strcpy(newpublicreview, "5 ***** strong accept. This author deserves two Nobels and an ice cream.\n");
 
-#ifdef __CHERI_PURE_CAPABILITY__
-    printf("\nsmallsz=%zx, CRRL(smallsz)=%zx\n", smallsz,
-        __builtin_cheri_round_representable_length(smallsz));
-    printf("biggersz=%zx, CRRL(biggersz)=%zx\n", biggersz,
-        __builtin_cheri_round_representable_length(biggersz));
-    printf("username=%#p realname=%#p diff=%tx\n", username, realname, realname - username);
-    printf("realname=%#p privatereview=%#p diff=%tx\n", realname, privatereview, privatereview - realname);
-    printf("privatereview=%#p publicreview=%#p diff=%tx\n", privatereview, publicreview, publicreview - privatereview);
-    printf("publicreview=%#p permissions=%#p diff=%tx\n", publicreview, permissions, permissions - publicreview);
-    printf("realname=%#p permissions=%#p diff=%tx\n", realname, permissions, permissions - realname);
-    
+#ifdef __CHERI_PURE_CAPABILITY__    
     if(can_write(&review) == false) {
-        printf("\nSetting the review to read-only.\n");
         struct review *ro_review = set_read_only(&review);
         assert((cheri_perms_get(ro_review) & CHERI_PERM_STORE) == 0);
 
-        //printf("\nTry anyway? y/n: \n");
-        //char answer;
-        //scanf(" %c", &answer);
-        //if (answer == 'Y' || answer == 'y'){
         if ((argc > 1) && (strcmp(argv[1], "-overwrite") == 0)) {
             printf("\nThe struct is read-only so trying to change the review will make the program crash.\n");
             bWeak = false;
@@ -157,12 +143,6 @@ int main(int argc, char* argv[])
         b_improved = false;
     }
 #else
-    printf("\nusername=%p realname=%p diff=%tx\n", username, realname, realname - username);
-    printf("realname=%p privatereview=%p diff=%tx\n", realname, privatereview, privatereview - realname);
-    printf("privatereview=%p publicreview=%p diff=%tx\n", privatereview, publicreview, publicreview - privatereview);
-    printf("publicreview=%p permissions=%p diff=%tx\n", publicreview, permissions, permissions - publicreview);
-    printf("realname=%p permissions=%p diff=%tx\n", realname, permissions, permissions - realname);
-    
     b_improved = change_publicreview(&review, newpublicreview, true);
 #endif 
 
@@ -178,15 +158,10 @@ int main(int argc, char* argv[])
         print_details(&review);
     }
     
-    printf("\nFreeing username.\n");
     free(username);
-    printf("Freeing realname.\n");
     free(realname);
-    printf("Freeing privatereview.\n");
     free(privatereview);
-    printf("Freeing publicreview.\n");
     free(publicreview);
-    printf("Freeing permissions.\n");
     free(permissions);
 
     return 0;
