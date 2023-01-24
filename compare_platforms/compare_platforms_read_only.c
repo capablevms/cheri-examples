@@ -176,6 +176,17 @@ int main()
         b_improved = change_publicreview(&review, newpublicreview, bWeak);
         print_details(&review);
     }
+    
+    printf("\nFreeing username.\n");
+    free(username);
+    printf("Freeing realname.\n");
+    free(realname);
+    printf("Freeing privatereview.\n");
+    free(privatereview);
+    printf("Freeing publicreview.\n");
+    free(publicreview);
+    printf("Freeing permissions.\n");
+    free(permissions);
 
     return 0;
 }
