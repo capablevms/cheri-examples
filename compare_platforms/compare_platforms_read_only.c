@@ -6,8 +6,8 @@
  *     Step 1: Use can_read to check if the struct's "permissions" member includes write permissions.
  *     Step 2: Use capabilities to enforce read-only permissions
  *             (see https://github.com/capablevms/cheri-examples/blob/master/employee/include/employee.h).
- *     Step 3: Offer the user a choice to:
- *             a) try to write to the read-only struct members, and SIGPROT; or
+ *     Step 3: Either:
+ *             a) if command-line flag "-overwrite" was passed in, try to write to the read-only struct members, and SIGPROT; or
  *             b) try to exceed the bounds of an object and add write permissions (which will also SIGPROT).
  *
  * In a non-CHERI environment, it will:
