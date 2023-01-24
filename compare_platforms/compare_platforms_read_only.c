@@ -92,8 +92,9 @@ int main()
     // In a non-CHERI environment, write protection is weakly enforced
     bool bWeak = true;
     
-    size_t smallsz = 0x20;
-    size_t biggersz = 0x1001;
+    // initialization values for struct member sizes
+    const size_t smallsz = 0x20;
+    const size_t biggersz = 0x1001;
     
     char *username = malloc(smallsz);
     strcpy(username, "Reviewer 2"); 
