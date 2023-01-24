@@ -86,7 +86,7 @@ void overflow_reviewer_realname(size_t offset, size_t reps, struct review *rv)
     print_details(rv);
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     struct review review;
     // In a non-CHERI environment, write protection is weakly enforced
@@ -142,11 +142,12 @@ int main()
         struct review *ro_review = set_read_only(&review);
         assert((cheri_perms_get(ro_review) & CHERI_PERM_STORE) == 0);
 
-        printf("\nThe struct is read-only so trying to change the review will make the program crash.\n");
-        printf("\nTry anyway? y/n: \n");
-        char answer;
-        scanf(" %c", &answer);
-        if (answer == 'Y' || answer == 'y'){
+        //printf("\nTry anyway? y/n: \n");
+        //char answer;
+        //scanf(" %c", &answer);
+        //if (answer == 'Y' || answer == 'y'){
+        if ((argc > 1) && (strcmp(argv[1], "-overwrite") == 0)) {
+            printf("\nThe struct is read-only so trying to change the review will make the program crash.\n");
             bWeak = false;
             b_improved = change_publicreview(ro_review, newpublicreview, bWeak);
             // This line should be unreachable.
