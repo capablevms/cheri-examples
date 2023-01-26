@@ -70,6 +70,7 @@ if [ "$1" = "riscv64" ] || [ "$1" = "morello-purecap" ]; then
     run to_fail capability_sharing/cap-to-file cap_to_file
     run to_fail capability_sharing/leak-capability leak-capability
     run to_fail capability_sharing/mmap-shared-vs-private shared_file_main
+    run to_fail compare_platforms compare_platforms_read_only
 elif [ "$1" = "morello-hybrid" ]; then
     # HYBRID TESTS
     # Tests that should fail
