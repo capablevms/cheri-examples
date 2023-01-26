@@ -73,10 +73,9 @@ struct review *set_read_only(struct review *rv)
     #endif
 }
 
-void overflow_reviewer_realname(size_t offset, size_t reps, struct review *rv) 
+void overflow_into_permissions(size_t offset, size_t reps, char* overflow_from, struct review *rv) 
 {
-    printf("\nOverflowing reviewer realname by %zx\n", reps);
-    memset(rv->realname + offset, 'w', reps);
+    memset(overflow_from + offset, 'w', reps);
     printf("Permissions: %s\n", rv->permissions);
     fflush(stdout);
 }
@@ -91,22 +90,25 @@ char* max(char* a, char* b)
     return(a > b ? a : b);
 }
 
-void assert_positions(char* realname, char* publicreview, char* permissions, size_t smsz, size_t bigsz)
+int assert_no_overlap(char* realname, char* publicreview, char* permissions, size_t smsz, size_t bigsz)
 {
     if(min(min(realname, publicreview), permissions) == publicreview) 
     {
         assert((publicreview + bigsz) <= (min(realname, permissions))); 
         assert((min(realname, permissions) + smsz) <= (max(realname, permissions)));
+        return 0;
     } 
     else if(max(max(realname, publicreview), permissions) == publicreview)
     {
         assert((max(realname, permissions) + smsz) <= publicreview);
         assert((min(realname, permissions) + smsz) <= (max(realname, permissions)));
+        return 2;
     }
     else 
     {
         assert((min(realname, permissions) + smsz) <= publicreview);
-        assert((publicreview + bigsz) <=  (max(realname, permissions))); 
+        assert((publicreview + bigsz) <=  (max(realname, permissions)));
+        return 1; 
     }
 }
 
@@ -133,20 +135,6 @@ int main(int argc, char* argv[])
     review.permissions = permissions;
     
     print_details(&review);
-    
-#ifdef __CHERI_PURE_CAPABILITY__
-    printf("smallsz=%zx, CRRL(smallsz)=%zx\n", smallsz,
-        __builtin_cheri_round_representable_length(smallsz));
-    printf("biggersz=%zx, CRRL(biggersz)=%zx\n", biggersz,
-        __builtin_cheri_round_representable_length(biggersz));
-    printf("publicreview=%#p realname=%#p diff=%tx\n", publicreview, realname, realname - publicreview);
-    printf("realname=%#p permissions=%#p diff=%tx\n", realname, permissions, permissions - realname);
-#else
-    printf("publicreview=%p realname=%p diff=%tx\n", publicreview, realname, realname - publicreview);
-    printf("realname=%p permissions=%p diff=%tx\n", realname, permissions, permissions - realname);
-#endif
-
-    assert_positions(realname, publicreview, permissions, smallsz, biggersz);
     
     bool b_improved = false;
     char *newpublicreview = malloc(biggersz);
@@ -176,10 +164,27 @@ int main(int argc, char* argv[])
     // Contrast the behaviour of this code in a CHERI vs. non-CHERI environment.
     if(b_improved == false) 
     {
-        overflow_reviewer_realname(smallsz+1, 1, &review);
+        int revpos = assert_no_overlap(review.realname, review.publicreview, review.permissions, smallsz, biggersz);
+        // realname has to come before permissions for the following to make sense
+        assert((review.realname + smallsz) <= review.permissions);
+        
+        if((revpos == 1) && (review.publicreview+biggersz <= review.permissions)) 
+        {
+            // if publicreview is in the middle and permissions is on the right of it
+            assert((review.publicreview + biggersz + biggersz/2) > review.permissions);
+            printf("\nOverflowing publicreview into permissions by 1:\n");
+            overflow_into_permissions(biggersz+1, 1, review.publicreview, &review);
+        }
+        else 
+        {
+            assert((review.realname + smallsz + smallsz/2) > review.permissions);
+            printf("\nOverflowing realname into permissions by 1:\n");
+            overflow_into_permissions(smallsz+1, 1, review.realname, &review);
+        }
     
         const size_t oversz = review.permissions - review.realname + 2 - smallsz;
-        overflow_reviewer_realname(smallsz+2, oversz, &review);
+        printf("\nOverflowing realname into permissions by %zu:\n", oversz);
+        overflow_into_permissions(smallsz+2, oversz, review.realname, &review);
         
         // If we reached this line, we should have acquired write privileges on the review.
         b_improved = change_publicreview(&review, newpublicreview, bWeak);
