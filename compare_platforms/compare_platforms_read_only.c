@@ -91,6 +91,25 @@ char* max(char* a, char* b)
     return(a > b ? a : b);
 }
 
+void assert_positions(char* realname, char* publicreview, char* permissions, size_t smsz, size_t bigsz)
+{
+    if(min(min(realname, publicreview), permissions) == publicreview) 
+    {
+        assert((publicreview + bigsz) <= (min(realname, permissions))); 
+        assert((min(realname, permissions) + smsz) <= (max(realname, permissions)));
+    } 
+    else if(max(max(realname, publicreview), permissions) == publicreview)
+    {
+        assert((max(realname, permissions) + smsz) <= publicreview);
+        assert((min(realname, permissions) + smsz) <= (max(realname, permissions)));
+    }
+    else 
+    {
+        assert((min(realname, permissions) + smsz) <= publicreview);
+        assert((publicreview + bigsz) <=  (max(realname, permissions))); 
+    }
+}
+
 int main(int argc, char* argv[])
 {
     struct review review;
@@ -126,6 +145,8 @@ int main(int argc, char* argv[])
     printf("publicreview=%p realname=%p diff=%tx\n", publicreview, realname, realname - publicreview);
     printf("realname=%p permissions=%p diff=%tx\n", realname, permissions, permissions - realname);
 #endif
+
+    assert_positions(realname, publicreview, permissions, smallsz, biggersz);
     
     bool b_improved = false;
     char *newpublicreview = malloc(biggersz);
