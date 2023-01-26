@@ -112,6 +112,38 @@ int assert_no_overlap(char* realname, char* publicreview, char* permissions, siz
     }
 }
 
+void free_pointers(struct review *rv)
+{
+    free(rv->realname);
+    free(rv->publicreview);
+    free(rv->permissions);
+}
+
+void rewrite_permissions_by_overflow(struct review *rv, size_t smsz, size_t bigsz, bool bWeak)
+{
+    int revpos = assert_no_overlap(rv->realname, rv->publicreview, rv->permissions, smsz, bigsz);
+    // realname has to come before permissions for the following to make sense
+    assert((rv->realname + smsz) <= rv->permissions);
+        
+    if((revpos == 1) && (rv->publicreview+bigsz <= rv->permissions)) 
+    {
+        // if publicreview is in the middle and permissions is on the right of it
+        assert((rv->publicreview + bigsz + bigsz/2) > rv->permissions);
+        printf("\nOverflowing publicreview into permissions by 1:\n");
+        overflow_into_permissions(bigsz+1, 1, rv->publicreview, rv);
+    }
+    else 
+    {
+        assert((rv->realname + smsz + smsz/2) > rv->permissions);
+        printf("\nOverflowing realname into permissions by 1:\n");
+        overflow_into_permissions(smsz+1, 1, rv->realname, rv);
+    }
+    
+    const size_t oversz = rv->permissions - rv->realname + 2 - smsz;
+    printf("\nOverflowing realname into permissions by %zu:\n", oversz);
+    overflow_into_permissions(smsz+2, oversz, rv->realname, rv);
+}
+
 int main(int argc, char* argv[])
 {
     struct review review;
@@ -137,6 +169,7 @@ int main(int argc, char* argv[])
     print_details(&review);
     
     bool b_improved = false;
+    
     char *newpublicreview = malloc(biggersz);
     strcpy(newpublicreview, "5 ***** strong accept. This author deserves two Nobels and an ice cream.\n");
 
@@ -164,36 +197,13 @@ int main(int argc, char* argv[])
     // Contrast the behaviour of this code in a CHERI vs. non-CHERI environment.
     if(b_improved == false) 
     {
-        int revpos = assert_no_overlap(review.realname, review.publicreview, review.permissions, smallsz, biggersz);
-        // realname has to come before permissions for the following to make sense
-        assert((review.realname + smallsz) <= review.permissions);
-        
-        if((revpos == 1) && (review.publicreview+biggersz <= review.permissions)) 
-        {
-            // if publicreview is in the middle and permissions is on the right of it
-            assert((review.publicreview + biggersz + biggersz/2) > review.permissions);
-            printf("\nOverflowing publicreview into permissions by 1:\n");
-            overflow_into_permissions(biggersz+1, 1, review.publicreview, &review);
-        }
-        else 
-        {
-            assert((review.realname + smallsz + smallsz/2) > review.permissions);
-            printf("\nOverflowing realname into permissions by 1:\n");
-            overflow_into_permissions(smallsz+1, 1, review.realname, &review);
-        }
-    
-        const size_t oversz = review.permissions - review.realname + 2 - smallsz;
-        printf("\nOverflowing realname into permissions by %zu:\n", oversz);
-        overflow_into_permissions(smallsz+2, oversz, review.realname, &review);
-        
+        rewrite_permissions_by_overflow(&review, smallsz, biggersz, bWeak);
         // If we reached this line, we should have acquired write privileges on the review.
         b_improved = change_publicreview(&review, newpublicreview, bWeak);
         print_details(&review);
     }
     
-    free(realname);
-    free(publicreview);
-    free(permissions);
+    free_pointers(&review);
 
     return 0;
 }
