@@ -145,14 +145,12 @@ void rewrite_permissions_by_overflow(struct review *rv, size_t smsz, size_t bigs
 }
 
 int main(int argc, char* argv[])
-{
-    struct review review;
-    // In a non-CHERI environment, write protection is weakly enforced
-    bool bWeak = true;
-    
+{    
     // initialization values for struct member sizes
     const size_t smallsz = 0x20;
     const size_t biggersz = 0x1001;
+    
+    struct review review;
        
     char *realname = malloc(smallsz);
     strcpy(realname, "Baba Yaga");
@@ -168,10 +166,13 @@ int main(int argc, char* argv[])
     
     print_details(&review);
     
+    // In a non-CHERI environment, write protection is weakly enforced
+    bool bWeak = true;
     bool b_improved = false;
     
     char *newpublicreview = malloc(biggersz);
     strcpy(newpublicreview, "5 ***** strong accept. This author deserves two Nobels and an ice cream.\n");
+    
 
 #ifdef __CHERI_PURE_CAPABILITY__    
     if(can_write(&review) == false) 
@@ -184,8 +185,7 @@ int main(int argc, char* argv[])
             printf("\nThe struct is read-only so trying to change the review will make the program crash.\n");
             bWeak = false;
             b_improved = change_publicreview(ro_review, newpublicreview, bWeak);
-            // This line should be unreachable.
-            print_details(ro_review);
+            assert(false);
         }
         fflush(stdout);
         b_improved = false;
