@@ -31,9 +31,7 @@
 
 struct review
 {
-    char *username;
     char *realname;
-    char *privatereview;
     char *publicreview;
     char *permissions;
 };
@@ -57,9 +55,7 @@ bool change_publicreview(struct review *rv, char* newpublicreview, bool bWeak)
 
 void print_details(struct review *rv)
 {
-    printf("\nReviewer Username: %s \n", rv->username);
     printf("Reviewer's Real Name: %s \n", rv->realname);
-    printf("Private Review: %s\n", rv->privatereview);
     printf("Public Review: %s\n", rv->publicreview);
     printf("Permissions: %s\n", rv->permissions);
     fflush(stdout);
@@ -68,9 +64,7 @@ void print_details(struct review *rv)
 struct review *set_read_only(struct review *rv)
 {
     #ifdef __CHERI_PURE_CAPABILITY__
-        rv->username = (char *) cheri_perms_and(rv->username, CHERI_PERM_LOAD);
         rv->realname = (char *) cheri_perms_and(rv->realname, CHERI_PERM_LOAD);
-        rv->privatereview = (char *) cheri_perms_and(rv->privatereview, CHERI_PERM_LOAD);
         rv->publicreview = (char *) cheri_perms_and(rv->publicreview, CHERI_PERM_LOAD);
         rv->permissions = (char *) cheri_perms_and(rv->permissions, CHERI_PERM_LOAD);
         return (struct review *) cheri_perms_and(rv, CHERI_PERM_LOAD | CHERI_PERM_LOAD_CAP);
@@ -87,6 +81,16 @@ void overflow_reviewer_realname(size_t offset, size_t reps, struct review *rv)
     fflush(stdout);
 }
 
+char* min(char* a, char* b)
+{
+    return(a > b ? b : a);
+}
+
+char* max(char* a, char* b)
+{
+    return(a > b ? a : b);
+}
+
 int main(int argc, char* argv[])
 {
     struct review review;
@@ -96,18 +100,10 @@ int main(int argc, char* argv[])
     // initialization values for struct member sizes
     const size_t smallsz = 0x20;
     const size_t biggersz = 0x1001;
-    
-    char *username = malloc(smallsz);
-    strcpy(username, "Reviewer 2"); 
-    review.username = username;
        
     char *realname = malloc(smallsz);
     strcpy(realname, "Baba Yaga");
     review.realname = realname;
-    
-    char *privatereview = malloc(biggersz);
-    strcpy(privatereview, "I cannot believe I read this appalling piece of dreck from start to finish. The authors should be ashamed, and I hope I get an opportunity to tell them so to their faces.");
-    review.privatereview = privatereview;
     
     char *publicreview = malloc(biggersz);
     strcpy(publicreview, "I am a little unclear as to the contribution. I think the authors could strengthen their case considerably if they conducted an RCT. Weak reject.");
@@ -119,20 +115,30 @@ int main(int argc, char* argv[])
     
     print_details(&review);
     
-    assert((size_t)(username + smallsz) <= (size_t)realname); 
-    assert((size_t)(privatereview + biggersz) <= (size_t)publicreview);
-    assert((size_t)(realname + smallsz) <= (size_t)permissions);
+#ifdef __CHERI_PURE_CAPABILITY__
+    printf("smallsz=%zx, CRRL(smallsz)=%zx\n", smallsz,
+        __builtin_cheri_round_representable_length(smallsz));
+    printf("biggersz=%zx, CRRL(biggersz)=%zx\n", biggersz,
+        __builtin_cheri_round_representable_length(biggersz));
+    printf("publicreview=%#p realname=%#p diff=%tx\n", publicreview, realname, realname - publicreview);
+    printf("realname=%#p permissions=%#p diff=%tx\n", realname, permissions, permissions - realname);
+#else
+    printf("publicreview=%p realname=%p diff=%tx\n", publicreview, realname, realname - publicreview);
+    printf("realname=%p permissions=%p diff=%tx\n", realname, permissions, permissions - realname);
+#endif
     
     bool b_improved = false;
     char *newpublicreview = malloc(biggersz);
     strcpy(newpublicreview, "5 ***** strong accept. This author deserves two Nobels and an ice cream.\n");
 
 #ifdef __CHERI_PURE_CAPABILITY__    
-    if(can_write(&review) == false) {
+    if(can_write(&review) == false) 
+    {
         struct review *ro_review = set_read_only(&review);
         assert((cheri_perms_get(ro_review) & CHERI_PERM_STORE) == 0);
 
-        if ((argc > 1) && (strcmp(argv[1], "-overwrite") == 0)) {
+        if ((argc > 1) && (strcmp(argv[1], "-overwrite") == 0)) 
+        {
             printf("\nThe struct is read-only so trying to change the review will make the program crash.\n");
             bWeak = false;
             b_improved = change_publicreview(ro_review, newpublicreview, bWeak);
@@ -147,7 +153,8 @@ int main(int argc, char* argv[])
 #endif 
 
     // Contrast the behaviour of this code in a CHERI vs. non-CHERI environment.
-    if(b_improved == false) {
+    if(b_improved == false) 
+    {
         overflow_reviewer_realname(smallsz+1, 1, &review);
     
         const size_t oversz = review.permissions - review.realname + 2 - smallsz;
@@ -158,9 +165,7 @@ int main(int argc, char* argv[])
         print_details(&review);
     }
     
-    free(username);
     free(realname);
-    free(privatereview);
     free(publicreview);
     free(permissions);
 
