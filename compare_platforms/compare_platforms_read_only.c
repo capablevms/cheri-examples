@@ -151,21 +151,18 @@ int main(int argc, char* argv[])
     
 
 #ifdef __CHERI_PURE_CAPABILITY__    
-    if(can_write(&review) == false) 
-    {
-        struct review *ro_review = set_read_only(&review);
-        assert((cheri_perms_get(ro_review) & CHERI_PERM_STORE) == 0);
+    struct review *ro_review = set_read_only(&review);
+    assert((cheri_perms_get(ro_review) & CHERI_PERM_STORE) == 0);
 
-        if ((argc > 1) && (strcmp(argv[1], "-overwrite") == 0)) 
-        {
-            printf("\nThe struct is read-only so trying to change the review will make the program crash.\n");
-            bWeak = false;
-            b_improved = change_publicreview(ro_review, newpublicreview, bWeak);
-            assert(false);
-        }
-        fflush(stdout);
-        b_improved = false;
+    if ((argc > 1) && (strcmp(argv[1], "-overwrite") == 0)) 
+    {
+        printf("\nThe struct is read-only so trying to change the review will make the program crash.\n");
+        bWeak = false;
+        b_improved = change_publicreview(ro_review, newpublicreview, bWeak);
+        assert(false);
     }
+    fflush(stdout);
+    b_improved = false;
 #else
     b_improved = change_publicreview(&review, newpublicreview, true);
 #endif 
