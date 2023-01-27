@@ -73,10 +73,9 @@ struct review *set_read_only(struct review *rv)
     #endif
 }
 
-void overflow_reviewer_realname(size_t offset, size_t reps, struct review *rv) 
+void overflow_into_permissions(size_t offset, size_t reps, char* overflow_from, struct review *rv) 
 {
-    printf("\nOverflowing reviewer realname by %zx\n", reps);
-    memset(rv->realname + offset, 'w', reps);
+    memset(overflow_from + offset, 'w', reps);
     printf("Permissions: %s\n", rv->permissions);
     fflush(stdout);
 }
@@ -91,22 +90,25 @@ char* max(char* a, char* b)
     return(a > b ? a : b);
 }
 
-void assert_positions(char* realname, char* publicreview, char* permissions, size_t smsz, size_t bigsz)
+int assert_no_overlap(char* realname, char* publicreview, char* permissions, size_t smsz, size_t bigsz)
 {
     if(min(min(realname, publicreview), permissions) == publicreview) 
     {
         assert((publicreview + bigsz) <= (min(realname, permissions))); 
         assert((min(realname, permissions) + smsz) <= (max(realname, permissions)));
+        return 0;
     } 
     else if(max(max(realname, publicreview), permissions) == publicreview)
     {
         assert((max(realname, permissions) + smsz) <= publicreview);
         assert((min(realname, permissions) + smsz) <= (max(realname, permissions)));
+        return 2;
     }
     else 
     {
         assert((min(realname, permissions) + smsz) <= publicreview);
-        assert((publicreview + bigsz) <=  (max(realname, permissions))); 
+        assert((publicreview + bigsz) <=  (max(realname, permissions)));
+        return 1; 
     }
 }
 
@@ -166,9 +168,6 @@ int main(int argc, char* argv[])
     
     // In a non-CHERI environment, write protection is weakly enforced
     bool bWeak = true;
-
-    assert_positions(realname, publicreview, permissions, smallsz, biggersz);
-    
     bool b_improved = false;
     
     char *newpublicreview = malloc(biggersz);
@@ -198,11 +197,7 @@ int main(int argc, char* argv[])
     // Contrast the behaviour of this code in a CHERI vs. non-CHERI environment.
     if(b_improved == false) 
     {
-        overflow_reviewer_realname(smallsz+1, 1, &review);
-    
-        const size_t oversz = review.permissions - review.realname + 2 - smallsz;
-        overflow_reviewer_realname(smallsz+2, oversz, &review);
-        
+        rewrite_permissions_by_overflow(&review, smallsz, biggersz, bWeak);
         // If we reached this line, we should have acquired write privileges on the review.
         b_improved = change_publicreview(&review, newpublicreview, bWeak);
         print_details(&review);
