@@ -117,31 +117,6 @@ void free_pointers(struct review *rv)
     free(rv->permissions);
 }
 
-void rewrite_permissions_by_overflow(struct review *rv, size_t smsz, size_t bigsz, bool bWeak)
-{
-    int revpos = assert_no_overlap(rv->realname, rv->publicreview, rv->permissions, smsz, bigsz);
-    // realname has to come before permissions for the following to make sense
-    assert((rv->realname + smsz) <= rv->permissions);
-        
-    if((revpos == 1) && (rv->publicreview+bigsz <= rv->permissions)) 
-    {
-        // if publicreview is in the middle and permissions is on the right of it
-        assert((rv->publicreview + bigsz + bigsz/2) > rv->permissions);
-        printf("\nOverflowing publicreview into permissions by 1:\n");
-        overflow_into_permissions(bigsz+1, 1, rv->publicreview, rv);
-    }
-    else 
-    {
-        assert((rv->realname + smsz + smsz/2) > rv->permissions);
-        printf("\nOverflowing realname into permissions by 1:\n");
-        overflow_into_permissions(smsz+1, 1, rv->realname, rv);
-    }
-    
-    const size_t oversz = rv->permissions - rv->realname + 2 - smsz;
-    printf("\nOverflowing realname into permissions by %zu:\n", oversz);
-    overflow_into_permissions(smsz+2, oversz, rv->realname, rv);
-}
-
 int main(int argc, char* argv[])
 {    
     // initialization values for struct member sizes
