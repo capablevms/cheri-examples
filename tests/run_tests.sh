@@ -60,15 +60,15 @@ function run {
 if [ "$1" = "riscv64" ] || [ "$1" = "morello-purecap" ]; then
     # Tests that should pass
     run OK shared_objects shared_objects-pcc_bounds_check_main
-    #run OK capability_sharing/cap-to-file cap_to_file
     run OK capability_sharing/read-cap-from-file read-cap-from-file
-    #run OK capability_sharing/leak-capability leak-capability
     run OK capability_sharing/mmap-shared-vs-private private_anon_main
     run OK capability_sharing/mmap-shared-vs-private private_file_main
     run OK capability_sharing/mmap-shared-vs-private shared_anon_main
     run OK capability_sharing/read-cap-from-pipe main
     run OK capability_sharing/read-cap-from-pipe-with-sh read-cap-from-pipe-with-sh
     # Tests that should fail
+    run to_fail capability_sharing/cap-to-file cap_to_file
+    run to_fail capability_sharing/leak-capability leak-capability
     run to_fail capability_sharing/mmap-shared-vs-private shared_file_main
     run to_fail compare_platforms compare_platforms_read_only
 elif [ "$1" = "morello-hybrid" ]; then
