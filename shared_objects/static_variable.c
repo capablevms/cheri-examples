@@ -13,20 +13,20 @@ static int32_t count = -5;
 
 void increment()
 {
-	count += 1;
-	assert(base_and_bounds_eq(cheri_pcc_get(), &increment));
+    count += 1;
+    assert(base_and_bounds_eq(cheri_pcc_get(), &increment));
 }
 
 int get_count()
 {
-	assert(base_and_bounds_eq(cheri_pcc_get(), &get_count));
+    assert(base_and_bounds_eq(cheri_pcc_get(), &get_count));
 
-	if (count > 0)
-	{
-		return count;
-	}
-	else
-	{
-		return 0;
-	}
+    if (count > 0)
+    {
+        return count;
+    }
+    else
+    {
+        return 0;
+    }
 }

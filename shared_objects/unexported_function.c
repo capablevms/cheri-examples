@@ -15,22 +15,22 @@
 
 __attribute__((visibility("hidden"))) void do_work()
 {
-	printf("Doing work\n");
+    printf("Doing work\n");
 }
 
 void *test()
 {
-	printf("Finding do_work using dlsym (lib4):\nptr: ");
-	pp_cap(dlsym(NULL, "do_work"));
-	printf("Obtaining a direct pointer to it: \nptr: ");
-	pp_cap(&do_work);
-	printf("test ptr just to keep it in the pcc:\n ptr: %p\n", &test);
-	printf(" ------- scanning pcc for sealed pointers --------\n");
-	bool found = scan_range(cheri_getpcc(), &do_work);
-	assert(found == true);
-	do_work();
+    printf("Finding do_work using dlsym (lib4):\nptr: ");
+    pp_cap(dlsym(NULL, "do_work"));
+    printf("Obtaining a direct pointer to it: \nptr: ");
+    pp_cap(&do_work);
+    printf("test ptr just to keep it in the pcc:\n ptr: %p\n", &test);
+    printf(" ------- scanning pcc for sealed pointers --------\n");
+    bool found = scan_range(cheri_getpcc(), &do_work);
+    assert(found == true);
+    do_work();
 
-	// We return a non-tagged capability to show
-	// and automatically test if there is outside access.
-	return cheri_cleartag(&do_work);
+    // We return a non-tagged capability to show
+    // and automatically test if there is outside access.
+    return cheri_cleartag(&do_work);
 }

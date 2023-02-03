@@ -10,8 +10,8 @@
 
 int main()
 {
-	for (uint64_t length = 0; length <= (4096 * 2); length += 1)
-	{
-		printf("%lu\n", cheri_representable_length(length));
-	}
+    for (uint64_t length = 0; length <= (4096 * 2); length += 1)
+    {
+        printf("%lu\n", cheri_representable_length(length));
+    }
 }

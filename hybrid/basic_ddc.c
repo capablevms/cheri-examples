@@ -15,17 +15,17 @@
 
 int main()
 {
-	uint16_t *some_int_ptr = (uint16_t *) malloc(sizeof(uint16_t));
-	*some_int_ptr = 200;
-	assert(cheri_address_get(cheri_ddc_get()) != some_int_ptr);
-	uint32_t *some_other_int_ptr = (uint32_t *) malloc(sizeof(uint32_t));
-	write_ddc((void *__capability) some_other_int_ptr);
-	assert(cheri_address_get(cheri_ddc_get()) != some_int_ptr);
-	assert(cheri_address_get(cheri_ddc_get()) == some_other_int_ptr);
-	// Note: this program is very simple and writing to the DDC in this fashion
-	// would cause a crash if the program were to execute much further.
-	write_ddc((void *__capability) some_int_ptr);
-	assert(cheri_address_get(cheri_ddc_get()) != some_other_int_ptr);
-	assert(cheri_address_get(cheri_ddc_get()) == some_int_ptr);
-	return 0;
+    uint16_t *some_int_ptr = (uint16_t *) malloc(sizeof(uint16_t));
+    *some_int_ptr = 200;
+    assert(cheri_address_get(cheri_ddc_get()) != some_int_ptr);
+    uint32_t *some_other_int_ptr = (uint32_t *) malloc(sizeof(uint32_t));
+    write_ddc((void *__capability) some_other_int_ptr);
+    assert(cheri_address_get(cheri_ddc_get()) != some_int_ptr);
+    assert(cheri_address_get(cheri_ddc_get()) == some_other_int_ptr);
+    // Note: this program is very simple and writing to the DDC in this fashion
+    // would cause a crash if the program were to execute much further.
+    write_ddc((void *__capability) some_int_ptr);
+    assert(cheri_address_get(cheri_ddc_get()) != some_other_int_ptr);
+    assert(cheri_address_get(cheri_ddc_get()) == some_int_ptr);
+    return 0;
 }

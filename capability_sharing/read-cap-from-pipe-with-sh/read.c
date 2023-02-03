@@ -26,24 +26,24 @@
  */
 int main(int argc, char **argv)
 {
-	uintptr_t cap = 0;
-	// 0 is not a valid capability
-	assert(!cheri_is_valid((void *) cap));
+    uintptr_t cap = 0;
+    // 0 is not a valid capability
+    assert(!cheri_is_valid((void *) cap));
 
-	freopen(NULL, "rb", stdin);
+    freopen(NULL, "rb", stdin);
 
-	size_t n = fread(&cap, sizeof(uintptr_t), 1, stdin);
+    size_t n = fread(&cap, sizeof(uintptr_t), 1, stdin);
 
-	if (n != 1)
-	{
-		fprintf(stderr, "read failed: %zu\n", n);
-		return 1;
-	}
+    if (n != 1)
+    {
+        fprintf(stderr, "read failed: %zu\n", n);
+        return 1;
+    }
 
-	printf("Read capability from stdin: %#lp\n", (void *) cap);
+    printf("Read capability from stdin: %#lp\n", (void *) cap);
 
-	// As expected, the capability read from stdin is invalid.
-	assert(!cheri_is_valid((void *) cap));
+    // As expected, the capability read from stdin is invalid.
+    assert(!cheri_is_valid((void *) cap));
 
-	return 0;
+    return 0;
 }

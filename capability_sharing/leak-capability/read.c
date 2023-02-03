@@ -30,37 +30,37 @@
  */
 int main(int argc, char **argv)
 {
-	uintptr_t cap = 0;
-	// 0 is not a valid capability
-	assert(!cheri_is_valid((void *) cap));
+    uintptr_t cap = 0;
+    // 0 is not a valid capability
+    assert(!cheri_is_valid((void *) cap));
 
-	FILE *f = fopen(CAP_FILE, "r");
+    FILE *f = fopen(CAP_FILE, "r");
 
-	if (f == NULL)
-	{
-		perror("failed to open file");
-		return 1;
-	}
+    if (f == NULL)
+    {
+        perror("failed to open file");
+        return 1;
+    }
 
-	size_t n = fread(&cap, sizeof(uintptr_t), 1, f);
+    size_t n = fread(&cap, sizeof(uintptr_t), 1, f);
 
-	if (n != 1)
-	{
-		fprintf(stderr, "read failed: %zu\n", n);
-		return 1;
-	}
+    if (n != 1)
+    {
+        fprintf(stderr, "read failed: %zu\n", n);
+        return 1;
+    }
 
-	if (fclose(f))
-	{
-		perror("failed to close file");
-		return 1;
-	}
+    if (fclose(f))
+    {
+        perror("failed to close file");
+        return 1;
+    }
 
-	printf("Read capability from %s: %#lp\n", CAP_FILE, (void *) cap);
+    printf("Read capability from %s: %#lp\n", CAP_FILE, (void *) cap);
 
-	// XXX the capability should not be valid but due to a bug in CheriBSD
-	// this assertion succeeds!
-	assert(cheri_is_valid((void *) cap));
+    // XXX the capability should not be valid but due to a bug in CheriBSD
+    // this assertion succeeds!
+    assert(cheri_is_valid((void *) cap));
 
-	return 0;
+    return 0;
 }

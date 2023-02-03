@@ -24,22 +24,22 @@
 
 int main()
 {
-	int i;
-	int *p;
+    int i;
+    int *p;
 
-	init_alloc(NUM_WORDS * sizeof(int));
+    init_alloc(NUM_WORDS * sizeof(int));
 
-	p = (int *) bump_alloc(1 * sizeof(int));
-	if (DEBUG_PRINTF)
-		pp_cap(p);
-	if (p)
-	{
-		*p = 42;
-		/* first bad op: write outside the pointer bounds */
-		*(p + 1) = 0xbaadf00d;
-		/* second bad op: read outside the pointer bounds */
-		printf("out-of-bounds read: %d\n", *(p + 1));
-	}
+    p = (int *) bump_alloc(1 * sizeof(int));
+    if (DEBUG_PRINTF)
+        pp_cap(p);
+    if (p)
+    {
+        *p = 42;
+        /* first bad op: write outside the pointer bounds */
+        *(p + 1) = 0xbaadf00d;
+        /* second bad op: read outside the pointer bounds */
+        printf("out-of-bounds read: %d\n", *(p + 1));
+    }
 
-	return 0;
+    return 0;
 }

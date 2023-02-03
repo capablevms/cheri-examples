@@ -5,15 +5,15 @@
 
 struct Car_priv
 {
-	int maxSpeed;
-	void (*crash)();
+    int maxSpeed;
+    void (*crash)();
 };
 
 struct Car
 {
-	int speed;
-	void (*honk)();
-	char name[];
+    int speed;
+    void (*honk)();
+    char name[];
 };
 
 void init();
