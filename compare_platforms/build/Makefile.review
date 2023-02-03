@@ -4,7 +4,7 @@
 # Common Makefile for the compare_platforms example.
 # This should not be invoked directly.
 
-RUNDIR := $(RUNDIR)/review
+RUNDIR := $(RUNDIR)/compare_platforms
 HFILES := $(wildcard include/*.h) $(wildcard ../include/*.h)
 export
 

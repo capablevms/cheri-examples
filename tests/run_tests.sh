@@ -70,6 +70,7 @@ if [ "$1" = "riscv64" ] || [ "$1" = "morello-purecap" ]; then
     run to_fail capability_sharing/cap-to-file cap_to_file
     run to_fail capability_sharing/leak-capability leak-capability
     run to_fail capability_sharing/mmap-shared-vs-private shared_file_main
+    run to_fail compare_platforms compare_platforms_overflow
     run to_fail compare_platforms compare_platforms_read_only
 elif [ "$1" = "morello-hybrid" ]; then
     # HYBRID TESTS
@@ -80,6 +81,7 @@ elif [ "$1" = "morello-hybrid" ]; then
     run to_fail hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure-redirect_clr
     run to_fail hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure-update_ddc
     # Tests that should pass
+    run OK compare_platforms compare_platforms_overflow
     run OK hybrid/ddc_compartment_switching ddc_compartment_switching
     run OK hybrid basic_ddc
     run OK hybrid/compartment_examples/inter_comp_call/base main
