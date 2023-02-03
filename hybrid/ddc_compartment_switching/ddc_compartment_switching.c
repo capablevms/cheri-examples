@@ -25,17 +25,17 @@ extern int switch_compartment(void *stack, size_t size);
 
 int main()
 {
-	uint8_t *simple_block = malloc(5000);
-	size_t compartment_size = 2000;
-	simple_block[1900] = 80;
-	switch_compartment(simple_block, compartment_size);
-	return 0;
+    uint8_t *simple_block = malloc(5000);
+    size_t compartment_size = 2000;
+    simple_block[1900] = 80;
+    switch_compartment(simple_block, compartment_size);
+    return 0;
 }
 
 int compartment_simple_fun()
 {
-	uint8_t *__capability ddc_cap = cheri_ddc_get();
-	assert(cheri_tag_get(ddc_cap) && cheri_length_get(ddc_cap) == 2000);
-	assert(ddc_cap[1900] == 80);
-	return 0;
+    uint8_t *__capability ddc_cap = cheri_ddc_get();
+    assert(cheri_tag_get(ddc_cap) && cheri_length_get(ddc_cap) == 2000);
+    assert(ddc_cap[1900] == 80);
+    return 0;
 }

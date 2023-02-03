@@ -5,7 +5,7 @@
 
 int main(int argc, char **argv)
 {
-	mmap_test_case_t test = INIT_TEST_CASE(PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1);
+    mmap_test_case_t test = INIT_TEST_CASE(PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1);
 
-	return run_mmap_test(test);
+    return run_mmap_test(test);
 }

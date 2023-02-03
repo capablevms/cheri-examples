@@ -19,37 +19,37 @@ const int MAX_ARRAY_SZ = 2048;
 int *random_chunk(size_t arr_length)
 {
 
-	srand(time(NULL));
+    srand(time(NULL));
 
-	int *arr = malloc(arr_length * sizeof(int));
-	for (size_t ix = 0; ix < arr_length; ix++)
-	{
-		arr[ix] = rand();
-	}
+    int *arr = malloc(arr_length * sizeof(int));
+    for (size_t ix = 0; ix < arr_length; ix++)
+    {
+        arr[ix] = rand();
+    }
 
-	return arr;
+    return arr;
 }
 
 int cmpfunc(const void *a, const void *b)
 {
-	return (*(int *) a - *(int *) b);
+    return (*(int *) a - *(int *) b);
 }
 
 bool arrEq(int arr_a[], int arr_b[], size_t lowerBound, size_t upperBound)
 {
-	if (lowerBound == upperBound || 0 == upperBound)
-	{
-		return true;
-	}
+    if (lowerBound == upperBound || 0 == upperBound)
+    {
+        return true;
+    }
 
-	for (size_t ix = lowerBound; ix <= upperBound; ix++)
-	{
-		if (arr_a[ix] != arr_b[ix])
-		{
-			return false;
-		}
-	}
-	return true;
+    for (size_t ix = lowerBound; ix <= upperBound; ix++)
+    {
+        if (arr_a[ix] != arr_b[ix])
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 /**
@@ -60,14 +60,14 @@ bool arrEq(int arr_a[], int arr_b[], size_t lowerBound, size_t upperBound)
  */
 size_t min(size_t a, size_t b)
 {
-	if (a <= b)
-	{
-		return a;
-	}
-	else
-	{
-		return b;
-	}
+    if (a <= b)
+    {
+        return a;
+    }
+    else
+    {
+        return b;
+    }
 }
 
 /**
@@ -77,53 +77,53 @@ size_t min(size_t a, size_t b)
  */
 bool isSorted(int arr[], size_t length)
 {
-	if (length <= 1)
-	{
-		return true;
-	}
+    if (length <= 1)
+    {
+        return true;
+    }
 
-	for (size_t ix = 1; ix < length; ix++)
-	{
-		if (arr[ix - 1] > arr[ix])
-		{
-			return false;
-		}
-	}
+    for (size_t ix = 1; ix < length; ix++)
+    {
+        if (arr[ix - 1] > arr[ix])
+        {
+            return false;
+        }
+    }
 
-	return true;
+    return true;
 }
 
 struct bp_array_s
 {
-	void *pointer;
-	size_t base;
-	size_t length;
+    void *pointer;
+    size_t base;
+    size_t length;
 };
 
 struct bp_array_s packBP_mangled(void *pointer, size_t baseIndex, size_t sizeInBytes)
 {
-	struct bp_array_s ret;
+    struct bp_array_s ret;
 
-	ret.pointer = pointer;
-	ret.base = baseIndex;
-	ret.length = sizeInBytes;
+    ret.pointer = pointer;
+    ret.base = baseIndex;
+    ret.length = sizeInBytes;
 
-	return ret;
+    return ret;
 }
 
 void *get_pointer_mangled(struct bp_array_s bp)
 {
-	return bp.pointer;
+    return bp.pointer;
 }
 
 size_t get_base_mangled(struct bp_array_s bp)
 {
-	return bp.base;
+    return bp.base;
 }
 
 size_t get_length_mangled(struct bp_array_s bp)
 {
-	return bp.length;
+    return bp.length;
 }
 
 #ifndef __CHERI_PURE_CAPABILITY__
@@ -140,69 +140,69 @@ typedef void *bp_array;
 
 bp_array packBP(int *pointer, const size_t baseIndex, const size_t sizeInBytes)
 {
-	if (0 == baseIndex)
-	{
+    if (0 == baseIndex)
+    {
 
-		struct bp_array_s *largeDescriptor = malloc(sizeof(struct bp_array_s));
-		if (NULL == largeDescriptor)
-		{
-			exit(EXIT_FAILURE);
-		}
-		*largeDescriptor = packBP_mangled(pointer, baseIndex, sizeInBytes);
+        struct bp_array_s *largeDescriptor = malloc(sizeof(struct bp_array_s));
+        if (NULL == largeDescriptor)
+        {
+            exit(EXIT_FAILURE);
+        }
+        *largeDescriptor = packBP_mangled(pointer, baseIndex, sizeInBytes);
 
-		return (bp_array) largeDescriptor;
-	}
+        return (bp_array) largeDescriptor;
+    }
 
-	int *descriptor = cheri_setoffset(pointer, 0);
-	descriptor = cheri_setbounds(descriptor, sizeInBytes);
-	descriptor = cheri_setoffset(descriptor, baseIndex);
+    int *descriptor = cheri_setoffset(pointer, 0);
+    descriptor = cheri_setbounds(descriptor, sizeInBytes);
+    descriptor = cheri_setoffset(descriptor, baseIndex);
 
-	if (baseIndex != cheri_getoffset(descriptor) || sizeInBytes != cheri_getlen(descriptor))
-	{
-		struct bp_array_s *largeDescriptor = malloc(sizeof(struct bp_array_s));
-		if (NULL == largeDescriptor)
-		{
-			exit(EXIT_FAILURE);
-		}
-		*largeDescriptor = packBP_mangled(pointer, baseIndex, sizeInBytes);
+    if (baseIndex != cheri_getoffset(descriptor) || sizeInBytes != cheri_getlen(descriptor))
+    {
+        struct bp_array_s *largeDescriptor = malloc(sizeof(struct bp_array_s));
+        if (NULL == largeDescriptor)
+        {
+            exit(EXIT_FAILURE);
+        }
+        *largeDescriptor = packBP_mangled(pointer, baseIndex, sizeInBytes);
 
-		return (bp_array) largeDescriptor;
-	}
+        return (bp_array) largeDescriptor;
+    }
 
-	return (bp_array) descriptor;
+    return (bp_array) descriptor;
 }
 
 bool isMangled(bp_array bp)
 {
-	return 0 == cheri_getoffset(bp);
+    return 0 == cheri_getoffset(bp);
 }
 
 void *get_pointer(bp_array bp)
 {
-	if (isMangled(bp))
-	{
-		return cheri_setoffset(get_pointer_mangled(*(struct bp_array_s *) bp), 0);
-	}
-	void *ret = bp;
-	return cheri_setoffset(ret, 0);
+    if (isMangled(bp))
+    {
+        return cheri_setoffset(get_pointer_mangled(*(struct bp_array_s *) bp), 0);
+    }
+    void *ret = bp;
+    return cheri_setoffset(ret, 0);
 }
 
 size_t get_base(bp_array bp)
 {
-	if (isMangled(bp))
-	{
-		return get_base_mangled(*(struct bp_array_s *) bp);
-	}
-	return cheri_getoffset(bp);
+    if (isMangled(bp))
+    {
+        return get_base_mangled(*(struct bp_array_s *) bp);
+    }
+    return cheri_getoffset(bp);
 }
 
 size_t get_length(bp_array bp)
 {
-	if (isMangled(bp))
-	{
-		return get_length_mangled(*(struct bp_array_s *) bp);
-	}
-	return cheri_getlength(bp);
+    if (isMangled(bp))
+    {
+        return get_length_mangled(*(struct bp_array_s *) bp);
+    }
+    return cheri_getlength(bp);
 }
 
 #endif
@@ -211,32 +211,32 @@ size_t get_length(bp_array bp)
 
 void callBP_dispatch(void (*function)(bp_array), bp_array args)
 {
-	function(args);
+    function(args);
 }
 
 #define callBP(function, pointer, base, length)                                                    \
-	callBP_dispatch((function), packBP((pointer), (base), (length)))
+    callBP_dispatch((function), packBP((pointer), (base), (length)))
 
 #else
 void call_and_free(void (*function)(bp_array), void *descriptor)
 {
-	function(descriptor);
-	free(descriptor);
-	return;
+    function(descriptor);
+    free(descriptor);
+    return;
 }
 
 void callBP_dispatch(void (*function)(bp_array), void *pointer, size_t base, size_t length)
 {
-	bp_array descriptor = packBP(pointer, base, length);
+    bp_array descriptor = packBP(pointer, base, length);
 
-	if (0 == base)
-	{
-		call_and_free(function, descriptor);
-		return;
-	}
+    if (0 == base)
+    {
+        call_and_free(function, descriptor);
+        return;
+    }
 
-	function(descriptor);
-	return;
+    function(descriptor);
+    return;
 }
 
 #define callBP(function, pointer, base, length) (callBP_dispatch(function, pointer, base, length))

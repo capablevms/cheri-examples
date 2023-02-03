@@ -8,7 +8,7 @@
 
 int main()
 {
-	increment();
-	check_static_and_non_static();
-	return 0;
+    increment();
+    check_static_and_non_static();
+    return 0;
 }

@@ -8,15 +8,15 @@
 
 int main()
 {
-	size_t size = 31;
+    size_t size = 31;
 
-	printf("Size: ");
-	if (0 == scanf("%lu", &size))
-	{
-		error("Extraneous input");
-		return -1;
-	}
+    printf("Size: ");
+    if (0 == scanf("%lu", &size))
+    {
+        error("Extraneous input");
+        return -1;
+    }
 
-	void *memory = malloc(size);
-	pp_cap(memory);
+    void *memory = malloc(size);
+    pp_cap(memory);
 }

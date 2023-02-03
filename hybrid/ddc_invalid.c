@@ -15,9 +15,9 @@
 
 int main()
 {
-	// Before clearing the tag we ensure we have a valid one
-	assert(cheri_tag_get(cheri_ddc_get()));
-	// Clearing the tag will cause the exception
-	write_ddc(cheri_tag_clear(cheri_ddc_get()));
-	return 0;
+    // Before clearing the tag we ensure we have a valid one
+    assert(cheri_tag_get(cheri_ddc_get()));
+    // Clearing the tag will cause the exception
+    write_ddc(cheri_tag_clear(cheri_ddc_get()));
+    return 0;
 }

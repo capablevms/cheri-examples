@@ -21,25 +21,25 @@
 extern int comp_fun();
 // The function connected to the assembly trampoline.
 extern int switch_compartment(void *stack, size_t size, void *__capability fn_call_start,
-							  void *__capability pcc);
+                              void *__capability pcc);
 
 // Function outside of PCC bounds to be called from within the compartment.
 void comp_fun_c(uint8_t *stk)
 {
-	// unreachable
+    // unreachable
 }
 
 int main()
 {
-	uint8_t *comp_mem = malloc(5000);
-	size_t comp_size = 2000;
+    uint8_t *comp_mem = malloc(5000);
+    size_t comp_size = 2000;
 
-	// Create a capability which we will use to tightly bound the PCC for the
-	// compartment.
-	void *__capability call_cap = (void *__capability) comp_fun;
-	call_cap = cheri_bounds_set(call_cap, comp_size);
+    // Create a capability which we will use to tightly bound the PCC for the
+    // compartment.
+    void *__capability call_cap = (void *__capability) comp_fun;
+    call_cap = cheri_bounds_set(call_cap, comp_size);
 
-	switch_compartment(comp_mem, comp_size, call_cap, comp_fun_c);
-	assert(false && "Should not get here");
-	return 0;
+    switch_compartment(comp_mem, comp_size, call_cap, comp_fun_c);
+    assert(false && "Should not get here");
+    return 0;
 }

@@ -15,9 +15,9 @@
 
 int main()
 {
-	// Ensure the DDC contains a valid capability
-	assert(cheri_tag_get(cheri_ddc_get()));
-	// Putting a NULL will cause the exception
-	write_ddc(NULL);
-	return 0;
+    // Ensure the DDC contains a valid capability
+    assert(cheri_tag_get(cheri_ddc_get()));
+    // Putting a NULL will cause the exception
+    write_ddc(NULL);
+    return 0;
 }

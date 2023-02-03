@@ -70,13 +70,13 @@ void *__capability switcher_call;
  */
 struct comp
 {
-	size_t id;
-	void *compartment_start;
-	void *stack_addr;
-	size_t stack_len;
-	size_t heap_len;
-	void *__capability ddc;
-	void *__capability comp_fn;
+    size_t id;
+    void *compartment_start;
+    void *stack_addr;
+    size_t stack_len;
+    size_t heap_len;
+    void *__capability ddc;
+    void *__capability comp_fn;
 };
 
 // ASM offsets, included here for validation
@@ -84,12 +84,12 @@ struct comp
 
 static_assert(COMP_SIZE == sizeof(struct comp), "Invalid `COMP_SIZE` provided");
 static_assert(COMP_OFFSET_STK_ADDR == offsetof(struct comp, stack_addr),
-			  "Invalid `COMP_OFFSET_STK_ADDR` provided.");
+              "Invalid `COMP_OFFSET_STK_ADDR` provided.");
 static_assert(COMP_OFFSET_STK_LEN == offsetof(struct comp, stack_len),
-			  "Invalid `COMP_OFFSET_STK_LEN` provided.");
+              "Invalid `COMP_OFFSET_STK_LEN` provided.");
 static_assert(COMP_OFFSET_DDC == offsetof(struct comp, ddc), "Invalid `COMP_OFFSET_DDC` provided.");
 static_assert(COMP_OFFSET_PCC == offsetof(struct comp, comp_fn),
-			  "Invalid `COMP_OFFSET_PCC` provided.");
+              "Invalid `COMP_OFFSET_PCC` provided.");
 
 struct comp comps[COMP_COUNT];
 
@@ -104,54 +104,54 @@ struct comp comps[COMP_COUNT];
  */
 void init_comps()
 {
-	void *__capability switch_cap = (void *__capability) switch_compartment;
-	size_t switcher_size = (uintptr_t) switch_compartment_end - (uintptr_t) switch_compartment;
-	switch_cap = cheri_bounds_set(switch_cap, switcher_size);
-	switcher_caps[1] = switch_cap;
+    void *__capability switch_cap = (void *__capability) switch_compartment;
+    size_t switcher_size = (uintptr_t) switch_compartment_end - (uintptr_t) switch_compartment;
+    switch_cap = cheri_bounds_set(switch_cap, switcher_size);
+    switcher_caps[1] = switch_cap;
 
-	void *__capability comps_addr = (void *__capability) &comps;
-	comps_addr = cheri_bounds_set(comps_addr, COMP_COUNT * COMP_SIZE);
-	switcher_caps[0] = comps_addr;
+    void *__capability comps_addr = (void *__capability) &comps;
+    comps_addr = cheri_bounds_set(comps_addr, COMP_COUNT * COMP_SIZE);
+    switcher_caps[0] = comps_addr;
 
-	switcher_call = (void *__capability) switcher_caps;
-	// Seal this capability to be only used via a `lpb` type call
-	asm("seal %w0, %w0, lpb" : "+r"(switcher_call) :);
+    switcher_call = (void *__capability) switcher_caps;
+    // Seal this capability to be only used via a `lpb` type call
+    asm("seal %w0, %w0, lpb" : "+r"(switcher_call) :);
 }
 
 void add_comp(uint8_t *_start_addr, void (*_comp_fn)(), void *_comp_fn_end)
 {
-	assert(id < COMP_COUNT);
-	struct comp new_comp;
-	new_comp.id = id;
+    assert(id < COMP_COUNT);
+    struct comp new_comp;
+    new_comp.id = id;
 
-	new_comp.compartment_start = (void *) _start_addr;
-	new_comp.stack_addr = (void *) (_start_addr + comp_stack_size);
-	new_comp.stack_len = comp_stack_size;
-	new_comp.heap_len = total_comp_size - comp_stack_size;
+    new_comp.compartment_start = (void *) _start_addr;
+    new_comp.stack_addr = (void *) (_start_addr + comp_stack_size);
+    new_comp.stack_len = comp_stack_size;
+    new_comp.heap_len = total_comp_size - comp_stack_size;
 
-	// Ensure 16-byte alignment throughout the compartment bounds
-	assert(((uintptr_t) new_comp.compartment_start) % 16 == 0);
-	assert(((uintptr_t) new_comp.stack_addr) % 16 == 0);
-	assert(total_comp_size % 16 == 0);
+    // Ensure 16-byte alignment throughout the compartment bounds
+    assert(((uintptr_t) new_comp.compartment_start) % 16 == 0);
+    assert(((uintptr_t) new_comp.stack_addr) % 16 == 0);
+    assert(total_comp_size % 16 == 0);
 
-	// When creating a compartment, store a local copy of the capability which
-	// will allow us to call `switch_compartment` in the heap of the compartment.
-	void *heap_top = (void *) (_start_addr + total_comp_size - sizeof(void *__capability));
-	memcpy(heap_top, &switcher_call, sizeof(void *__capability));
+    // When creating a compartment, store a local copy of the capability which
+    // will allow us to call `switch_compartment` in the heap of the compartment.
+    void *heap_top = (void *) (_start_addr + total_comp_size - sizeof(void *__capability));
+    memcpy(heap_top, &switcher_call, sizeof(void *__capability));
 
-	void *__capability comp_ddc = (void *__capability) _start_addr;
-	comp_ddc = cheri_bounds_set(comp_ddc, total_comp_size);
-	new_comp.ddc = comp_ddc;
+    void *__capability comp_ddc = (void *__capability) _start_addr;
+    comp_ddc = cheri_bounds_set(comp_ddc, total_comp_size);
+    new_comp.ddc = comp_ddc;
 
-	// Set up a capability pointing to the function we want to call within the
-	// compartment. This will be loaded as the PCC when the function is called.
-	void *__capability comp_fn = (void *__capability) _comp_fn;
-	size_t comp_fn_size = (uintptr_t) _comp_fn_end - (uintptr_t) _comp_fn;
-	comp_fn = cheri_bounds_set(comp_fn, comp_fn_size);
-	new_comp.comp_fn = comp_fn;
+    // Set up a capability pointing to the function we want to call within the
+    // compartment. This will be loaded as the PCC when the function is called.
+    void *__capability comp_fn = (void *__capability) _comp_fn;
+    size_t comp_fn_size = (uintptr_t) _comp_fn_end - (uintptr_t) _comp_fn;
+    comp_fn = cheri_bounds_set(comp_fn, comp_fn_size);
+    new_comp.comp_fn = comp_fn;
 
-	comps[id] = new_comp;
-	++id;
+    comps[id] = new_comp;
+    ++id;
 }
 
 /*******************************************************************************
@@ -160,15 +160,15 @@ void add_comp(uint8_t *_start_addr, void (*_comp_fn)(), void *_comp_fn_end)
 
 int main()
 {
-	init_comps();
+    init_comps();
 
-	uint8_t *comp_f = malloc(total_comp_size);
-	add_comp(comp_f, comp_f_fn, &comp_f_fn_end);
-	uint8_t *comp_g = malloc(total_comp_size);
-	add_comp(comp_g, comp_g_fn, &comp_g_fn_end);
+    uint8_t *comp_f = malloc(total_comp_size);
+    add_comp(comp_f, comp_f_fn, &comp_f_fn_end);
+    uint8_t *comp_g = malloc(total_comp_size);
+    add_comp(comp_g, comp_g_fn, &comp_g_fn_end);
 
-	executive_switch(switcher_caps[0]);
+    executive_switch(switcher_caps[0]);
 
-	// Check compartment did indeed execute
-	assert(comp_g[4000] == 42);
+    // Check compartment did indeed execute
+    assert(comp_g[4000] == 42);
 }

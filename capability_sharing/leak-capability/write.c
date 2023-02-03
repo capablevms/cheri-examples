@@ -30,32 +30,32 @@
  */
 int main(int argc, char **argv)
 {
-	FILE *f = fopen(CAP_FILE, "w");
+    FILE *f = fopen(CAP_FILE, "w");
 
-	if (f == NULL)
-	{
-		perror("failed to open file");
-		return 1;
-	}
+    if (f == NULL)
+    {
+        perror("failed to open file");
+        return 1;
+    }
 
-	int x = 1;
-	uintptr_t cap = (uintptr_t) &x;
+    int x = 1;
+    uintptr_t cap = (uintptr_t) &x;
 
-	size_t n = fwrite(&cap, sizeof(uintptr_t), 1, f);
+    size_t n = fwrite(&cap, sizeof(uintptr_t), 1, f);
 
-	fprintf(stderr, "Wrote capability to %s: %#lp\n", CAP_FILE, (void *) cap);
+    fprintf(stderr, "Wrote capability to %s: %#lp\n", CAP_FILE, (void *) cap);
 
-	if (n != 1)
-	{
-		fprintf(stderr, "write failed: %zu\n", n);
-		return 1;
-	}
+    if (n != 1)
+    {
+        fprintf(stderr, "write failed: %zu\n", n);
+        return 1;
+    }
 
-	if (fclose(f))
-	{
-		perror("failed to close file");
-		return 1;
-	}
+    if (fclose(f))
+    {
+        perror("failed to close file");
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }

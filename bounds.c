@@ -12,14 +12,14 @@
 
 int main()
 {
-	int32_t array[16] = {0};
-	int32_t *typed_array = &array;
+    int32_t array[16] = {0};
+    int32_t *typed_array = &array;
 
-	uint64_t length = cheri_length_get(typed_array);
-	for (uint32_t counter = 0; counter <= (length / sizeof(int32_t)) + 15; counter++)
-	{
-		pp_cap(typed_array + counter);
-		// Read value to crash
-		printf("Count: %d, Value: %d\n", counter, *(typed_array + counter));
-	}
+    uint64_t length = cheri_length_get(typed_array);
+    for (uint32_t counter = 0; counter <= (length / sizeof(int32_t)) + 15; counter++)
+    {
+        pp_cap(typed_array + counter);
+        // Read value to crash
+        printf("Count: %d, Value: %d\n", counter, *(typed_array + counter));
+    }
 }

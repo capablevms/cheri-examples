@@ -20,28 +20,28 @@
 
 int main()
 {
-	int i;
+    int i;
 
-	init_alloc(NUM_WORDS * sizeof(int));
+    init_alloc(NUM_WORDS * sizeof(int));
 
-	/* now try to do some bump pointer allocations */
-	for (i = 0; i < NUM_WORDS; i++)
-	{
-		int *x = (int *) bump_alloc(1 * sizeof(int));
-		if (DEBUG_PRINTF)
-			pp_cap(x);
-		if (x)
-		{
-			*x = 42;
-			if (DEBUG_PRINTF)
-				printf("stored value %d\n", *x);
-		}
-		else
-		{
-			if (DEBUG_PRINTF)
-				printf("bump_alloc returned null\n");
-		}
-	}
+    /* now try to do some bump pointer allocations */
+    for (i = 0; i < NUM_WORDS; i++)
+    {
+        int *x = (int *) bump_alloc(1 * sizeof(int));
+        if (DEBUG_PRINTF)
+            pp_cap(x);
+        if (x)
+        {
+            *x = 42;
+            if (DEBUG_PRINTF)
+                printf("stored value %d\n", *x);
+        }
+        else
+        {
+            if (DEBUG_PRINTF)
+                printf("bump_alloc returned null\n");
+        }
+    }
 
-	return 0;
+    return 0;
 }

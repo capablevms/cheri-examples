@@ -10,11 +10,11 @@
 
 int main()
 {
-	struct employee employee = {0, "Good", "Employee", 55000};
-	double salary = 0.0;
-	print_details(&employee);
-	printf("\nInsert the new salary for this employee: \n");
-	scanf("%lf", &salary);
-	change_salary(&employee, salary);
-	print_details(&employee);
+    struct employee employee = {0, "Good", "Employee", 55000};
+    double salary = 0.0;
+    print_details(&employee);
+    printf("\nInsert the new salary for this employee: \n");
+    scanf("%lf", &salary);
+    change_salary(&employee, salary);
+    print_details(&employee);
 }

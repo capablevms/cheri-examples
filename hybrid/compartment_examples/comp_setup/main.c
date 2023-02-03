@@ -54,13 +54,13 @@ size_t id = 0;
  */
 struct comp
 {
-	size_t id;
-	void *stack_addr;
-	size_t stack_len;
-	void *heap_addr;
-	size_t heap_len;
-	void *__capability ddc;
-	void *__capability comp_fn;
+    size_t id;
+    void *stack_addr;
+    size_t stack_len;
+    void *heap_addr;
+    size_t heap_len;
+    void *__capability ddc;
+    void *__capability comp_fn;
 };
 
 // ASM offsets, included here for validation
@@ -68,12 +68,12 @@ struct comp
 
 static_assert(COMP_SIZE == sizeof(struct comp), "Invalid `COMP_SIZE` provided");
 static_assert(COMP_OFFSET_STK_ADDR == offsetof(struct comp, stack_addr),
-			  "Invalid `COMP_OFFSET_STK_ADDR` provided.");
+              "Invalid `COMP_OFFSET_STK_ADDR` provided.");
 static_assert(COMP_OFFSET_STK_LEN == offsetof(struct comp, stack_len),
-			  "Invalid `COMP_OFFSET_STK_LEN` provided.");
+              "Invalid `COMP_OFFSET_STK_LEN` provided.");
 static_assert(COMP_OFFSET_DDC == offsetof(struct comp, ddc), "Invalid `COMP_OFFSET_DDC` provided.");
 static_assert(COMP_OFFSET_PCC == offsetof(struct comp, comp_fn),
-			  "Invalid `COMP_OFFSET_PCC` provided.");
+              "Invalid `COMP_OFFSET_PCC` provided.");
 
 struct comp comps[COMP_COUNT];
 
@@ -86,38 +86,38 @@ struct comp comps[COMP_COUNT];
  */
 void executive_switch(struct comp c)
 {
-	void *comps_addr = &comps;
-	asm("mov x19, %0\n\t"
-		"mov x0, #0\n\t"
-		"msr CID_EL0, c0"
-		:
-		: "r"(comps_addr));
+    void *comps_addr = &comps;
+    asm("mov x19, %0\n\t"
+        "mov x0, #0\n\t"
+        "msr CID_EL0, c0"
+        :
+        : "r"(comps_addr));
 
-	switch_compartment();
+    switch_compartment();
 }
 
 void add_comp(uint8_t *_start_addr, void (*_comp_fn)())
 {
-	assert(id < COMP_COUNT);
+    assert(id < COMP_COUNT);
 
-	struct comp new_comp;
-	new_comp.id = id;
+    struct comp new_comp;
+    new_comp.id = id;
 
-	new_comp.stack_addr = (void *) _start_addr;
-	new_comp.stack_len = comp_stack_size;
-	new_comp.heap_addr = (void *) (_start_addr + comp_stack_size);
-	new_comp.heap_len = total_comp_size - comp_stack_size;
+    new_comp.stack_addr = (void *) _start_addr;
+    new_comp.stack_len = comp_stack_size;
+    new_comp.heap_addr = (void *) (_start_addr + comp_stack_size);
+    new_comp.heap_len = total_comp_size - comp_stack_size;
 
-	void *__capability comp_ddc = (void *__capability) _start_addr;
-	comp_ddc = cheri_bounds_set(comp_ddc, total_comp_size);
-	new_comp.ddc = comp_ddc;
+    void *__capability comp_ddc = (void *__capability) _start_addr;
+    comp_ddc = cheri_bounds_set(comp_ddc, total_comp_size);
+    new_comp.ddc = comp_ddc;
 
-	void *__capability comp_fn = (void *__capability) _comp_fn;
-	comp_fn = cheri_bounds_set(comp_fn, 40);
-	new_comp.comp_fn = comp_fn;
+    void *__capability comp_fn = (void *__capability) _comp_fn;
+    comp_fn = cheri_bounds_set(comp_fn, 40);
+    new_comp.comp_fn = comp_fn;
 
-	comps[id] = new_comp;
-	++id;
+    comps[id] = new_comp;
+    ++id;
 }
 
 /*******************************************************************************
@@ -126,11 +126,11 @@ void add_comp(uint8_t *_start_addr, void (*_comp_fn)())
 
 int main()
 {
-	uint8_t *comp_f = malloc(total_comp_size);
-	add_comp(comp_f, comp_f_fn);
+    uint8_t *comp_f = malloc(total_comp_size);
+    add_comp(comp_f, comp_f_fn);
 
-	executive_switch(comps[0]);
+    executive_switch(comps[0]);
 
-	// Check compartment did indeed execute
-	assert(comp_f[4000] == 42);
+    // Check compartment did indeed execute
+    assert(comp_f[4000] == 42);
 }

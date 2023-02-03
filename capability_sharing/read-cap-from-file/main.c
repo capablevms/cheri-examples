@@ -18,41 +18,41 @@
 
 int read_cap(FILE *f, uintptr_t *cap)
 {
-	size_t res = fread(cap, sizeof(uintptr_t), 1, f);
-	if (res != 1)
-	{
-		fprintf(stderr, "read failed: %zu\n", res);
-		return 1;
-	}
+    size_t res = fread(cap, sizeof(uintptr_t), 1, f);
+    if (res != 1)
+    {
+        fprintf(stderr, "read failed: %zu\n", res);
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int main(int argc, char **argv)
 {
-	int x = 1;
-	FILE *f = NULL;
+    int x = 1;
+    FILE *f = NULL;
 
-	if (!(f = fopen(CAP_FILE, "r")))
-	{
-		perror("failed to open capability file");
-		return 1;
-	}
+    if (!(f = fopen(CAP_FILE, "r")))
+    {
+        perror("failed to open capability file");
+        return 1;
+    }
 
-	uintptr_t stored_cap = 0;
-	// 0 is not a valid capability
-	assert(!cheri_is_valid((void *) stored_cap));
+    uintptr_t stored_cap = 0;
+    // 0 is not a valid capability
+    assert(!cheri_is_valid((void *) stored_cap));
 
-	if (read_cap(f, &stored_cap))
-	{
-		return 1;
-	}
+    if (read_cap(f, &stored_cap))
+    {
+        return 1;
+    }
 
-	printf("Read capability from file: %#lp\n", (void *) stored_cap);
+    printf("Read capability from file: %#lp\n", (void *) stored_cap);
 
-	assert(!cheri_is_valid((void *) stored_cap));
+    assert(!cheri_is_valid((void *) stored_cap));
 
-	fclose(f);
+    fclose(f);
 
-	return 0;
+    return 0;
 }

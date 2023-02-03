@@ -17,18 +17,18 @@ typedef int (*stat_fn)(const char *restrict path, struct stat *restrict statbuf)
 
 void try_stat(stat_fn fn, char const *file)
 {
-	struct stat statbuf;
-	printf("    stat(\"%s\", &statbuf)\n", file);
-	if (fn(file, &statbuf) == 0)
-	{
-		// Print some easily-verifiable information to demonstrate that
-		// the syscall actually worked.
-		printf("    - Success, size is %zu bytes.\n", statbuf.st_size);
-	}
-	else
-	{
-		printf("    - Failed, errno = %d: %s\n", errno, strerror(errno));
-	}
+    struct stat statbuf;
+    printf("    stat(\"%s\", &statbuf)\n", file);
+    if (fn(file, &statbuf) == 0)
+    {
+        // Print some easily-verifiable information to demonstrate that
+        // the syscall actually worked.
+        printf("    - Success, size is %zu bytes.\n", statbuf.st_size);
+    }
+    else
+    {
+        printf("    - Failed, errno = %d: %s\n", errno, strerror(errno));
+    }
 }
 
 int stat_without_perm_syscall(const char *restrict path, struct stat *restrict statbuf);
@@ -75,13 +75,13 @@ asm(	".type stat_without_perm_syscall, @function\n"
 
 int main(int argc, char *argv[])
 {
-	// Arbitrarily pick the executable itself as the subject.
-	char const *file = argv[0];
+    // Arbitrarily pick the executable itself as the subject.
+    char const *file = argv[0];
 
-	printf("\nInitially, we can call syscalls as usual:\n");
-	try_stat(stat, file);
-	printf("\nIf we remove CHERI_PERM_SYSCALL, CheriBSD rejects them:\n");
-	try_stat(stat_without_perm_syscall, file);
-	printf("\nThe error is conventional (not an exception), so we can recover:\n");
-	try_stat(stat, file);
+    printf("\nInitially, we can call syscalls as usual:\n");
+    try_stat(stat, file);
+    printf("\nIf we remove CHERI_PERM_SYSCALL, CheriBSD rejects them:\n");
+    try_stat(stat_without_perm_syscall, file);
+    printf("\nThe error is conventional (not an exception), so we can recover:\n");
+    try_stat(stat, file);
 }

@@ -3,8 +3,8 @@
 
    contributed by Kevin Carson
    compilation:
-	   gcc -O3 -fomit-frame-pointer -funroll-loops -static binary-trees.c -lm
-	   icc -O3 -ip -unroll -static binary-trees.c -lm
+       gcc -O3 -fomit-frame-pointer -funroll-loops -static binary-trees.c -lm
+       icc -O3 -ip -unroll -static binary-trees.c -lm
 
    *reset*
 */
@@ -17,103 +17,103 @@
 
 typedef struct tn
 {
-	struct tn *left;
-	struct tn *right;
+    struct tn *left;
+    struct tn *right;
 } treeNode;
 
 treeNode *NewTreeNode(treeNode *left, treeNode *right)
 {
-	treeNode *new;
+    treeNode *new;
 
-	new = (treeNode *) alloc(sizeof(treeNode));
+    new = (treeNode *) alloc(sizeof(treeNode));
 
-	new->left = left;
-	new->right = right;
+    new->left = left;
+    new->right = right;
 
-	return new;
+    return new;
 } /* NewTreeNode() */
 
 long ItemCheck(treeNode *tree)
 {
-	if (tree->left == NULL)
-		return 1;
-	else
-		return 1 + ItemCheck(tree->left) + ItemCheck(tree->right);
+    if (tree->left == NULL)
+        return 1;
+    else
+        return 1 + ItemCheck(tree->left) + ItemCheck(tree->right);
 } /* ItemCheck() */
 
 treeNode *BottomUpTree(unsigned depth)
 {
-	if (depth > 0)
-		return NewTreeNode(BottomUpTree(depth - 1), BottomUpTree(depth - 1));
-	else
-		return NewTreeNode(NULL, NULL);
+    if (depth > 0)
+        return NewTreeNode(BottomUpTree(depth - 1), BottomUpTree(depth - 1));
+    else
+        return NewTreeNode(NULL, NULL);
 } /* BottomUpTree() */
 
 void DeleteTree(treeNode *tree)
 {
-	if (tree->left != NULL)
-	{
-		DeleteTree(tree->left);
-		DeleteTree(tree->right);
-	}
+    if (tree->left != NULL)
+    {
+        DeleteTree(tree->left);
+        DeleteTree(tree->right);
+    }
 
-	dealloc(tree);
+    dealloc(tree);
 } /* DeleteTree() */
 
 int main(int argc, char *argv[])
 {
-	unsigned N, depth, minDepth, maxDepth, stretchDepth;
-	treeNode *stretchTree, *longLivedTree, *tempTree;
-	unsigned pages; /* mem required */
+    unsigned N, depth, minDepth, maxDepth, stretchDepth;
+    treeNode *stretchTree, *longLivedTree, *tempTree;
+    unsigned pages; /* mem required */
 
-	N = (argc > 1) ? atol(argv[1]) : 0;
+    N = (argc > 1) ? atol(argv[1]) : 0;
 
-	minDepth = 4;
+    minDepth = 4;
 
-	if ((minDepth + 2) > N)
-		maxDepth = minDepth + 2;
-	else
-		maxDepth = N;
+    if ((minDepth + 2) > N)
+        maxDepth = minDepth + 2;
+    else
+        maxDepth = N;
 
-	stretchDepth = maxDepth + 1;
+    stretchDepth = maxDepth + 1;
 
-	/* calculate mem requirements, with allocator-specific
-	 * size-class assumptions
-	 */
-	pages = ((2 << (stretchDepth + 3)) * sizeof(treeNode)) / BYTES_IN_PAGE;
-	printf("treenode size is %u bytes\n", (unsigned int) sizeof(treeNode));
-	printf("we need %u pages\n", pages);
+    /* calculate mem requirements, with allocator-specific
+     * size-class assumptions
+     */
+    pages = ((2 << (stretchDepth + 3)) * sizeof(treeNode)) / BYTES_IN_PAGE;
+    printf("treenode size is %u bytes\n", (unsigned int) sizeof(treeNode));
+    printf("we need %u pages\n", pages);
 
-	/* allocate memory pool */
-	initialize(pages);
+    /* allocate memory pool */
+    initialize(pages);
 
-	/* start creating tree data structures */
-	stretchTree = BottomUpTree(stretchDepth);
-	printf("stretch tree of depth %u\t check: %li\n", stretchDepth, ItemCheck(stretchTree));
+    /* start creating tree data structures */
+    stretchTree = BottomUpTree(stretchDepth);
+    printf("stretch tree of depth %u\t check: %li\n", stretchDepth, ItemCheck(stretchTree));
 
-	DeleteTree(stretchTree);
+    DeleteTree(stretchTree);
 
-	longLivedTree = BottomUpTree(maxDepth);
+    longLivedTree = BottomUpTree(maxDepth);
 
-	for (depth = minDepth; depth <= maxDepth; depth += 2)
-	{
-		long i, iterations, check;
+    for (depth = minDepth; depth <= maxDepth; depth += 2)
+    {
+        long i, iterations, check;
 
-		iterations = pow(2, maxDepth - depth + minDepth);
+        iterations = pow(2, maxDepth - depth + minDepth);
 
-		check = 0;
+        check = 0;
 
-		for (i = 1; i <= iterations; i++)
-		{
-			tempTree = BottomUpTree(depth);
-			check += ItemCheck(tempTree);
-			DeleteTree(tempTree);
-		} /* for(i = 1...) */
+        for (i = 1; i <= iterations; i++)
+        {
+            tempTree = BottomUpTree(depth);
+            check += ItemCheck(tempTree);
+            DeleteTree(tempTree);
+        } /* for(i = 1...) */
 
-		printf("%li\t trees of depth %u\t check: %li\n", iterations, depth, check);
-	} /* for(depth = minDepth...) */
+        printf("%li\t trees of depth %u\t check: %li\n", iterations, depth, check);
+    } /* for(depth = minDepth...) */
 
-	printf("long lived tree of depth %u\t check: %li\n", maxDepth, ItemCheck(longLivedTree));
+    printf("long lived tree of depth %u\t check: %li\n", maxDepth, ItemCheck(longLivedTree));
 
-	return 0;
+    return 0;
 } /* main() */

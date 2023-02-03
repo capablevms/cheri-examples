@@ -28,20 +28,20 @@
  */
 int main(int argc, char **argv)
 {
-	freopen(NULL, "wb", stdout);
+    freopen(NULL, "wb", stdout);
 
-	int x = 1;
-	uintptr_t cap = (uintptr_t) &x;
+    int x = 1;
+    uintptr_t cap = (uintptr_t) &x;
 
-	size_t n = fwrite(&cap, sizeof(uintptr_t), 1, stdout);
+    size_t n = fwrite(&cap, sizeof(uintptr_t), 1, stdout);
 
-	fprintf(stderr, "Wrote capability to stdout: %#lp\n", (void *) cap);
+    fprintf(stderr, "Wrote capability to stdout: %#lp\n", (void *) cap);
 
-	if (n != 1)
-	{
-		fprintf(stderr, "write failed: %zu\n", n);
-		return 1;
-	}
+    if (n != 1)
+    {
+        fprintf(stderr, "write failed: %zu\n", n);
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }
