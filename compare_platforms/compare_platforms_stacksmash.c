@@ -45,7 +45,7 @@ void display_process_info(char *str)
 {
     printf("\nPID = %d\n", getpid());
 
-#ifdef __CHERI_PURE_CAPABILITY__    
+#ifdef __CHERI_PURE_CAPABILITY__
     pp_cap(str);
 #else
     printf("Address of str = %p\n", &str);
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     const size_t alphabet_size = 26;
     size_t goodindex = rand() % alphabet_size;
     char *str = &alphabet[goodindex];
-    
+
     display_process_info(str);
 
     // Show the audience what they should be seeing
