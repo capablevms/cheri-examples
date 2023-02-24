@@ -62,13 +62,6 @@ void display_process_info(char *str)
 #endif
 }
 
-void spin(intptr_t howlong)
-{
-    intmax_t t = get_time();
-    while ((get_time() - t) < (intmax_t) howlong)
-        ;
-}
-
 int main(int argc, char *argv[])
 {
     char *alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -85,8 +78,9 @@ int main(int argc, char *argv[])
     // Show the audience what they should be seeing
     for (int i = 0; i < 10; i++)
     {
+        sleep(1);
         printf("%s\n", str);
-        spin(1);
+        fflush(stdout);
     }
 
     // get an index we know is out-of-bounds of alphabet
@@ -100,8 +94,9 @@ int main(int argc, char *argv[])
     // now show the ill-gotten string
     for (int i = 0; i < 10; i++)
     {
+        sleep(1);
         printf("%s\n", str);
-        spin(1);
+        fflush(stdout);
     }
 
     return 0;
