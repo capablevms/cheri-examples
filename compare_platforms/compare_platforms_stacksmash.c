@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     printf("Address of str = %p\n", &str);
 #endif
 
-    // keep showing the ill-gotten string until the user kills the process
+    // now show the ill-gotten string
     for (int i = 0; i < 10; i++)
     {
         printf("%s\n", str);
