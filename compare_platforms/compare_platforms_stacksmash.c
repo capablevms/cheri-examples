@@ -95,6 +95,10 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 10; i++)
     {
         sleep(1);
+        // In a purecap environment, this is what causes a SIGPROT.
+        // We know the address of str is off the end of alphabet because we put it there.
+        // Specifically, a call to strlen() is on the stack at the point of the SIGPROT,
+        // and it results in a capability bounds fault.
         printf("%s\n", str);
         fflush(stdout);
     }
