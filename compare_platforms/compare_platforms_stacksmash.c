@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 #endif
 
     // keep showing the ill-gotten string until the user kills the process
-    while (1) {
+    for(int i=0; i<10; i++) {
         printf("%s\n", str);
         spin(1);
     }
