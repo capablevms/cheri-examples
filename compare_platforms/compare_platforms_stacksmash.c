@@ -1,30 +1,20 @@
 /*
- * This example is meant to be run in multiple instances launched simultaneously.
- * It can also be run as a single instance.
- *
- * Usage:
- * prompt> ./compare_platforms_stacksmash & ./compare_platforms_stacksmash &
- * or:
- * prompt> ./compare_platforms_stacksmash
- *
- * The purpose of the example is to compare how a stack-smashing attempt is handled
+ * The purpose of this example is to compare how a stack-smashing attempt is handled
  * in a CHERI purecap vs hybrid environment, vs a non-CHERI environment.
  *
  * The example first displays a substring of the Latin alphabet starting from a random index,
  * then tries to smash the stack using an index that is known to be out-of-bounds,
- * and display the out-of-bounds substring to the user.
+ * and display the contents of the out-of-bounds address to the user.
  *
  * In a CHERI purecap environment:
- * - A single instance should crash, and multiple instances should hang;
- * - The user should not see the out-of-bounds substring;
- * - The address of the pointer should be the same for all instances but change when
- * the substring's value changes.
+ * - The program should crash with a SIGPROT caused by a capability bounds fault;
+ * - The user should not see the contents of the out-of-bounds address;
+ * - The address of the pointer should change when its value changes.
  *
  * In a morello-hybrid environment:
  * - The program should run without crashing;
- * - The user should see the out-of-bounds substring;
- * - The address of the pointer should be different for all instances and should not
- * change when the substring's value changes.
+ * - The user should see the contents of the out-of-bounds address;
+ * - The address of the pointer should not change when its value changes.
  *
  * In a non-CHERI environment, the program's behaviour is implementation dependent.
  */
