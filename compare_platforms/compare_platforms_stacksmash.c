@@ -51,6 +51,17 @@ intmax_t get_time()
     return (intmax_t) t.tv_sec + (intmax_t) t.tv_usec / 1e6;
 }
 
+void display_process_info(char *str)
+{
+#ifdef __CHERI_PURE_CAPABILITY__
+    printf("\nPID = %d\n", getpid());
+    pp_cap(str);
+#else
+    printf("\nPID = %d\n", getpid());
+    printf("Address of str = %p\n", &str);
+#endif
+}
+
 void spin(intptr_t howlong)
 {
     intmax_t t = get_time();
@@ -68,14 +79,8 @@ int main(int argc, char *argv[])
     const size_t alphabet_size = 26;
     size_t goodindex = rand() % alphabet_size;
     char *str = &alphabet[goodindex];
-
-#ifdef __CHERI_PURE_CAPABILITY__
-    printf("\nPID = %d\n", getpid());
-    pp_cap(str);
-#else
-    printf("\nPID = %d\n", getpid());
-    printf("Address of str = %p\n", &str);
-#endif
+    
+    display_process_info(str);
 
     // Show the audience what they should be seeing
     for (int i = 0; i < 10; i++)
@@ -90,13 +95,7 @@ int main(int argc, char *argv[])
     // change the message to something the user shouldn't see
     str = &alphabet[evilindex];
 
-#ifdef __CHERI_PURE_CAPABILITY__
-    printf("\nPID = %d\n", getpid());
-    pp_cap(str);
-#else
-    printf("\nPID = %d\n", getpid());
-    printf("Address of str = %p\n", &str);
-#endif
+    display_process_info(str);
 
     // now show the ill-gotten string
     for (int i = 0; i < 10; i++)
