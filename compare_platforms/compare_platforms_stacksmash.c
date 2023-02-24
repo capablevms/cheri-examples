@@ -53,11 +53,11 @@ intmax_t get_time()
 
 void display_process_info(char *str)
 {
-#ifdef __CHERI_PURE_CAPABILITY__
     printf("\nPID = %d\n", getpid());
+
+#ifdef __CHERI_PURE_CAPABILITY__    
     pp_cap(str);
 #else
-    printf("\nPID = %d\n", getpid());
     printf("Address of str = %p\n", &str);
 #endif
 }
