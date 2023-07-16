@@ -69,7 +69,9 @@ datacap_create(void *sandbox_base, void *sandbox_end)
 }
 
 /*
-/// TODO: test function attributes (ccall, ccallee), with args
+//
+// TODO: test function attributes (ccall, ccallee), with args
+//
 __attribute__((cheri_ccall))
 __attribute__((cheri_method_suffix("_cap")))
 __attribute__((cheri_method_class(main_obj)))
