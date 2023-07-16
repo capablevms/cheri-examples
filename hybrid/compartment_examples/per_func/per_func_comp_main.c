@@ -222,13 +222,7 @@ int main () // remove unused args
     printf("\n -- ERROR ----- heapval_external: %d (ERROR: this should not be printed)\n", *heap_cap);
     
     /*
-    void *__capability sealcap;
-    size_t sealcap_size = sizeof(sealcap);
-    if (sysctlbyname("security.cheri.sealcap", &sealcap, &sealcap_size, NULL, 0) < 0)
-    {
-         error("Fatal error. Cannot get `security.cheri.sealcap`.");
-         exit(1);
-    }
+    
     main_obj.co_datacap = (__cheri_tocap void *__capability)cheri_ddc_get();
     void * stack_addr = __builtin_frame_address(0);
     main_obj.co_datacap = cheri_address_set((void *__capability)main_obj.co_datacap, 
