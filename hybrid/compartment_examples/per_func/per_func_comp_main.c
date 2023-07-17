@@ -146,21 +146,9 @@ __attribute__((cheri_method_class(main_obj)))
 
 int main () // remove unused args
 {
-    //- Setup a capability of a heap object first -//
-    int * heap_ptr = (int *)malloc (sizeof(int));
-    int *__capability heap_cap = (__cheri_tocap int *__capability)heap_ptr;
-    write_ddc((void *__capability) heap_cap); 
-   
-    heap_cap = cheri_address_set((void *__capability)heap_cap, (unsigned long)heap_ptr);
-    heap_cap = cheri_bounds_set((void *__capability)heap_cap, sizeof(int));
-    cheri_perms_and(heap_cap, CHERI_PERM_LOAD | CHERI_PERM_STORE | CHERI_PERM_LOAD_CAP);
-    
-    printf("\n --- heapcap_2/4 ---------\n");
-    pp_cap((void *__capability) heap_cap);
-    
-    *heap_cap = 10;
-    
     //-- Setup sandbox_1 object capability --//
+    
+    void * apprx_data_UB = __builtin_frame_address(0);
     
     //- Get a sealing capability 
     void *__capability sealcap;
@@ -172,18 +160,20 @@ int main () // remove unused args
     }
     
     //- sandbox_1 sealcap -// 
-    //sandbox_1_sealcap = (void *__capability)cheri_maketype(sealcap, tysz); // a cheri object? 
+    //sandbox_1_sealcap = (void *__capability)cheri_maketype(sealcap, tysz); 
     sandbox_1_sealcap = (void *__capability)cheri_maketype(sealcap, sealcap_size); 
                         // cheri_maketype return type -> ?? 
     
     //- sandbox_1 code cap -// 
     void * sandbox_code_1_ubound = (void*)(((size_t)sandbox_1_func) + SANDBOX_CODE_SZ); 
+        // TODO (1) test with overlapped address range of objcap with diff permissoins
+        //      (2) test with preciser addr bounds 
     sandbox_1_codecap = cheri_seal(codecap_create((void (*)(void))&sandbox_1_func, sandbox_code_1_ubound), 
                                    sandbox_1_sealcap);
    
     //- sandbox1's data's range is heap lower bound  ~ upper bound -//
-    size_t sandbox_data_1_lbound = cheri_base_get(heap_cap);
-    size_t sandbox_data_1_ubound = sandbox_data_1_lbound + cheri_length_get(heap_cap) - 1;
+    size_t sandbox_data_1_lbound = apprx_data_UB - 1000; // approx
+    size_t sandbox_data_1_ubound = apprx_data_UB;
     sandbox_1_datacap = cheri_seal(datacap_create((void*)sandbox_data_1_lbound, (void*)sandbox_data_1_ubound), 
                                    sandbox_1_sealcap);
 
@@ -199,9 +189,8 @@ int main () // remove unused args
                                    sandbox_2_sealcap);
     
     //- sandbox_2 data cap -// 
-    void * sandbox2_ubound = __builtin_frame_address(0);
-    void * sandbox2_lbound = (void*)((size_t)sandbox2_ubound - 1000); // approx 
-    sandbox_2_datacap = cheri_seal(datacap_create(sandbox2_lbound, sandbox2_ubound), 
+    void * sandbox2_lbound = (void*)((size_t)apprx_data_UB - 1000); // approx 
+    sandbox_2_datacap = cheri_seal(datacap_create(sandbox2_lbound, apprx_data_UB), 
                                    sandbox_2_sealcap);
 
     // just check 
@@ -220,6 +209,27 @@ int main () // remove unused args
     
     *heap_cap = sandbox_2_func(heap_cap);
     printf("\n -- ERROR ----- heapval_external: %d (ERROR: this should not be printed)\n", *heap_cap);
+    
+    //- Setup a capability of a heap object first -//
+    
+    int * heap_ptr = (int *)malloc (sizeof(int));
+    int *__capability heap_cap = (__cheri_tocap int *__capability)heap_ptr;
+    write_ddc((void *__capability) heap_cap); 
+   
+    heap_cap = cheri_address_set((void *__capability)heap_cap, (unsigned long)heap_ptr);
+    heap_cap = cheri_bounds_set((void *__capability)heap_cap, sizeof(int));
+    cheri_perms_and(heap_cap, CHERI_PERM_LOAD | CHERI_PERM_STORE | CHERI_PERM_LOAD_CAP);
+    
+    printf("\n --- heapcap_2/4 ---------\n");
+    pp_cap((void *__capability) heap_cap);
+    
+    *heap_cap = 10;
+    
+    //- sandbox1's data's range is heap lower bound  ~ upper bound -//
+    size_t sandbox_data_1_lbound = cheri_base_get(heap_cap);
+    size_t sandbox_data_1_ubound = sandbox_data_1_lbound + cheri_length_get(heap_cap) - 1;
+    sandbox_1_datacap = cheri_seal(datacap_create((void*)sandbox_data_1_lbound, (void*)sandbox_data_1_ubound), 
+                                   sandbox_1_sealcap);
     
     /*
     
