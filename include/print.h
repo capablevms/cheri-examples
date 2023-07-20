@@ -1,20 +1,20 @@
 #ifndef __CHERI_EXAMPLE_PRINT_H
-#define __CHERI_EXAMPLE_PRINT_H 
+#define __CHERI_EXAMPLE_PRINT_H
 
 #include <assert.h>
 #include <cheri.h>
 #include <cheri/cheri.h>
 #include <cheri/cheric.h>
 #include <machine/sysarch.h>
-#include <stdlib.h>
-#include <sys/sysctl.h>
-#include <sys/types.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/sysctl.h>
+#include <sys/types.h>
 
-// 
-#define cheri_tag_get(x)    __builtin_cheri_tag_get(x)
+//
+#define cheri_tag_get(x) __builtin_cheri_tag_get(x)
 #define cheri_address_get(x) __builtin_cheri_address_get(x)
 #define cheri_is_sealed(x) __builtin_cheri_sealed_get(x)
 #define cheri_flags_get(x) __builtin_cheri_flags_get(x)
