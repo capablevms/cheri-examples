@@ -6,7 +6,7 @@
  * Print information about a capability
  */
 
-#define cheri_address_get(x)    __builtin_cheri_address_get(x)
+#define cheri_address_get(x) __builtin_cheri_address_get(x)
 
 void print_cap(void *__capability ptr)
 {
@@ -24,4 +24,3 @@ void print_cap(void *__capability ptr)
            "Length: %04lx, Offset: %04lx\n\n",
            tag, perms, type, address, base, base + length, flags, length, offset);
 }
-

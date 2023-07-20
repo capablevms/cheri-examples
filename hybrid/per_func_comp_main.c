@@ -1,10 +1,8 @@
-/*
-    This example implements a simple cheri type allocator 
-    to show how cheri otype values are determined.
-    
-    Note: cheriintrin.h is not used in this example.
-
-*/
+/***
+* This example implements a simple cheri type allocator to show 
+* how cheri otype values are determined. 
+* Note: cheriintrin.h is not used in this example. 
+***/
 
 #include <assert.h>
 #include <cheri.h>
@@ -20,7 +18,7 @@
 
 #define SANDBOX_CODE_SZ 1000 // approx. later modify it.
 
-//- NOTE ------  
+// NOTE ------  
 /// cheriintrin.h is commented out temporarily in this example //
 typedef long cheri_otype_t;
 #define cheri_is_sealed(x)      __builtin_cheri_sealed_get(x)
@@ -160,7 +158,6 @@ int main() // Remove unused args
         printf("Fatal error. Cannot get `security.cheri.sealcap`.");
         exit(1);
     }
-    
     //=- Create cheri_object_1 sealcap -=//
     
     //- Get a next type i.e. create a next sealing capability -//
@@ -258,8 +255,7 @@ int main() // Remove unused args
     // but perms for code and data differ.
     // TODO: Test obj cap invoke
     assert(cheri_perms_get(cheriobj_1_codecap) != cheri_perms_get(cheriobj_1_datacap));
-    assert(cheri_perms_get(cheriobj_2_codecap) != cheri_perms_get(cheriobj_2_datacap));
-    
+    assert(cheri_perms_get(cheriobj_2_codecap)!=cheri_perms_get(cheriobj_2_datacap));
     printf(" ** Success: code and data capability perms differ ** \n");
 
     // TODO: cheri_invoke
