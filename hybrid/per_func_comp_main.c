@@ -6,13 +6,6 @@
 
 #include "../include/print.h"
 #include "include/utils.h"
-#include <assert.h>
-#include <cheri.h>
-#include <cheri/cheri.h>
-#include <cheri/cheric.h>
-#include <machine/sysarch.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/sysctl.h>
 #include <sys/types.h>
 
@@ -21,7 +14,7 @@
 // NOTE ------
 /// cheriintrin.h is commented out temporarily in this example //
 typedef long cheri_otype_t;
-#define cheri_is_sealed(x) __builtin_cheri_sealed_get(x)
+//#define cheri_is_sealed(x) __builtin_cheri_sealed_get(x)
 // from cheriintrin.h  ///
 
 // static void * __capability sandbox_1_sealcap;
