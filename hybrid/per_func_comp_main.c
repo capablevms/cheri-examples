@@ -240,7 +240,7 @@ int main() // Remove unused args
     assert(cheri_type_get(cheriobj_1_codecap) != cheri_type_get(cheriobj_2_codecap));
     assert(cheri_type_get(cheriobj_1_datacap) != cheri_type_get(cheriobj_2_datacap));
 
-    printf(" ** Success: code and data capability types differ ** \n");
+    printf(" ** Success: object 1 and 2's types differ ** \n");
 
     // Each cheri_object's code and data address ranges are set the same,
     // but perms for code and data differ.
