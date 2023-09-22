@@ -3,7 +3,7 @@
 Examples of CHERI fundamental operations, interesting corner cases, and simple
 demonstrative applications.
 
-A makefile is provided for each supported platform, and a basic build command
+A `Makefile` is provided for each supported platform, and a basic build command
 looks like this:
 
 ```
@@ -26,6 +26,8 @@ files for details.
   to the SDK can be given in `SDKBASE`.
 - For `run-<binary>` targets, a machine or model that can run the result,
   reachable by SSH.
+- GNU make. Depending on your platform you might need to specify `gmake` rather
+  than `make`.
 
 [cheribuild]: https://github.com/CTSRD-CHERI/cheribuild
 
