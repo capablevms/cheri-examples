@@ -50,7 +50,10 @@ function run {
             make -f Makefile.$BUILDBOT_PLATFORM run-$name
         fi
     done
-    popd
+    # popd so long as we're not working in the repo root
+    if [ "$2" != "." ]; then
+        popd
+    fi
 }
 
 # TODO: `mmap` also fails, but looks like it is intended to pass.
@@ -81,12 +84,14 @@ elif [ "$1" = "morello-hybrid" ]; then
     run to_fail hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure-redirect_clr
     run to_fail hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure-update_ddc
     # Tests that should pass
+    run OK . cap_build
     run OK compare_platforms compare_platforms_overflow
     run OK hybrid/ddc_compartment_switching ddc_compartment_switching
     run OK hybrid basic_ddc
     run OK hybrid/compartment_examples/inter_comp_call/base main
     run OK hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure
     run OK syscall-restrict syscall-restrict
+    run OK example_allocators/compartment_alloc main
 else
     echo "$1 not recognised."
     exit 1
