@@ -6,5 +6,5 @@
 
 CHERIBASE ?= $(HOME)/cheri
 SDKBASE ?= $(CHERIBASE)/output/morello-sdk
-CFLAGS := --config cheribsd-morello-hybrid.cfg $(CFLAGS)
+CFLAGS := --config cheribsd-morello-hybrid.cfg $(CFLAGS) -lm -lpthread
 PLATFORM := morello-hybrid
