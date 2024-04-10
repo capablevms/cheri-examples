@@ -84,14 +84,14 @@ elif [ "$1" = "morello-hybrid" ]; then
     run to_fail hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure-redirect_clr
     run to_fail hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure-update_ddc
     # Tests that should pass
-    run OK . cap_build
     run OK compare_platforms compare_platforms_overflow
-    run OK hybrid/ddc_compartment_switching ddc_compartment_switching
+    run OK example_allocators/compartment_alloc main
     run OK hybrid basic_ddc
+    run OK hybrid cap_build
     run OK hybrid/compartment_examples/inter_comp_call/base main
     run OK hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure
+    run OK hybrid/ddc_compartment_switching ddc_compartment_switching
     run OK syscall-restrict syscall-restrict
-    run OK example_allocators/compartment_alloc main
 else
     echo "$1 not recognised."
     exit 1

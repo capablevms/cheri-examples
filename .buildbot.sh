@@ -50,7 +50,7 @@ args=(
 )
 export BUILDBOT_PLATFORM=riscv64-purecap
 args=${args[@]}
-script -O /dev/null -c "python3 tests/run_cheri_examples.py $args"
+script -O /dev/null -ec "python3 tests/run_cheri_examples.py $args"
 
 echo "Running tests for 'morello-hybrid' using QEMU..."
 args=(
@@ -66,7 +66,7 @@ args=(
 )
 export BUILDBOT_PLATFORM=morello-hybrid
 args=${args[@]}
-script -O /dev/null -c "python3 tests/run_cheri_examples.py $args"
+script -O /dev/null -ec "python3 tests/run_cheri_examples.py $args"
 
 echo "Running tests for 'morello-purecap' using QEMU..."
 args=(
@@ -82,4 +82,4 @@ args=(
 )
 export BUILDBOT_PLATFORM=morello-purecap
 args=${args[@]}
-script -O /dev/null -c "python3 tests/run_cheri_examples.py $args"
+script -O /dev/null -ec "python3 tests/run_cheri_examples.py $args"
