@@ -15,11 +15,12 @@
 //    from the first argument --- which differentiates `cheri_address_set` and
 //   `cheri_cap_build`.
 
-#include "cheriintrin.h"
-#include "include/common.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../include/common.h"
+#include "cheriintrin.h"
 
 int main()
 {
