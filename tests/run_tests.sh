@@ -88,6 +88,7 @@ elif [ "$1" = "morello-hybrid" ]; then
     run OK example_allocators/compartment_alloc main
     run OK hybrid basic_ddc
     run OK hybrid cap_build
+    run OK hybrid threads_ddc
     run OK hybrid/compartment_examples/inter_comp_call/base main
     run OK hybrid/compartment_examples/inter_comp_call/malicious_compartments inter_comp_call-secure
     run OK hybrid/ddc_compartment_switching ddc_compartment_switching
