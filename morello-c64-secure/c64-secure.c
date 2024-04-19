@@ -7,7 +7,8 @@
 // the backtrace).
 
 #include <assert.h>
-#include <cheri/cheric.h>
+#include <cheriintrin.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -20,10 +21,10 @@ void C(uint32_t locals);
 void Z(uint32_t locals);
 typedef void (*AbiHelperFn)(uint32_t);
 
-int is_in_A(uintptr_t pcc);
-int is_in_B(uintptr_t pcc);
-int is_in_C(uintptr_t pcc);
-int is_in_Z(uintptr_t pcc);
+bool is_in_A(uintptr_t pcc);
+bool is_in_B(uintptr_t pcc);
+bool is_in_C(uintptr_t pcc);
+bool is_in_Z(uintptr_t pcc);
 
 enum ABI {
 	AbiA,
@@ -120,7 +121,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-int is_in_range(size_t address, size_t start, size_t end) {
+bool is_in_range(size_t address, size_t start, size_t end) {
 	return (address >= start) && (address < end);
 }
 
@@ -189,8 +190,8 @@ int backtrace(struct Context frame, struct Context const* current) {
 	const char* frame_slot_names[3] = { "UNKNOWN", "UNKNOWN", "UNKNOWN" };
 	size_t frame_record_slots;
 	struct Context caller;
-	size_t cfp_len = cheri_getlen(frame.cfp);
-	ptraddr_t csp_limit = cheri_getbase(frame.csp) + cheri_getlen(frame.csp);
+	size_t cfp_len = cheri_length_get(frame.cfp);
+	ptraddr_t csp_limit = cheri_base_get(frame.csp) + cheri_length_get(frame.csp);
 	switch (abi) {
 		case AbiUnknown:
 			// Probably C's `main`. Stop looking for more frames.
@@ -199,7 +200,7 @@ int backtrace(struct Context frame, struct Context const* current) {
 		case AbiA:
 		case AbiB:
 			// C64-Secure frame
-			assert(cheri_getoffset(frame.cfp) == 0);
+			assert(cheri_offset_get(frame.cfp) == 0);
 			frame_record_slots = 3;
 			caller.cfp = frame_record[0];
 			caller.csp = frame_record[1];
@@ -212,9 +213,9 @@ int backtrace(struct Context frame, struct Context const* current) {
 			// C64-Secure v2, with precisely-restricted csp.
 			frame_record_slots = 2;
 			ptraddr_t caller_sp =
-				cheri_getaddress(frame_record[0] + frame_record_slots);
-			caller.cfp = cheri_setaddress(frame.cfp, frame_record[0]);
-			caller.csp = cheri_setaddress(frame_record[0], caller_sp);
+				cheri_address_get(frame_record[0] + frame_record_slots);
+			caller.cfp = cheri_address_set(frame.cfp, frame_record[0]);
+			caller.csp = cheri_address_set(frame_record[0], caller_sp);
 			caller.pcc = frame_record[1];
 			frame_slot_names[0] = "(cfp x csp)";
 			frame_slot_names[1] = "pcc";
@@ -249,14 +250,14 @@ int backtrace(struct Context frame, struct Context const* current) {
 	Slot cfp_max_slot = cfp_slot + frame_record_slots - 1;
 
 	size_t cur_csp = (size_t)(current->csp);
-	size_t cur_csp_base = (size_t)(cheri_getbase(current->csp));
-	size_t cur_csp_len = (size_t)(cheri_getlen(current->csp));
+	size_t cur_csp_base = (size_t)(cheri_base_get(current->csp));
+	size_t cur_csp_len = (size_t)(cheri_length_get(current->csp));
 	Slot cur_csp_min_slot = cur_csp_base / slot_size;
 	Slot cur_csp_slot = (Slot)(current->csp) / slot_size;
 	Slot cur_csp_max_slot = (Slot)(cur_csp_base + cur_csp_len - 1) / slot_size;
 
-	size_t cur_cfp_base = (size_t)(cheri_getbase(current->cfp));
-	size_t cur_cfp_len = (size_t)(cheri_getlen(current->cfp));
+	size_t cur_cfp_base = (size_t)(cheri_base_get(current->cfp));
+	size_t cur_cfp_len = (size_t)(cheri_length_get(current->cfp));
 	Slot cur_cfp_min_slot = cur_cfp_base / slot_size;
 	Slot cur_cfp_slot = (Slot)(current->cfp) / slot_size;
 	Slot cur_cfp_max_slot = (Slot)(cur_cfp_base + cur_cfp_len - 1) / slot_size;
