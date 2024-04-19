@@ -197,12 +197,16 @@ Z_end:
 
         // Helpers for mapping a code address to a given demo function. This is
         // how we identify which ABI was used.
+        //
+        // Each of these take the address to query in c0. That, and the
+        // per-function bounds, are passed in the tail-call to the `is_in_range`
+        // helper.
 
         .global is_in_A
         .type is_in_A, %function
 is_in_A:
-        adr c1, A
-        gcvalue x1, c1
+        adr c10, A
+        gcvalue x1, c10
         add x2, x1, #(A_end-A)
         b is_in_range
         .size is_in_A, .-is_in_A
