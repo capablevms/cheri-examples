@@ -421,13 +421,20 @@ bool maybe_print_abi_desc(enum ABI from, enum ABI to)
 
 // From a given context, ask the user what to call next.
 //
-// This should be called from each demo function in a loop. The demo function
-// should either call the resulting function, or return (exiting its loop) if
-// it's NULL.
+// This is the interactive logic of the example, responsible for presenting
+// available options, asking the user what to do next, and then passing that
+// information back to the demo itself (A, B, C, ...). The actual ABI logic is
+// in the demo functions.
 //
-// `can_call()` says that the example ABIs can't call 'Z' (C code), but actually
-// they'll all work well enough to call this helper. TODO: This might fail if
-// the user requests a large number of locals.
+// `what_next` should be called by each demo function (A, B, C, ...) in a loop.
+// Each time it is called, `what_next` will prompt the user, and return another
+// demo function to call (with a given number of stacked locals), or NULL if the
+// calling demo function should return.
+//
+// Note: Since this is implemented in C, it uses AAPCS64-cap, which we
+// respresent as 'Z'. `can_call()` says that the example ABIs can't call 'Z',
+// but in practice they'll all work well enough to call this helper.
+// TODO: This might fail if the user requests a large number of locals.
 struct Next what_next(uintptr_t cfp, uintptr_t csp, size_t pc)
 {
     clear();
