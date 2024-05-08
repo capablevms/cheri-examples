@@ -81,8 +81,9 @@ B:
         rrmask x12, x11
         and x12, x11, x12
         // We assume that since the original stack must have been larger than
-        // this, its base is suitably aligned.
-        // TODO: Prove that this is sound.
+        // this, its base is suitably aligned. Whilst this is intuitively true,
+        // and sufficient for demonstration purpose, we have not proven this
+        // property.
         scbndse c10, c10, x12
         sub x12, x12, w0, uxtw #4   // Allocate locals.
         scoff csp, c10, x12
