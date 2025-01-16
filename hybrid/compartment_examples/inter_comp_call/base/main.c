@@ -98,8 +98,8 @@ void executive_switch(struct comp c)
     void *__capability comps_addr = (void *__capability) &comps;
     comps_addr = cheri_bounds_set(comps_addr, COMP_COUNT * COMP_SIZE);
 
-    asm("mov c19, %w0\n\t"
-        "mov c20, %w1\n\t"
+    asm("mov c19, %C0\n\t"
+        "mov c20, %C1\n\t"
         "mov x0, #0\n\t"
         "msr CID_EL0, c0"
         :
