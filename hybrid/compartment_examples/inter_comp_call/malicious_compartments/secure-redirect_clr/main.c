@@ -115,7 +115,7 @@ void init_comps()
 
     switcher_call = (void *__capability) switcher_caps;
     // Seal this capability to be only used via a `lpb` type call
-    asm("seal %w0, %w0, lpb" : "+r"(switcher_call) :);
+    asm("seal %C0, %C0, lpb" : "+r"(switcher_call) :);
 }
 
 void add_comp(uint8_t *_start_addr, void (*_comp_fn)(), void *_comp_fn_end)

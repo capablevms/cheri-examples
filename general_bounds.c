@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 
     printf("Explicitly setting the bounds outside the range causes the following exception: ");
     fflush(stdout);
-    int32_t custom_bounds_array = cheri_setbounds(array, bounds);
+    int32_t *custom_bounds_array = cheri_setbounds(array, bounds);
 #else
 #error Platform not currently supported.
 #endif
