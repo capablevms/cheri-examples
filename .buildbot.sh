@@ -12,24 +12,29 @@ echo "Checking clang-format..."
 CLANG_FORMAT=$CHERI_DIR/morello-sdk/bin/clang-format
 find . -iname "*.c" -o -iname "*.h" -o -iname "*.cpp" -o -iname "*.hpp" | xargs "$CLANG_FORMAT" --dry-run -Werror
 
-echo "Checking that all the purecap examples build for all platforms..."
-PLATFORMS='riscv64-purecap morello-purecap'
+echo "Checking that all riscv64-purecap examples build..."
 # TODO: Add "example_allocators".
 for dir in . employee shared_objects timsort; do
     pushd "$dir"
-    for platform in $PLATFORMS; do
-        make -f Makefile.$platform clean
-        make -f Makefile.$platform all
-    done
+    make -f Makefile.riscv64-purecap clean
+    make -f Makefile.riscv64-purecap all
     popd
 done
 
-echo "Checking that all the hybrid examples build on Morello..."
-platform='morello-hybrid'
+echo "Checking that all morello-hybrid examples build..."
 for dir in hybrid hybrid/ddc_compartment_switching syscall-restrict; do
     pushd "$dir"
-    make -f Makefile.$platform clean
-    make -f Makefile.$platform all
+    make -f Makefile.morello-hybrid clean
+    make -f Makefile.morello-hybrid all
+    popd
+done
+
+echo "Checking that all morello-purecap examples build..."
+# TODO: Add "example_allocators".
+for dir in . employee shared_objects timsort morello-c64-secure; do
+    pushd "$dir"
+        make -f Makefile.morello-purecap clean
+        make -f Makefile.morello-purecap all
     popd
 done
 
